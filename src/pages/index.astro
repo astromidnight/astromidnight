@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Calendar from '../components/Calendar.astro';
+import Meteoblue from '../components/Meteoblue.astro';
+import Pillar from '../components/Pillar.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Shop from '../components/Shop.astro';
+import Community from '../components/Community.astro';
+import Footer from '../components/Footer.astro';
+import portraits from '../assets/Portraits.jpg';
+---
+
+<Layout>
+  <Header />
+  <main>
+    <Hero />
+    <About />
+    <Calendar />
+    <Meteoblue />
+    <Pillar
+      id="stargazing"
+      eyebrow="Stargazing"
+      title="Uma noite privada no observatório"
+      description="Até quatro pessoas, telescópio de 250mm, Saturno e nebulosas que a olho nu ninguém vê. Uma experiência guiada por um astrofotógrafo premiado, no céu escuro do Alentejo."
+      price="55€"
+      priceNote="por pessoa · preço de lançamento"
+      ctaLabel="Reservar noite"
+      video={{ src: '/videos/observatory.mp4', poster: '/posters/observatory.jpg' }}
+    />
+    <Pillar
+      id="retratos"
+      eyebrow="Retratos sob as Estrelas"
+      title="O teu retrato, com um mar de estrelas"
+      description="Sessão dedicada de fotografia de retrato sob o céu estrelado. Não é um extra, é o serviço todo: sessão privada de 60 minutos, com 5 a 10 fotos finais editadas."
+      price="180€"
+      priceNote="por sessão · 1 a 2 pessoas"
+      ctaLabel="Reservar sessão"
+      flip
+      image={{
+        src: portraits,
+        alt: 'Casal fotografado sob um céu cheio de estrelas',
+      }}
+    />
+    <Pillar
+      id="workshops"
+      eyebrow="Workshops"
+      title="Aprende, evolui, disfruta"
+      description="Nightscape, Deepsky, troubleshooting do teu setup e mentoria de edição online. Formatos presenciais no observatório ou ao vivo, sempre em grupos pequenos."
+      price="desde 40€"
+      ctaLabel="Ver workshops"
+      video={{ src: '/videos/workshops.mp4', poster: '/posters/workshops.jpg' }}
+    />
+    <Testimonials />
+    <Shop />
+    <Community />
+  </main>
+  <Footer />
+</Layout>

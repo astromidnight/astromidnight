@@ -1,0 +1,80 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/About.jpg';
+
+const stats = [
+  { value: '3×', label: 'NASA APOD' },
+  { value: '4×', label: 'Astrobin IOTD' },
+  { value: '2×', label: 'ZWO IOTW' },
+  { value: 'ESA', label: 'Colaboração' },
+];
+---
+
+<section id="sobre" class="starfield relative py-24 sm:py-32">
+  <div
+    class="mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[5fr_7fr] lg:gap-20"
+  >
+    <div class="reveal relative mx-auto w-full max-w-md lg:max-w-none">
+      <div
+        class="absolute -inset-3 rounded-2xl border border-accent-400/25 bg-night-900 lg:-inset-4"
+        aria-hidden="true"
+      >
+      </div>
+      <Image
+        src={portrait}
+        alt="David Cruz no observatório, à noite"
+        class="relative aspect-[4/5] w-full rounded-xl object-cover"
+        widths={[480, 720, 960]}
+        sizes="(min-width: 1024px) 480px, 90vw"
+      />
+    </div>
+
+    <div>
+      <p class="eyebrow reveal mb-4">Sobre</p>
+      <h2
+        class="reveal text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]"
+        style="--reveal-delay: 0.05s"
+      >
+        Olá, sou o David Cruz.<br />
+        <span class="text-cream-50/60">No Instagram sou o Astromidnight.</span>
+      </h2>
+      <p
+        class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+        style="--reveal-delay: 0.1s"
+      >
+        Fotografo a partir do meu observatório no Alentejo, sob céu Bortle 3, e
+        é aqui que recebo cada sessão, workshop e retrato.
+      </p>
+
+      <dl
+        class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
+        style="--reveal-delay: 0.15s"
+      >
+        {
+          stats.map((s) => (
+            <div class="border-l border-accent-400/30 pl-4">
+              <dt class="sr-only">{s.label}</dt>
+              <dd class="text-3xl font-bold tracking-tight text-accent-200 sm:text-4xl">
+                {s.value}
+              </dd>
+              <dd class="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/55">
+                {s.label}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <a
+        href="#sobre"
+        class="reveal group mt-10 inline-flex items-center gap-2 text-sm font-medium text-accent-200 transition-colors hover:text-accent-300"
+        style="--reveal-delay: 0.2s"
+      >
+        Sobre mim e o observatório
+        <span class="transition-transform duration-300 group-hover:translate-x-1"
+          >→</span
+        >
+      </a>
+    </div>
+  </div>
+</section>

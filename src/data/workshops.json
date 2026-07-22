@@ -1,0 +1,38 @@
+[
+  {
+    "id": "nightscape",
+    "title": "Astrofotografia Nightscape",
+    "format": "Presencial, observatório",
+    "booking": "luma",
+    "price": "desde 40€",
+    "duration": "Data marcada, vagas limitadas",
+    "note": "Preço final por confirmar (secção 15 da espec)"
+  },
+  {
+    "id": "deepsky",
+    "title": "Astrofotografia Deepsky",
+    "format": "Presencial, observatório",
+    "booking": "luma",
+    "price": "~70€",
+    "duration": "Data marcada, vagas limitadas",
+    "note": "Preço final por confirmar (secção 15 da espec)"
+  },
+  {
+    "id": "troubleshooting",
+    "title": "Troubleshooting de setup",
+    "format": "Presencial, observatório, 1-a-1 ou grupo pequeno",
+    "booking": "cal.com",
+    "price": "95€ (sugerido)",
+    "duration": "1h30 a 2h",
+    "note": "Preço sugerido, por confirmar"
+  },
+  {
+    "id": "mentoria-edicao",
+    "title": "Mentoria de edição de imagem",
+    "format": "Online, ao vivo",
+    "booking": "cal.com",
+    "price": "65€/hora (sugerido)",
+    "duration": "60 ou 90 minutos",
+    "note": "Preço sugerido, por confirmar"
+  }
+]

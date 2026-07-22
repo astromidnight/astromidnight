@@ -1,0 +1,40 @@
+{
+  "evergreen": [
+    {
+      "dateLabel": "Sempre",
+      "title": "Stargazing — reserva a tua data",
+      "subtitle": "Quase todas as noites de céu limpo, grupo até 4 pessoas",
+      "type": "stargazing",
+      "typeLabel": "Stargazing",
+      "price": "45€",
+      "cta": "Reservar"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Retratos sob as Estrelas — sessão privada",
+      "subtitle": "Sessão dedicada, individual ou casal",
+      "type": "retratos",
+      "typeLabel": "Retratos",
+      "price": "160€",
+      "cta": "Reservar sessão"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Astrophotography Mentorship",
+      "subtitle": "Sessão privada até 4h, setup e processamento deep-sky",
+      "type": "mentorship",
+      "typeLabel": "Mentorship",
+      "price": "95€",
+      "cta": "Reservar"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Image Editing Mentorship",
+      "subtitle": "Sessão online de 90 min, tratamento de imagem astro",
+      "type": "editing-mentorship",
+      "typeLabel": "Mentorship",
+      "price": "75€",
+      "cta": "Reservar"
+    }
+  ]
+}

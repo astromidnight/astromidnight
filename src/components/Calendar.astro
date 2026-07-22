@@ -1,0 +1,856 @@
+---
+import calendar from '../data/calendar.json';
+import { moonPhasesInMonth, moonIlluminationByDay, type PhaseType } from '../lib/moon';
+import {
+  meteorShowersInMonth,
+  meteorPeaksByDay,
+  milkyWayVisible,
+  darkSkyWindow,
+  nightQuality,
+} from '../lib/sky';
+import { getLumaEvents, type LumaEvent } from '../lib/luma';
+import { getAvailability, CAL_LINKS, type ServiceType } from '../lib/calcom';
+
+// Quantos meses para a frente se pode navegar.
+const MONTHS_AHEAD = 6;
+
+// Dados reais, obtidos no momento do build: eventos de data fixa do Luma e
+// disponibilidade dos 4 produtos do Cal.com (ver src/lib/luma.ts e
+// src/lib/calcom.ts).
+const lumaEvents = await getLumaEvents();
+const availability = await getAvailability();
+
+const weekdays = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
+const WEEKDAYS_PT = [
+  'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado',
+];
+const MONTHS_PT = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
+
+// Mês atual, em hora de Lisboa (resolvido no build)
+const nowParts = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Lisbon',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+}).formatToParts(new Date());
+const part = (t: string) => Number(nowParts.find((p) => p.type === t)!.value);
+const CUR_Y = part('year');
+const CUR_M = part('month');
+const TODAY = part('day');
+
+// SVG de cada fase — parte iluminada a claro sobre disco escuro
+const moonSvg = (type: PhaseType) => {
+  const ring =
+    '<circle cx="8" cy="8" r="7" fill="#121212" stroke="currentColor" stroke-width="1"/>';
+  const inner =
+    type === 'new'
+      ? ring
+      : type === 'full'
+        ? '<circle cx="8" cy="8" r="7" fill="currentColor"/>'
+        : type === 'first'
+          ? ring + '<path d="M8 1 A7 7 0 0 1 8 15 Z" fill="currentColor"/>'
+          : ring + '<path d="M8 1 A7 7 0 0 0 8 15 Z" fill="currentColor"/>';
+  return `<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true">${inner}</svg>`;
+};
+
+const meteorSvg =
+  '<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M2 14 L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11.5" cy="4.5" r="1.6" fill="currentColor"/></svg>';
+
+const legend: { type: PhaseType; label: string }[] = [
+  { type: 'new', label: 'Lua Nova' },
+  { type: 'first', label: 'Quarto Crescente' },
+  { type: 'full', label: 'Lua Cheia' },
+  { type: 'last', label: 'Quarto Minguante' },
+];
+
+const nightRange = (w: { start: number; end: number }, name: string) =>
+  w.start === w.end ? `${w.start} ${name}` : `${w.start}–${w.end} ${name}`;
+
+// Atividades reserváveis numa noite, em função da lua.
+// Stargazing acontece sempre; Retratos só com pouca ou nenhuma lua.
+type Service = {
+  name: string;
+  type: ServiceType;
+  price: string;
+  desc: string;
+  available: boolean;
+  href: string;
+};
+
+const servicesForNight = (illum: number) => {
+  const s: Service[] = [
+    {
+      name: 'Stargazing',
+      type: 'stargazing',
+      price: '55€',
+      desc:
+        illum <= 15
+          ? 'Deep-sky, nebulosas e a Via Láctea no telescópio de 250mm.'
+          : illum <= 60
+            ? 'Planetas, enxames estelares e objetos brilhantes.'
+            : 'A Lua ao detalhe e os planetas do momento.',
+      available: availability.stargazing,
+      href: CAL_LINKS.stargazing,
+    },
+  ];
+  if (illum <= 15)
+    s.push({
+      name: 'Retratos sob as Estrelas',
+      type: 'retratos',
+      price: '180€',
+      desc: 'O teu retrato sob um céu cheio de estrelas. Só em noites de pouca ou nenhuma lua.',
+      available: availability.retratos,
+      href: CAL_LINKS.retratos,
+    });
+  return s;
+};
+
+// Constrói tudo o que é preciso para renderizar um mês (grelha, insights,
+// painel do céu e dados das noites para o modal).
+function buildMonth(y: number, m: number) {
+  const monthName = MONTHS_PT[m - 1];
+  const monthLabel = `${monthName} ${y}`;
+  const todayDay = y === CUR_Y && m === CUR_M ? TODAY : -1;
+
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const leading = (new Date(y, m - 1, 1).getDay() + 6) % 7;
+
+  const phasesByDay = new Map<
+    number,
+    ReturnType<typeof moonPhasesInMonth>[number]
+  >();
+  for (const p of moonPhasesInMonth(y, m)) phasesByDay.set(p.day, p);
+
+  const illumByDay = moonIlluminationByDay(y, m);
+  const peaksByDay = meteorPeaksByDay(m);
+  const showers = meteorShowersInMonth(m);
+  const milkyWay = milkyWayVisible(m);
+  const darkWindow = darkSkyWindow(illumByDay);
+  const darkLabel = darkWindow ? nightRange(darkWindow, monthName) : null;
+  const fullMoon = [...phasesByDay.values()].find((p) => p.type === 'full');
+  const topPeak = showers
+    .filter((s) => s.peakDay !== null)
+    .sort((a, b) => b.zhr - a.zhr)[0];
+
+  // Eventos de data fixa do Luma que caem neste mês
+  const evByDay = new Map<number, LumaEvent[]>();
+  for (const ev of lumaEvents) {
+    if (ev.year !== y || ev.month !== m) continue;
+    const list = evByDay.get(ev.day) ?? [];
+    list.push(ev);
+    evByDay.set(ev.day, list);
+  }
+
+  const cells: (number | null)[] = [
+    ...Array.from({ length: leading }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const rc = cells.map((day) => {
+    if (day === null) return { day: null as null };
+    const illum = illumByDay.get(day)!.illum;
+    const phase = phasesByDay.get(day);
+    const inDark =
+      !!darkWindow && day >= darkWindow.start && day <= darkWindow.end;
+    return {
+      day,
+      illum,
+      wash: (Math.pow(illum / 100, 0.85) * 0.11).toFixed(3),
+      phaseType: phase?.type ?? null,
+      phaseLabel: phase?.label ?? null,
+      phaseTime: phase?.time ?? null,
+      isToday: day === todayDay,
+      inDark,
+      hasPeak: peaksByDay.has(day),
+      peaksTitle: (peaksByDay.get(day) ?? []).join(', '),
+      verdict: nightQuality(illum).verdict,
+      events: evByDay.get(day) ?? [],
+    };
+  });
+
+  const nights: Record<number, unknown> = {};
+  for (let d = 1; d <= daysInMonth; d++) {
+    const { illum, waxing } = illumByDay.get(d)!;
+    const q = nightQuality(illum);
+    nights[d] = {
+      day: d,
+      weekday: WEEKDAYS_PT[new Date(y, m - 1, d).getDay()],
+      dateLabel: `${d} de ${monthName} de ${y}`,
+      illum,
+      waxing,
+      tone: q.tone,
+      verdict: q.verdict,
+      phase: phasesByDay.get(d)?.label ?? null,
+      phaseTime: phasesByDay.get(d)?.time ?? null,
+      peaks: peaksByDay.get(d) ?? [],
+      services: servicesForNight(illum),
+      events: (evByDay.get(d) ?? []).map((e) => ({
+        title: e.title,
+        typeLabel: e.typeLabel,
+        price: e.price,
+        href: e.href,
+      })),
+    };
+  }
+
+  return {
+    monthLabel,
+    monthName,
+    rc,
+    darkWindow,
+    darkLabel,
+    fullMoon,
+    topPeak,
+    showers,
+    milkyWay,
+    nights,
+  };
+}
+
+const addMonths = (y: number, m: number, n: number) => {
+  const idx = m - 1 + n;
+  return { y: y + Math.floor(idx / 12), m: (idx % 12) + 1 };
+};
+
+const months = Array.from({ length: MONTHS_AHEAD + 1 }, (_, i) => {
+  const { y, m } = addMonths(CUR_Y, CUR_M, i);
+  return buildMonth(y, m);
+});
+const lastIndex = months.length - 1;
+
+const calendarData = {
+  months: months.map((mv) => ({
+    monthLabel: mv.monthLabel,
+    milkyWay: mv.milkyWay,
+    showers: mv.showers.map((s) => ({
+      name: s.name,
+      peakDay: s.peakDay,
+      zhr: s.zhr,
+      note: s.note,
+    })),
+    nights: mv.nights,
+  })),
+};
+
+const filters = [
+  { id: 'all', label: 'Tudo' },
+  { id: 'stargazing', label: 'Stargazing' },
+  { id: 'retratos', label: 'Retratos' },
+  { id: 'workshops', label: 'Workshops' },
+  { id: 'eventos', label: 'Eventos' },
+];
+
+const listItems = [...lumaEvents, ...calendar.evergreen];
+const listHref = (item: (typeof listItems)[number]) =>
+  'href' in item ? item.href : CAL_LINKS[item.type as ServiceType];
+---
+
+<section id="calendario" class="relative py-24 sm:py-32">
+  <script type="application/json" id="calendar-data" set:html={JSON.stringify(calendarData)}
+  ></script>
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="reveal max-w-2xl">
+      <p class="eyebrow mb-4">Calendário</p>
+      <h2 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]">
+        As próximas noites
+      </h2>
+      <p class="mt-4 max-w-lg text-cream-50/70">
+        Lua, meteoros e céu escuro em tempo real. Toca numa noite para veres a
+        qualidade do céu e reservar.
+      </p>
+    </div>
+
+    <!-- Melhores oportunidades do mês (um bloco por mês) -->
+    <div id="cal-insights" class="reveal mt-8" style="--reveal-delay: 0.08s">
+      {
+        months.map((mv, i) => (
+          <div
+            class="month-insights grid gap-3 sm:grid-cols-3"
+            data-i={i}
+            class:list={[i > 0 && 'hidden']}
+          >
+            {mv.darkWindow && (
+              <button
+                class="highlight-jump flex items-start gap-3 rounded-xl border border-accent-300/25 bg-accent-400/[0.06] p-4 text-left transition-colors hover:border-accent-300/50"
+                data-i={i}
+                data-day={mv.darkWindow.start}
+              >
+                <span class="mt-0.5 h-5 w-5 shrink-0 text-cream-50" set:html={moonSvg('new')} />
+                <span>
+                  <span class="block text-sm font-semibold">Céu mais escuro</span>
+                  <span class="block text-sm text-cream-50/60">
+                    {mv.darkLabel} · deep-sky, Via Láctea e Retratos
+                  </span>
+                </span>
+              </button>
+            )}
+            {mv.fullMoon && (
+              <button
+                class="highlight-jump flex items-start gap-3 rounded-xl border border-cream-50/12 bg-night-900 p-4 text-left transition-colors hover:border-cream-50/30"
+                data-i={i}
+                data-day={mv.fullMoon.day}
+              >
+                <span class="mt-0.5 h-5 w-5 shrink-0 text-cream-50" set:html={moonSvg('full')} />
+                <span>
+                  <span class="block text-sm font-semibold">
+                    Lua cheia · {mv.fullMoon.day} {mv.monthName}
+                  </span>
+                  <span class="block text-sm text-cream-50/60">
+                    Noite de luar · observação da Lua e planetas
+                  </span>
+                </span>
+              </button>
+            )}
+            {mv.topPeak && mv.topPeak.peakDay && (
+              <button
+                class="highlight-jump flex items-start gap-3 rounded-xl border border-cream-50/12 bg-night-900 p-4 text-left transition-colors hover:border-cream-50/30"
+                data-i={i}
+                data-day={mv.topPeak.peakDay}
+              >
+                <span class="mt-0.5 h-5 w-5 shrink-0 text-accent-200" set:html={meteorSvg} />
+                <span>
+                  <span class="block text-sm font-semibold">{mv.topPeak.name}</span>
+                  <span class="block text-sm text-cream-50/60">
+                    Pico {mv.topPeak.peakDay} {mv.monthName} · ZHR ~{mv.topPeak.zhr}
+                  </span>
+                </span>
+              </button>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="reveal mt-6 flex flex-wrap items-center justify-between gap-4"
+      style="--reveal-delay: 0.12s"
+    >
+      <div class="flex flex-wrap gap-2">
+        {
+          filters.map((f, i) => (
+            <button
+              class="filter-btn cursor-pointer rounded-full border border-cream-50/15 px-4 py-2 text-sm text-cream-50/70 transition-colors hover:border-accent-300/60 hover:text-cream-50"
+              data-filter={f.id}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div
+        class="inline-flex rounded-full border border-cream-50/15 p-1"
+        role="tablist"
+        aria-label="Vista do calendário"
+      >
+        <button
+          class="view-btn btn !min-h-0 !px-5 !py-2 text-sm"
+          data-view="grid"
+          role="tab"
+          aria-selected="true">Calendário</button
+        >
+        <button
+          class="view-btn btn !min-h-0 !px-5 !py-2 text-sm"
+          data-view="cards"
+          role="tab"
+          aria-selected="false">Cards</button
+        >
+      </div>
+    </div>
+
+    <!-- Vista: grelha mensal (um bloco por mês) -->
+    <div data-panel="grid" class="reveal mt-8" style="--reveal-delay: 0.15s">
+      {
+        months.map((mv, i) => (
+          <div class="month-grid" data-i={i} class:list={[i > 0 && 'hidden']}>
+            <div class="overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900">
+              <div class="flex items-center justify-between border-b border-cream-50/10 px-4 py-4 sm:px-6 sm:py-5">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    class="cal-prev flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-cream-50/15 disabled:hover:text-cream-50/70"
+                    data-i={i}
+                    disabled={i === 0}
+                    aria-label="Mês anterior"
+                  >
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                  </button>
+                  <h3 class="min-w-[8.5rem] text-center text-lg font-bold tracking-tight">
+                    {mv.monthLabel}
+                  </h3>
+                  <button
+                    class="cal-next flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50 disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:border-cream-50/15 disabled:hover:text-cream-50/70"
+                    data-i={i}
+                    disabled={i === lastIndex}
+                    aria-label="Mês seguinte"
+                  >
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                  </button>
+                </div>
+                <p class="hidden text-xs uppercase tracking-[0.18em] text-cream-50/40 sm:block">
+                  Toca numa noite
+                </p>
+              </div>
+              <div class="grid grid-cols-7 border-b border-cream-50/10">
+                {weekdays.map((d) => (
+                  <div class="px-2 py-3 text-center text-xs font-medium uppercase tracking-[0.14em] text-cream-50/40">
+                    {d}
+                  </div>
+                ))}
+              </div>
+              <div class="grid grid-cols-7">
+                {mv.rc.map((cell) =>
+                  cell.day === null ? (
+                    <div class="min-h-16 border-b border-r border-cream-50/5 bg-night-950/40 p-2 sm:min-h-24 [&:nth-child(7n)]:border-r-0" />
+                  ) : (
+                    <button
+                      type="button"
+                      class:list={[
+                        'day-cell relative min-h-16 cursor-pointer border-b border-r border-cream-50/5 p-2 text-left transition-shadow hover:ring-1 hover:ring-inset hover:ring-accent-300/50 sm:min-h-24 [&:nth-child(7n)]:border-r-0',
+                        cell.isToday
+                          ? 'ring-1 ring-inset ring-accent-300/40'
+                          : cell.inDark && 'ring-1 ring-inset ring-accent-300/20',
+                      ]}
+                      style={`background-color: rgba(232,232,232,${cell.wash})`}
+                      data-i={i}
+                      data-day={cell.day}
+                      aria-label={`${cell.day} de ${mv.monthName} — ${cell.verdict}, lua ${cell.illum}%`}
+                    >
+                      <div class="flex items-start justify-between gap-1">
+                        <span
+                          class:list={[
+                            'text-xs',
+                            cell.isToday
+                              ? 'font-semibold text-accent-200'
+                              : cell.events.length || cell.inDark
+                                ? 'font-medium text-cream-50'
+                                : 'text-cream-50/40',
+                          ]}
+                        >
+                          {cell.day}
+                        </span>
+                        {cell.phaseType && (
+                          <span
+                            class="h-3.5 w-3.5 shrink-0 text-cream-50 sm:h-4 sm:w-4"
+                            role="img"
+                            aria-label={`${cell.phaseLabel} (${cell.phaseTime})`}
+                            title={`${cell.phaseLabel} · ${cell.phaseTime}`}
+                            set:html={moonSvg(cell.phaseType)}
+                          />
+                        )}
+                      </div>
+                      {cell.events.map((ev) => (
+                        <span
+                          class="day-event mt-1.5 block truncate rounded bg-accent-400/15 px-1.5 py-1 text-[0.65rem] leading-tight text-accent-200"
+                          data-type={ev.type}
+                          title={ev.title}
+                        >
+                          <span class="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-accent-300" />
+                          <span class="hidden sm:inline">{ev.title}</span>
+                        </span>
+                      ))}
+                      {cell.hasPeak && (
+                        <span
+                          class="absolute bottom-1.5 right-1.5 h-3 w-3 text-accent-200/80 sm:h-3.5 sm:w-3.5"
+                          role="img"
+                          aria-label="Pico de chuva de meteoros"
+                          title={`Meteoros: ${cell.peaksTitle}`}
+                          set:html={meteorSvg}
+                        />
+                      )}
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            <!-- Legendas -->
+            <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+              {legend.map((l) => (
+                <span class="inline-flex items-center gap-2 text-xs text-cream-50/70">
+                  <span class="h-4 w-4 shrink-0 text-cream-50" aria-hidden="true" set:html={moonSvg(l.type)} />
+                  {l.label}
+                </span>
+              ))}
+              <span class="inline-flex items-center gap-2 text-xs text-cream-50/70">
+                <span class="h-4 w-4 shrink-0 text-accent-200" aria-hidden="true" set:html={meteorSvg} />
+                Meteoros
+              </span>
+              <span class="inline-flex items-center gap-2 text-xs text-cream-50/60">
+                <span
+                  class="h-3 w-16 rounded-full border border-cream-50/15"
+                  style="background: linear-gradient(90deg, #141414, rgba(232,232,232,0.14))"
+                />
+                Escuro → Luar
+              </span>
+            </div>
+
+            <!-- Céu deste mês -->
+            {(mv.showers.length > 0 || mv.milkyWay) && (
+              <div class="mt-8 rounded-2xl border border-cream-50/10 bg-night-900 p-6">
+                <h3 class="text-sm font-semibold uppercase tracking-[0.16em] text-cream-50/50">
+                  Céu de {mv.monthName}
+                </h3>
+                <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+                  {mv.showers.map((s) => (
+                    <li class="flex items-start gap-3">
+                      <span class="mt-0.5 h-4 w-4 shrink-0 text-accent-200" aria-hidden="true" set:html={meteorSvg} />
+                      <span class="text-sm">
+                        <span class="font-medium">{s.name}</span>
+                        <span class="text-cream-50/55">
+                          {' — '}{s.peakDay ? `pico ${s.peakDay} ${mv.monthName}` : 'ativa'} · ZHR ~{s.zhr}
+                          {s.note ? ` · ${s.note}` : ''}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                  {mv.milkyWay && (
+                    <li class="flex items-start gap-3">
+                      <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent-300" aria-hidden="true" />
+                      <span class="text-sm">
+                        <span class="font-medium">Núcleo da Via Láctea</span>
+                        <span class="text-cream-50/55"> — visível nas noites de céu escuro</span>
+                      </span>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+        ))
+      }
+
+      <!-- Lista de próximos itens -->
+      <ul class="mt-8 divide-y divide-cream-50/8 border-y border-cream-50/8">
+        {
+          listItems.map((item) => (
+            <li
+              class="list-row -mx-4 grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 rounded-lg px-4 py-5 transition-colors duration-300 hover:bg-night-900 sm:-mx-6 sm:grid-cols-[6rem_1fr_auto_auto_auto] sm:gap-x-8 sm:px-6"
+              data-type={item.type}
+            >
+              <span class="text-sm font-bold uppercase tracking-wide text-accent-200">
+                {item.dateLabel}
+              </span>
+              <div>
+                <p class="font-medium">{item.title}</p>
+                {'subtitle' in item && item.subtitle && (
+                  <p class="mt-0.5 text-sm text-cream-50/55">{item.subtitle}</p>
+                )}
+              </div>
+              <span class="col-start-2 w-fit rounded-full border border-cream-50/15 px-3 py-1 text-xs text-cream-50/60 sm:col-start-auto">
+                {item.typeLabel}
+              </span>
+              <span class="col-start-2 text-lg font-bold text-cream-50 sm:col-start-auto">
+                {item.price}
+              </span>
+              <a
+                href={listHref(item)}
+                target="_blank"
+                rel="noopener"
+                class="btn btn-ghost col-start-2 w-fit !min-h-0 !px-5 !py-2 text-sm sm:col-start-auto"
+              >
+                {item.cta}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Vista: cards -->
+    <div
+      data-panel="cards"
+      class="mt-10 hidden grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+    >
+      {
+        listItems.map((item) => (
+          <article
+            class="card-item flex flex-col rounded-2xl border border-cream-50/10 bg-night-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent-400/40"
+            data-type={item.type}
+          >
+            <div class="flex items-center justify-between">
+              <span class="rounded-full border border-cream-50/15 px-3 py-1 text-xs text-cream-50/60">
+                {item.typeLabel}
+              </span>
+              <span class="text-sm font-bold uppercase tracking-wide text-accent-200">
+                {item.dateLabel}
+              </span>
+            </div>
+            <h3 class="mt-5 text-lg font-bold leading-snug">{item.title}</h3>
+            {'subtitle' in item && item.subtitle && (
+              <p class="mt-1.5 text-sm text-cream-50/55">{item.subtitle}</p>
+            )}
+            <div class="mt-auto flex items-center justify-between pt-6">
+              <span class="text-2xl font-bold">{item.price}</span>
+              <a
+                href={listHref(item)}
+                target="_blank"
+                rel="noopener"
+                class="btn btn-primary !min-h-0 !px-5 !py-2 text-sm"
+              >
+                {item.cta}
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Detalhe da noite -->
+  <div
+    id="night-modal"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="nm-title"
+  >
+    <div class="modal-backdrop absolute inset-0 bg-night-950/80 backdrop-blur-sm"></div>
+    <div
+      class="relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border border-cream-50/12 bg-night-900 p-6 shadow-2xl"
+    >
+      <button
+        class="modal-close absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-cream-50/60 transition-colors hover:bg-night-800 hover:text-cream-50"
+        aria-label="Fechar"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+      <p id="nm-weekday" class="text-xs uppercase tracking-[0.18em] text-accent-200"></p>
+      <h3 id="nm-title" class="mt-1 text-2xl font-bold"></h3>
+      <div class="mt-5 flex items-center gap-3">
+        <span id="nm-moon" class="h-9 w-9 shrink-0 text-cream-50"></span>
+        <div>
+          <p id="nm-verdict" class="font-medium"></p>
+          <p id="nm-moontext" class="text-sm text-cream-50/60"></p>
+        </div>
+      </div>
+      <ul id="nm-sky" class="mt-4 space-y-1.5 text-sm text-cream-50/70"></ul>
+      <div class="mt-5">
+        <p class="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
+          Ideal para
+        </p>
+        <div id="nm-activities" class="space-y-2.5"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const section = document.getElementById('calendario')!;
+  const viewBtns = section.querySelectorAll<HTMLButtonElement>('.view-btn');
+  const panels = section.querySelectorAll<HTMLElement>('[data-panel]');
+  const activeView = ['bg-accent-400', 'text-night-950', 'font-medium'];
+
+  const setView = (view: string) => {
+    viewBtns.forEach((b) => {
+      const on = b.dataset.view === view;
+      b.classList.toggle('text-cream-50/70', !on);
+      activeView.forEach((c) => b.classList.toggle(c, on));
+      b.setAttribute('aria-selected', String(on));
+    });
+    panels.forEach((p) => {
+      const on = p.dataset.panel === view;
+      p.classList.toggle('hidden', !on);
+      if (p.dataset.panel === 'cards') p.classList.toggle('grid', on);
+    });
+  };
+  viewBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view!)));
+  setView('grid');
+
+  const filterBtns = section.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const setFilter = (filter: string) => {
+    filterBtns.forEach((b) => {
+      const on = b.dataset.filter === filter;
+      b.setAttribute('aria-pressed', String(on));
+      b.classList.toggle('border-accent-300', on);
+      b.classList.toggle('text-accent-200', on);
+    });
+    section
+      .querySelectorAll<HTMLElement>('.list-row, .card-item, .day-event')
+      .forEach((el) => {
+        el.classList.toggle(
+          'hidden',
+          filter !== 'all' && el.dataset.type !== filter
+        );
+      });
+  };
+  filterBtns.forEach((b) =>
+    b.addEventListener('click', () => setFilter(b.dataset.filter!))
+  );
+  setFilter('all');
+
+  // ---- Navegação entre meses ----
+  const monthBlocks = section.querySelectorAll<HTMLElement>(
+    '.month-insights, .month-grid'
+  );
+  const lastIndex = Math.max(
+    0,
+    ...[...monthBlocks].map((el) => Number(el.dataset.i))
+  );
+  let active = 0;
+  const showMonth = (i: number) => {
+    active = Math.max(0, Math.min(lastIndex, i));
+    monthBlocks.forEach((el) => {
+      el.classList.toggle('hidden', Number(el.dataset.i) !== active);
+    });
+  };
+  section
+    .querySelectorAll<HTMLButtonElement>('.cal-prev')
+    .forEach((b) => b.addEventListener('click', () => showMonth(active - 1)));
+  section
+    .querySelectorAll<HTMLButtonElement>('.cal-next')
+    .forEach((b) => b.addEventListener('click', () => showMonth(active + 1)));
+
+  // ---- Detalhe da noite ----
+  type Service = {
+    name: string;
+    type: string;
+    price: string;
+    desc: string;
+    available: boolean;
+    href: string;
+  };
+  type NightEvent = { title: string; typeLabel: string; price: string; href: string };
+  type Night = {
+    day: number;
+    weekday: string;
+    dateLabel: string;
+    illum: number;
+    waxing: boolean;
+    tone: 'dark' | 'good' | 'bright';
+    verdict: string;
+    phase: string | null;
+    phaseTime: string | null;
+    peaks: string[];
+    services: Service[];
+    events: NightEvent[];
+  };
+  type MonthData = {
+    monthLabel: string;
+    milkyWay: boolean;
+    showers: { name: string; peakDay: number | null; zhr: number; note?: string }[];
+    nights: Record<string, Night>;
+  };
+  type Data = { months: MonthData[] };
+
+  const data: Data = JSON.parse(
+    document.getElementById('calendar-data')!.textContent!
+  );
+
+  const modal = document.getElementById('night-modal')!;
+  const $ = (id: string) => document.getElementById(id)!;
+
+  const discSvg = (illum: number, waxing: boolean) => {
+    const ring =
+      '<circle cx="8" cy="8" r="7" fill="#121212" stroke="currentColor" stroke-width="1"/>';
+    if (illum <= 3) return `<svg viewBox="0 0 16 16" width="100%" height="100%">${ring}</svg>`;
+    if (illum >= 97)
+      return '<svg viewBox="0 0 16 16" width="100%" height="100%"><circle cx="8" cy="8" r="7" fill="currentColor"/></svg>';
+    const half = waxing
+      ? '<path d="M8 1 A7 7 0 0 1 8 15 Z" fill="currentColor"/>'
+      : '<path d="M8 1 A7 7 0 0 0 8 15 Z" fill="currentColor"/>';
+    return `<svg viewBox="0 0 16 16" width="100%" height="100%">${ring}${half}</svg>`;
+  };
+
+  const openNight = (mi: number, day: number) => {
+    const mv = data.months[mi];
+    const n = mv?.nights[String(day)];
+    if (!n) return;
+
+    $('nm-weekday').textContent = n.weekday;
+    $('nm-title').textContent = n.dateLabel;
+    $('nm-moon').innerHTML = discSvg(n.illum, n.waxing);
+    $('nm-verdict').textContent = n.verdict;
+
+    const phaseTxt = n.phase ? `${n.phase} (${n.phaseTime}) · ` : '';
+    $('nm-moontext').textContent = `${phaseTxt}Lua ${n.illum}% iluminada`;
+
+    // Céu desta noite
+    const sky: string[] = [];
+    for (const p of n.peaks) {
+      const s = mv.showers.find((x) => x.name === p);
+      sky.push(
+        `☄ Pico das <strong>${p}</strong> esta noite${s ? ` (ZHR ~${s.zhr})` : ''}`
+      );
+    }
+    const activeShowers = mv.showers
+      .filter((s) => !n.peaks.includes(s.name))
+      .map((s) => s.name);
+    if (activeShowers.length) sky.push(`Meteoros ativos: ${activeShowers.join(', ')}`);
+    if (mv.milkyWay && n.tone === 'dark')
+      sky.push('Núcleo da Via Láctea bem visível');
+    const skyEl = $('nm-sky');
+    skyEl.innerHTML = sky.map((s) => `<li>${s}</li>`).join('');
+    skyEl.classList.toggle('hidden', sky.length === 0);
+
+    // CTA de reserva por atividade: eventos do Luma (1 botão, link real do
+    // evento) vs. serviços do Cal.com (badge disponível/esgotado + "Reservar
+    // agora" + "Saber mais", este último ainda placeholder/inativo).
+    const escAttr = (s: string) => s.replace(/"/g, '&quot;');
+
+    const eventCard = (e: NightEvent) => `
+      <div class="flex items-center justify-between gap-3 rounded-xl border border-cream-50/12 bg-night-950/50 px-4 py-3">
+        <div class="min-w-0">
+          <div class="flex items-baseline gap-2">
+            <p class="font-medium">${e.title}</p>
+            <span class="shrink-0 text-sm font-bold">${e.price}</span>
+          </div>
+          <span class="mt-1 inline-block rounded-full border border-cream-50/15 px-2 py-0.5 text-[0.65rem] text-cream-50/55">${e.typeLabel}</span>
+        </div>
+        <a href="${escAttr(e.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 shrink-0 !px-4 !py-2 text-xs">Reservar</a>
+      </div>`;
+
+    const serviceCard = (s: Service) => `
+      <div class="rounded-xl border border-cream-50/12 bg-night-950/50 px-4 py-3">
+        <div class="flex items-baseline gap-2">
+          <p class="font-medium">${s.name}</p>
+          <span class="shrink-0 text-sm font-bold">${s.price}</span>
+        </div>
+        ${s.desc ? `<p class="mt-1 text-xs text-cream-50/55">${s.desc}</p>` : ''}
+        <span class="mt-1.5 inline-flex items-center gap-1.5 text-[0.7rem] font-medium ${s.available ? 'text-accent-200' : 'text-cream-50/45'}">
+          <span class="h-1.5 w-1.5 rounded-full ${s.available ? 'bg-accent-300' : 'bg-cream-50/30'}"></span>
+          ${s.available ? 'Disponível' : 'Sem vagas nos próximos 30 dias'}
+        </span>
+        <div class="mt-3 flex items-center gap-2">
+          ${
+            s.available
+              ? `<a href="${escAttr(s.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</a>`
+              : `<span class="btn !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40">Reservar agora</span>`
+          }
+          <span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>
+        </div>
+      </div>`;
+
+    const cards: string[] = [
+      ...n.events.map(eventCard),
+      ...n.services.map(serviceCard),
+    ];
+    $('nm-activities').innerHTML = cards.join('');
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  };
+
+  const bindOpen = (el: HTMLElement) =>
+    el.addEventListener('click', () =>
+      openNight(Number(el.dataset.i), Number(el.dataset.day))
+    );
+  section.querySelectorAll<HTMLElement>('.day-cell').forEach(bindOpen);
+  section.querySelectorAll<HTMLElement>('.highlight-jump').forEach(bindOpen);
+  modal.querySelector('.modal-close')!.addEventListener('click', closeModal);
+  modal.querySelector('.modal-backdrop')!.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+  });
+</script>

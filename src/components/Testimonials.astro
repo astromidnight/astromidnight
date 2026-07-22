@@ -1,0 +1,37 @@
+---
+const placeholders = [1, 2, 3];
+---
+
+<section class="relative border-y border-cream-50/8 bg-night-900 py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Prova social</p>
+    <h2
+      class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]"
+      style="--reveal-delay: 0.05s"
+    >
+      Quem já veio
+    </h2>
+
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {
+        placeholders.map((i) => (
+          <figure
+            class="reveal flex flex-col rounded-2xl border border-dashed border-cream-50/20 bg-night-800 p-7"
+            style={`--reveal-delay: ${0.1 + i * 0.07}s`}
+          >
+            <span class="w-fit rounded-full border border-accent-400/40 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-accent-200">
+              Placeholder
+            </span>
+            <blockquote class="mt-5 leading-relaxed text-cream-50/45 italic">
+              Testemunho de cliente real, a recolher após as primeiras sessões.
+              Duas a três linhas sobre a experiência.
+            </blockquote>
+            <figcaption class="mt-auto pt-6 text-sm font-medium text-cream-50/35">
+              Nome do cliente
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

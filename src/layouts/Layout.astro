@@ -1,0 +1,76 @@
+---
+import '@fontsource/work-sans/400.css';
+import '@fontsource/work-sans/500.css';
+import '@fontsource/work-sans/700.css';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Astromidnight — O céu que já não vês',
+  description =
+    'Noites privadas de observação, retratos sob as estrelas e workshops de astrofotografia num observatório próprio em céu Bortle 3, no Alentejo. Por David Cruz, astrofotógrafo premiado pela NASA e pela ESA.',
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const ogImage = new URL(`${base}share_thumb.jpg`, Astro.site);
+---
+
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href={`${base}favicon.png`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <slot />
+    <script>
+      // Revelação ao scroll
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealed = document.querySelectorAll('.reveal');
+      if (reduced) {
+        revealed.forEach((el) => el.classList.add('in-view'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+        );
+        revealed.forEach((el) => io.observe(el));
+      }
+
+      // Vídeos abaixo da dobra: preload="none" + play só quando visíveis
+      const lazyVideos = document.querySelectorAll<HTMLVideoElement>('video[data-lazy]');
+      const vio = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) {
+              video.play().catch(() => {});
+            } else {
+              video.pause();
+            }
+          }
+        },
+        { threshold: 0.2 }
+      );
+      lazyVideos.forEach((v) => vio.observe(v));
+    </script>
+  </body>
+</html>

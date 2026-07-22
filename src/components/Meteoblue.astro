@@ -1,0 +1,63 @@
+---
+// Coordenadas do observatório (Alentejo). O slug do widget da meteoblue
+// (lat/lon arredondados a 3 casas + altitude + fuso) foi validado ao vivo
+// no configurador deles: https://www.meteoblue.com/en/weather/widget/setupseeing
+const METEOBLUE_SRC =
+  'https://www.meteoblue.com/en/weather/widget/seeing/38.742N-8.077E247_Europe%2FLisbon?geoloc=fixed&noground=0';
+---
+
+<section class="starfield relative border-y border-cream-50/8 bg-night-900 py-24 sm:py-32">
+  <div
+    class="mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-2 lg:gap-20"
+  >
+    <div>
+      <p class="eyebrow reveal mb-4">Condições do céu</p>
+      <h2
+        class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]"
+        style="--reveal-delay: 0.05s"
+      >
+        Como está o céu esta noite?
+      </h2>
+      <p
+        class="reveal mt-4 max-w-lg text-cream-50/70"
+        style="--reveal-delay: 0.1s"
+      >
+        Previsão em tempo real para as coordenadas do observatório.
+      </p>
+
+      <div class="reveal mt-10 space-y-8" style="--reveal-delay: 0.15s">
+        <div class="border-l-2 border-accent-400/50 pl-5">
+          <h3 class="font-bold text-accent-200">Seeing alto</h3>
+          <p class="mt-2 max-w-md text-sm leading-relaxed text-cream-50/70">
+            Melhor para Lua e planetas. Mede a turbulência da atmosfera: quanto
+            mais alto, mais detalhe fino se consegue.
+          </p>
+        </div>
+        <div class="border-l-2 border-accent-400/50 pl-5">
+          <h3 class="font-bold text-accent-200">Transparência alta com lua nova</h3>
+          <p class="mt-2 max-w-md text-sm leading-relaxed text-cream-50/70">
+            Melhor para deep-sky. Nebulosas e galáxias são difusas e fracas,
+            precisam de céu limpo e escuro.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="--reveal-delay: 0.2s">
+      <div
+        class="mx-auto max-w-[520px] overflow-hidden rounded-2xl border border-cream-50/10 bg-night-800"
+      >
+        <iframe
+          src={METEOBLUE_SRC}
+          width="100%"
+          height="740"
+          frameborder="0"
+          scrolling="NO"
+          loading="lazy"
+          title="Previsão de seeing astronómico — meteoblue"
+          style="width: 100%; height: 740px; display: block;"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
