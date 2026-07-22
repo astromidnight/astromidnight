@@ -9,7 +9,7 @@ import {
   nightQuality,
 } from '../lib/sky';
 import { getLumaEvents, type LumaEvent } from '../lib/luma';
-import { getAvailability, CAL_LINKS, type ServiceType } from '../lib/calcom';
+import { getAvailability, isAvailable, CAL_LINKS, type ServiceType } from '../lib/calcom';
 
 // Quantos meses para a frente se pode navegar.
 const MONTHS_AHEAD = 6;
@@ -80,7 +80,7 @@ type Service = {
   href: string;
 };
 
-const servicesForNight = (illum: number) => {
+const servicesForNight = (illum: number, dateKey: string) => {
   const s: Service[] = [
     {
       name: 'Stargazing',
@@ -92,8 +92,8 @@ const servicesForNight = (illum: number) => {
           : illum <= 60
             ? 'Planetas, enxames estelares e objetos brilhantes.'
             : 'A Lua ao detalhe e os planetas do momento.',
-      available: availability.stargazing,
-      href: CAL_LINKS.stargazing,
+      available: isAvailable(availability, 'stargazing', dateKey),
+      href: `${CAL_LINKS.stargazing}?date=${dateKey}`,
     },
   ];
   if (illum <= 15)
@@ -102,8 +102,8 @@ const servicesForNight = (illum: number) => {
       type: 'retratos',
       price: '180€',
       desc: 'O teu retrato sob um céu cheio de estrelas. Só em noites de pouca ou nenhuma lua.',
-      available: availability.retratos,
-      href: CAL_LINKS.retratos,
+      available: isAvailable(availability, 'retratos', dateKey),
+      href: `${CAL_LINKS.retratos}?date=${dateKey}`,
     });
   return s;
 };
@@ -177,6 +177,7 @@ function buildMonth(y: number, m: number) {
   for (let d = 1; d <= daysInMonth; d++) {
     const { illum, waxing } = illumByDay.get(d)!;
     const q = nightQuality(illum);
+    const dateKey = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     nights[d] = {
       day: d,
       weekday: WEEKDAYS_PT[new Date(y, m - 1, d).getDay()],
@@ -188,7 +189,7 @@ function buildMonth(y: number, m: number) {
       phase: phasesByDay.get(d)?.label ?? null,
       phaseTime: phasesByDay.get(d)?.time ?? null,
       peaks: peaksByDay.get(d) ?? [],
-      services: servicesForNight(illum),
+      services: servicesForNight(illum, dateKey),
       events: (evByDay.get(d) ?? []).map((e) => ({
         title: e.title,
         typeLabel: e.typeLabel,
