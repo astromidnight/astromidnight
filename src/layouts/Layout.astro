@@ -14,9 +14,6 @@ const {
   description =
     'Noites privadas de observação, retratos sob as estrelas e workshops de astrofotografia num observatório próprio em céu Bortle 3, no Alentejo. Por David Cruz, astrofotógrafo premiado pela NASA e pela ESA.',
 } = Astro.props;
-
-const base = import.meta.env.BASE_URL;
-const ogImage = new URL(`${base}share_thumb.jpg`, Astro.site);
 ---
 
 <!doctype html>
@@ -26,10 +23,10 @@ const ogImage = new URL(`${base}share_thumb.jpg`, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/png" href={`${base}favicon.png`} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content="/share_thumb.jpg" />
     <meta property="og:type" content="website" />
   </head>
   <body>

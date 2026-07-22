@@ -2,7 +2,9 @@
 
 Site em Astro 5 + Tailwind CSS 4, com Work Sans auto-alojada via `@fontsource/work-sans`. Construído a partir do `Brief-Claude-Code.md` e do `Brief-Claude-Code-Calendario.md` (fora deste repo, na pasta-mãe do projeto).
 
-O calendário (`src/components/Calendar.astro`) usa dados reais no momento do build: eventos de data fixa vêm do feed público do Luma, e a disponibilidade "disponível/esgotado" de cada atividade vem de uma consulta à API do Cal.com. Não há servidor nem base de dados — o site é 100% estático, reconstruído de hora a hora via GitHub Action (`.github/workflows/deploy.yml`) e publicado no GitHub Pages.
+O calendário (`src/components/Calendar.astro`) usa dados reais no momento do build: eventos de data fixa vêm do feed público do Luma, e a disponibilidade "disponível/esgotado" de cada atividade vem de uma consulta à API do Cal.com. Não há servidor nem base de dados — o site é 100% estático.
+
+**Deploy: Vercel**, ligado a este repositório (build e publicação automáticos a cada push a `main`). Para o site apanhar eventos novos no Luma e mudanças de disponibilidade no Cal.com sem precisar de um push, a GitHub Action `.github/workflows/rebuild.yml` chama de hora a hora um [Deploy Hook](https://vercel.com/docs/deployments/deploy-hooks) do Vercel (URL guardado no secret `VERCEL_DEPLOY_HOOK_URL` do repo), que pede ao Vercel para reconstruir com o mesmo código. A `CAL_API_KEY` tem de estar definida como variável de ambiente no projeto Vercel (Settings → Environment Variables) — é lá que o build corre, não no GitHub Actions.
 
 ## Correr localmente
 
