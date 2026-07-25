@@ -1,15 +1,16 @@
 ---
 import calendar from '../data/calendar.json';
 import { moonPhasesInMonth, moonIlluminationByDay, type PhaseType } from '../lib/moon';
-import {
-  meteorShowersInMonth,
-  meteorPeaksByDay,
-  milkyWayVisible,
-  darkSkyWindow,
-  nightQuality,
-} from '../lib/sky';
+import { milkyWayVisible, darkSkyWindow, nightQuality } from '../lib/sky';
 import { getLumaEvents, type LumaEvent } from '../lib/luma';
-import { getAvailability, isAvailable, CAL_LINKS, type ServiceType } from '../lib/calcom';
+import {
+  getAvailability,
+  isAvailable,
+  CAL_LINKS,
+  STARGAZING_LINKS,
+  STARGAZING_PRICE_PER_ADULT,
+  type ServiceType,
+} from '../lib/calcom';
 
 // Quantos meses para a frente se pode navegar.
 const MONTHS_AHEAD = 6;
@@ -56,8 +57,10 @@ const moonSvg = (type: PhaseType) => {
   return `<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true">${inner}</svg>`;
 };
 
-const meteorSvg =
-  '<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M2 14 L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11.5" cy="4.5" r="1.6" fill="currentColor"/></svg>';
+// Ícone de nuvem para a legenda — mesma técnica do moonSvg (stroke em
+// currentColor, sem cor cromática, para bater certo com o resto do tema).
+const cloudSvg =
+  '<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M4.5 12.5a2.5 2.5 0 0 1-.3-4.98 3 3 0 0 1 5.6-1.7A2.6 2.6 0 0 1 13 8.4a2.1 2.1 0 0 1-.1 4.1H4.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 const legend: { type: PhaseType; label: string }[] = [
   { type: 'new', label: 'Lua Nova' },
@@ -78,14 +81,15 @@ type Service = {
   desc: string;
   available: boolean;
   href: string;
+  dateKey: string;
 };
 
 const servicesForNight = (illum: number, dateKey: string) => {
   const s: Service[] = [
     {
-      name: 'Stargazing',
+      name: 'Observação Noturna',
       type: 'stargazing',
-      price: '55€',
+      price: `desde ${STARGAZING_PRICE_PER_ADULT}€ por adulto`,
       desc:
         illum <= 15
           ? 'Deep-sky, nebulosas e a Via Láctea no telescópio de 250mm.'
@@ -94,16 +98,18 @@ const servicesForNight = (illum: number, dateKey: string) => {
             : 'A Lua ao detalhe e os planetas do momento.',
       available: isAvailable(availability, 'stargazing', dateKey),
       href: `${CAL_LINKS.stargazing}?date=${dateKey}`,
+      dateKey,
     },
   ];
   if (illum <= 15)
     s.push({
       name: 'Retratos sob as Estrelas',
       type: 'retratos',
-      price: '180€',
+      price: '160€',
       desc: 'O teu retrato sob um céu cheio de estrelas. Só em noites de pouca ou nenhuma lua.',
       available: isAvailable(availability, 'retratos', dateKey),
       href: `${CAL_LINKS.retratos}?date=${dateKey}`,
+      dateKey,
     });
   return s;
 };
@@ -125,15 +131,10 @@ function buildMonth(y: number, m: number) {
   for (const p of moonPhasesInMonth(y, m)) phasesByDay.set(p.day, p);
 
   const illumByDay = moonIlluminationByDay(y, m);
-  const peaksByDay = meteorPeaksByDay(m);
-  const showers = meteorShowersInMonth(m);
   const milkyWay = milkyWayVisible(m);
   const darkWindow = darkSkyWindow(illumByDay);
   const darkLabel = darkWindow ? nightRange(darkWindow, monthName) : null;
   const fullMoon = [...phasesByDay.values()].find((p) => p.type === 'full');
-  const topPeak = showers
-    .filter((s) => s.peakDay !== null)
-    .sort((a, b) => b.zhr - a.zhr)[0];
 
   // Eventos de data fixa do Luma que caem neste mês
   const evByDay = new Map<number, LumaEvent[]>();
@@ -166,8 +167,6 @@ function buildMonth(y: number, m: number) {
       isToday: day === todayDay,
       isPast: y === CUR_Y && m === CUR_M && day < TODAY,
       inDark,
-      hasPeak: peaksByDay.has(day),
-      peaksTitle: (peaksByDay.get(day) ?? []).join(', '),
       verdict: nightQuality(illum).verdict,
       events: evByDay.get(day) ?? [],
     };
@@ -180,6 +179,7 @@ function buildMonth(y: number, m: number) {
     const dateKey = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     nights[d] = {
       day: d,
+      dateKey,
       weekday: WEEKDAYS_PT[new Date(y, m - 1, d).getDay()],
       dateLabel: `${d} de ${monthName} de ${y}`,
       illum,
@@ -188,7 +188,6 @@ function buildMonth(y: number, m: number) {
       verdict: q.verdict,
       phase: phasesByDay.get(d)?.label ?? null,
       phaseTime: phasesByDay.get(d)?.time ?? null,
-      peaks: peaksByDay.get(d) ?? [],
       services: servicesForNight(illum, dateKey),
       events: (evByDay.get(d) ?? []).map((e) => ({
         title: e.title,
@@ -207,8 +206,6 @@ function buildMonth(y: number, m: number) {
     darkWindow,
     darkLabel,
     fullMoon,
-    topPeak,
-    showers,
     milkyWay,
     nights,
   };
@@ -226,26 +223,14 @@ const months = Array.from({ length: MONTHS_AHEAD + 1 }, (_, i) => {
 const lastIndex = months.length - 1;
 
 const calendarData = {
+  stargazingLinks: STARGAZING_LINKS,
+  stargazingPricePerAdult: STARGAZING_PRICE_PER_ADULT,
   months: months.map((mv) => ({
     monthLabel: mv.monthLabel,
     milkyWay: mv.milkyWay,
-    showers: mv.showers.map((s) => ({
-      name: s.name,
-      peakDay: s.peakDay,
-      zhr: s.zhr,
-      note: s.note,
-    })),
     nights: mv.nights,
   })),
 };
-
-const filters = [
-  { id: 'all', label: 'Tudo' },
-  { id: 'stargazing', label: 'Stargazing' },
-  { id: 'retratos', label: 'Retratos' },
-  { id: 'workshops', label: 'Workshops' },
-  { id: 'eventos', label: 'Eventos' },
-];
 
 const listItems = [...lumaEvents, ...calendar.evergreen];
 const listHref = (item: (typeof listItems)[number]) =>
@@ -256,100 +241,23 @@ const listHref = (item: (typeof listItems)[number]) =>
   <script type="application/json" id="calendar-data" set:html={JSON.stringify(calendarData)}
   ></script>
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <div class="reveal max-w-2xl">
-      <p class="eyebrow mb-4">Calendário</p>
-      <h2 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]">
-        As próximas noites
-      </h2>
-      <p class="mt-4 max-w-lg text-cream-50/70">
-        Lua, meteoros e céu escuro em tempo real. Toca numa noite para veres a
-        qualidade do céu e reservar.
-      </p>
-    </div>
-
-    <!-- Melhores oportunidades do mês (um bloco por mês) -->
-    <div id="cal-insights" class="reveal mt-8" style="--reveal-delay: 0.08s">
-      {
-        months.map((mv, i) => (
-          <div
-            class="month-insights grid gap-3 sm:grid-cols-3"
-            data-i={i}
-            class:list={[i > 0 && 'hidden']}
-          >
-            {mv.darkWindow && mv.darkWindow.end >= mv.todayDay && (
-              <button
-                class="highlight-jump flex items-start gap-3 rounded-xl border border-accent-300/25 bg-accent-400/[0.06] p-4 text-left transition-colors hover:border-accent-300/50"
-                data-i={i}
-                data-day={Math.max(mv.darkWindow.start, mv.todayDay)}
-              >
-                <span class="mt-0.5 h-5 w-5 shrink-0 text-cream-50" set:html={moonSvg('new')} />
-                <span>
-                  <span class="block text-sm font-semibold">Céu mais escuro</span>
-                  <span class="block text-sm text-cream-50/60">
-                    {mv.darkLabel} · deep-sky, Via Láctea e Retratos
-                  </span>
-                </span>
-              </button>
-            )}
-            {mv.fullMoon && mv.fullMoon.day >= mv.todayDay && (
-              <button
-                class="highlight-jump flex items-start gap-3 rounded-xl border border-cream-50/12 bg-night-900 p-4 text-left transition-colors hover:border-cream-50/30"
-                data-i={i}
-                data-day={mv.fullMoon.day}
-              >
-                <span class="mt-0.5 h-5 w-5 shrink-0 text-cream-50" set:html={moonSvg('full')} />
-                <span>
-                  <span class="block text-sm font-semibold">
-                    Lua cheia · {mv.fullMoon.day} {mv.monthName}
-                  </span>
-                  <span class="block text-sm text-cream-50/60">
-                    Noite de luar · observação da Lua e planetas
-                  </span>
-                </span>
-              </button>
-            )}
-            {mv.topPeak && mv.topPeak.peakDay && mv.topPeak.peakDay >= mv.todayDay && (
-              <button
-                class="highlight-jump flex items-start gap-3 rounded-xl border border-cream-50/12 bg-night-900 p-4 text-left transition-colors hover:border-cream-50/30"
-                data-i={i}
-                data-day={mv.topPeak.peakDay}
-              >
-                <span class="mt-0.5 h-5 w-5 shrink-0 text-accent-200" set:html={meteorSvg} />
-                <span>
-                  <span class="block text-sm font-semibold">{mv.topPeak.name}</span>
-                  <span class="block text-sm text-cream-50/60">
-                    Pico {mv.topPeak.peakDay} {mv.monthName} · ZHR ~{mv.topPeak.zhr}
-                  </span>
-                </span>
-              </button>
-            )}
-          </div>
-        ))
-      }
-    </div>
-
-    <div
-      class="reveal mt-6 flex flex-wrap items-center justify-between gap-4"
-      style="--reveal-delay: 0.12s"
-    >
-      <div class="flex flex-wrap gap-2">
-        {
-          filters.map((f, i) => (
-            <button
-              class="filter-btn cursor-pointer rounded-full border border-cream-50/15 px-4 py-2 text-sm text-cream-50/70 transition-colors hover:border-accent-300/60 hover:text-cream-50"
-              data-filter={f.id}
-              aria-pressed={i === 0 ? 'true' : 'false'}
-            >
-              {f.label}
-            </button>
-          ))
-        }
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-4">Calendário</p>
+        <h2 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]">
+          As próximas noites
+        </h2>
+        <p class="mt-4 max-w-lg text-cream-50/70">
+          Fases da lua e escuridão do céu, noite a noite. Escolhe uma
+          data para veres as condições e reservares o teu lugar.
+        </p>
       </div>
 
       <div
-        class="inline-flex rounded-full border border-cream-50/15 p-1"
+        class="reveal inline-flex shrink-0 rounded-full border border-cream-50/15 p-1"
         role="tablist"
         aria-label="Vista do calendário"
+        style="--reveal-delay: 0.12s"
       >
         <button
           class="view-btn btn !min-h-0 !px-5 !py-2 text-sm"
@@ -361,13 +269,13 @@ const listHref = (item: (typeof listItems)[number]) =>
           class="view-btn btn !min-h-0 !px-5 !py-2 text-sm"
           data-view="cards"
           role="tab"
-          aria-selected="false">Cards</button
+          aria-selected="false">Lista</button
         >
       </div>
     </div>
 
     <!-- Vista: grelha mensal (um bloco por mês) -->
-    <div data-panel="grid" class="reveal mt-8" style="--reveal-delay: 0.15s">
+    <div data-panel="grid" class="reveal mt-6" style="--reveal-delay: 0.15s">
       {
         months.map((mv, i) => (
           <div class="month-grid" data-i={i} class:list={[i > 0 && 'hidden']}>
@@ -395,7 +303,7 @@ const listHref = (item: (typeof listItems)[number]) =>
                   </button>
                 </div>
                 <p class="hidden text-xs uppercase tracking-[0.18em] text-cream-50/40 sm:block">
-                  Toca numa noite
+                  Seleciona uma noite
                 </p>
               </div>
               <div class="grid grid-cols-7 border-b border-cream-50/10">
@@ -427,29 +335,34 @@ const listHref = (item: (typeof listItems)[number]) =>
                       data-day={cell.day}
                       aria-label={`${cell.day} de ${mv.monthName} — ${cell.isPast ? 'já passou' : `${cell.verdict}, lua ${cell.illum}%`}`}
                     >
-                      <div class="flex items-start justify-between gap-1">
+                      <span
+                        class:list={[
+                          'text-xs',
+                          cell.isToday
+                            ? 'font-semibold text-accent-200'
+                            : cell.events.length || cell.inDark
+                              ? 'font-medium text-cream-50'
+                              : 'text-cream-50/40',
+                        ]}
+                      >
+                        {cell.day}
+                      </span>
+                      {cell.phaseType && (
                         <span
-                          class:list={[
-                            'text-xs',
-                            cell.isToday
-                              ? 'font-semibold text-accent-200'
-                              : cell.events.length || cell.inDark
-                                ? 'font-medium text-cream-50'
-                                : 'text-cream-50/40',
-                          ]}
-                        >
-                          {cell.day}
-                        </span>
-                        {cell.phaseType && (
-                          <span
-                            class="h-3.5 w-3.5 shrink-0 text-cream-50 sm:h-4 sm:w-4"
-                            role="img"
-                            aria-label={`${cell.phaseLabel} (${cell.phaseTime})`}
-                            title={`${cell.phaseLabel} · ${cell.phaseTime}`}
-                            set:html={moonSvg(cell.phaseType)}
-                          />
-                        )}
-                      </div>
+                          class="absolute right-2 top-1/2 h-5 w-5 shrink-0 -translate-y-1/2 text-cream-50 sm:h-6 sm:w-6"
+                          role="img"
+                          aria-label={`${cell.phaseLabel} (${cell.phaseTime})`}
+                          title={`${cell.phaseLabel} · ${cell.phaseTime}`}
+                          set:html={moonSvg(cell.phaseType)}
+                        />
+                      )}
+                      <span
+                        class="weather-badge hidden absolute inset-x-2 bottom-2 items-center justify-end gap-1 text-[0.6rem] leading-tight text-cream-50/55 sm:text-xs"
+                        data-weather-badge
+                      >
+                        <span class="min-w-0 truncate" data-weather-text />
+                        <span class="h-3 w-3 shrink-0" aria-hidden="true" data-weather-icon />
+                      </span>
                       {cell.events.map((ev) => (
                         <span
                           class="day-event mt-1.5 block truncate rounded bg-accent-400/15 px-1.5 py-1 text-[0.65rem] leading-tight text-accent-200"
@@ -460,15 +373,6 @@ const listHref = (item: (typeof listItems)[number]) =>
                           <span class="hidden sm:inline">{ev.title}</span>
                         </span>
                       ))}
-                      {cell.hasPeak && (
-                        <span
-                          class="absolute bottom-1.5 right-1.5 h-3 w-3 text-accent-200/80 sm:h-3.5 sm:w-3.5"
-                          role="img"
-                          aria-label="Pico de chuva de meteoros"
-                          title={`Meteoros: ${cell.peaksTitle}`}
-                          set:html={meteorSvg}
-                        />
-                      )}
                     </button>
                   )
                 )}
@@ -476,57 +380,33 @@ const listHref = (item: (typeof listItems)[number]) =>
             </div>
 
             <!-- Legendas -->
-            <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div class="mt-6 flex flex-wrap items-start gap-x-6 gap-y-3">
               {legend.map((l) => (
                 <span class="inline-flex items-center gap-2 text-xs text-cream-50/70">
-                  <span class="h-4 w-4 shrink-0 text-cream-50" aria-hidden="true" set:html={moonSvg(l.type)} />
+                  <span class="h-5 w-5 shrink-0 text-cream-50" aria-hidden="true" set:html={moonSvg(l.type)} />
                   {l.label}
                 </span>
               ))}
               <span class="inline-flex items-center gap-2 text-xs text-cream-50/70">
-                <span class="h-4 w-4 shrink-0 text-accent-200" aria-hidden="true" set:html={meteorSvg} />
-                Meteoros
+                <span class="h-5 w-5 shrink-0 text-cream-50" aria-hidden="true" set:html={cloudSvg} />
+                Previsão meteorológica
               </span>
-              <span class="inline-flex items-center gap-2 text-xs text-cream-50/60">
+
+              <div class="ml-auto flex items-center gap-3">
+                <div class="text-right">
+                  <p class="text-xs font-medium text-cream-50/80">Escuro</p>
+                  <p class="text-[11px] text-cream-50/50">Melhor para céu profundo</p>
+                </div>
                 <span
-                  class="h-3 w-16 rounded-full border border-cream-50/15"
+                  class="h-3.5 w-24 shrink-0 rounded-full border border-cream-50/15"
                   style="background: linear-gradient(90deg, #141414, rgba(232,232,232,0.14))"
                 />
-                Escuro → Luar
-              </span>
-            </div>
-
-            <!-- Céu deste mês -->
-            {(mv.showers.length > 0 || mv.milkyWay) && (
-              <div class="mt-8 rounded-2xl border border-cream-50/10 bg-night-900 p-6">
-                <h3 class="text-sm font-semibold uppercase tracking-[0.16em] text-cream-50/50">
-                  Céu de {mv.monthName}
-                </h3>
-                <ul class="mt-4 grid gap-3 sm:grid-cols-2">
-                  {mv.showers.map((s) => (
-                    <li class="flex items-start gap-3">
-                      <span class="mt-0.5 h-4 w-4 shrink-0 text-accent-200" aria-hidden="true" set:html={meteorSvg} />
-                      <span class="text-sm">
-                        <span class="font-medium">{s.name}</span>
-                        <span class="text-cream-50/55">
-                          {' — '}{s.peakDay ? `pico ${s.peakDay} ${mv.monthName}` : 'ativa'} · ZHR ~{s.zhr}
-                          {s.note ? ` · ${s.note}` : ''}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                  {mv.milkyWay && (
-                    <li class="flex items-start gap-3">
-                      <span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent-300" aria-hidden="true" />
-                      <span class="text-sm">
-                        <span class="font-medium">Núcleo da Via Láctea</span>
-                        <span class="text-cream-50/55"> — visível nas noites de céu escuro</span>
-                      </span>
-                    </li>
-                  )}
-                </ul>
+                <div>
+                  <p class="text-xs font-medium text-cream-50/80">Luar</p>
+                  <p class="text-[11px] text-cream-50/50">Melhor para Lua e Planetas</p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         ))
       }
@@ -534,36 +414,75 @@ const listHref = (item: (typeof listItems)[number]) =>
       <!-- Lista de próximos itens -->
       <ul class="mt-8 divide-y divide-cream-50/8 border-y border-cream-50/8">
         {
-          listItems.map((item) => (
-            <li
-              class="list-row -mx-4 grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 rounded-lg px-4 py-5 transition-colors duration-300 hover:bg-night-900 sm:-mx-6 sm:grid-cols-[6rem_1fr_auto_auto_auto] sm:gap-x-8 sm:px-6"
-              data-type={item.type}
-            >
-              <span class="text-sm font-bold uppercase tracking-wide text-accent-200">
-                {item.dateLabel}
-              </span>
-              <div>
-                <p class="font-medium">{item.title}</p>
-                {'subtitle' in item && item.subtitle && (
-                  <p class="mt-0.5 text-sm text-cream-50/55">{item.subtitle}</p>
-                )}
-              </div>
-              <span class="col-start-2 w-fit rounded-full border border-cream-50/15 px-3 py-1 text-xs text-cream-50/60 sm:col-start-auto">
-                {item.typeLabel}
-              </span>
-              <span class="col-start-2 text-lg font-bold text-cream-50 sm:col-start-auto">
-                {item.price}
-              </span>
-              <a
-                href={listHref(item)}
-                target="_blank"
-                rel="noopener"
-                class="btn btn-ghost col-start-2 w-fit !min-h-0 !px-5 !py-2 text-sm sm:col-start-auto"
+          listItems.map((item) => {
+            const hasDate = item.dateLabel !== 'Sempre';
+            return (
+              <li
+                class:list={[
+                  'list-row -mx-4 grid items-center gap-x-5 gap-y-3 rounded-lg px-4 py-5 transition-colors duration-300 hover:bg-night-900 sm:-mx-6 sm:gap-x-8 sm:px-6',
+                  hasDate
+                    ? 'grid-cols-[auto_1fr] sm:grid-cols-[6rem_1fr_auto_auto_auto]'
+                    : 'grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto]',
+                ]}
+                data-type={item.type}
               >
-                {item.cta}
-              </a>
-            </li>
-          ))
+                {hasDate && (
+                  <span class="text-sm font-bold uppercase tracking-wide text-accent-200">
+                    {item.dateLabel}
+                  </span>
+                )}
+                <div>
+                  <p class="font-medium">{item.title}</p>
+                  {'subtitle' in item && item.subtitle && (
+                    <p class="mt-0.5 text-sm text-cream-50/55">{item.subtitle}</p>
+                  )}
+                </div>
+                <span
+                  class:list={[
+                    'w-fit rounded-full border border-cream-50/15 px-3 py-1 text-xs text-cream-50/60 sm:col-start-auto',
+                    hasDate ? 'col-start-2' : 'col-start-1',
+                  ]}
+                >
+                  {item.typeLabel}
+                </span>
+                <span
+                  class:list={[
+                    'sm:col-start-auto',
+                    hasDate ? 'col-start-2' : 'col-start-1',
+                  ]}
+                >
+                  <span class="text-lg font-bold text-cream-50">{item.price}</span>
+                  {'priceUnit' in item && item.priceUnit && (
+                    <span class="ml-1 text-sm text-cream-50/50">{item.priceUnit}</span>
+                  )}
+                </span>
+                {item.type === 'stargazing' ? (
+                  <button
+                    type="button"
+                    data-open-stargazing
+                    class:list={[
+                      'btn btn-ghost w-fit !min-h-0 !px-5 !py-2 text-sm sm:col-start-auto',
+                      hasDate ? 'col-start-2' : 'col-start-1',
+                    ]}
+                  >
+                    {item.cta}
+                  </button>
+                ) : (
+                  <a
+                    href={listHref(item)}
+                    target="_blank"
+                    rel="noopener"
+                    class:list={[
+                      'btn btn-ghost w-fit !min-h-0 !px-5 !py-2 text-sm sm:col-start-auto',
+                      hasDate ? 'col-start-2' : 'col-start-1',
+                    ]}
+                  >
+                    {item.cta}
+                  </a>
+                )}
+              </li>
+            );
+          })
         }
       </ul>
     </div>
@@ -584,7 +503,7 @@ const listHref = (item: (typeof listItems)[number]) =>
                 {item.typeLabel}
               </span>
               <span class="text-sm font-bold uppercase tracking-wide text-accent-200">
-                {item.dateLabel}
+                {item.dateLabel !== 'Sempre' && item.dateLabel}
               </span>
             </div>
             <h3 class="mt-5 text-lg font-bold leading-snug">{item.title}</h3>
@@ -592,15 +511,30 @@ const listHref = (item: (typeof listItems)[number]) =>
               <p class="mt-1.5 text-sm text-cream-50/55">{item.subtitle}</p>
             )}
             <div class="mt-auto flex items-center justify-between pt-6">
-              <span class="text-2xl font-bold">{item.price}</span>
-              <a
-                href={listHref(item)}
-                target="_blank"
-                rel="noopener"
-                class="btn btn-primary !min-h-0 !px-5 !py-2 text-sm"
-              >
-                {item.cta}
-              </a>
+              <span>
+                <span class="text-2xl font-bold">{item.price}</span>
+                {'priceUnit' in item && item.priceUnit && (
+                  <span class="ml-1 text-sm text-cream-50/50">{item.priceUnit}</span>
+                )}
+              </span>
+              {item.type === 'stargazing' ? (
+                <button
+                  type="button"
+                  data-open-stargazing
+                  class="btn btn-primary !min-h-0 !px-5 !py-2 text-sm"
+                >
+                  {item.cta}
+                </button>
+              ) : (
+                <a
+                  href={listHref(item)}
+                  target="_blank"
+                  rel="noopener"
+                  class="btn btn-primary !min-h-0 !px-5 !py-2 text-sm"
+                >
+                  {item.cta}
+                </a>
+              )}
             </div>
           </article>
         ))
@@ -644,6 +578,43 @@ const listHref = (item: (typeof listItems)[number]) =>
       </div>
     </div>
   </div>
+
+  <!-- Popup de quantidade — Stargazing -->
+  <div
+    id="stargazing-modal"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="sg-title"
+  >
+    <div class="modal-backdrop absolute inset-0 bg-night-950/80 backdrop-blur-sm"></div>
+    <div
+      class="relative w-full max-w-sm rounded-2xl border border-cream-50/12 bg-night-900 p-6 shadow-2xl"
+    >
+      <button
+        class="modal-close absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-cream-50/60 transition-colors hover:bg-night-800 hover:text-cream-50"
+        aria-label="Fechar"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+      <p class="eyebrow">Observação Noturna</p>
+      <h3 id="sg-title" class="mt-1 text-xl font-bold">Quantos adultos?</h3>
+      <p id="sg-date" class="mt-1 hidden text-sm text-cream-50/55"></p>
+      <p class="mt-1 text-xs text-cream-50/45">Crianças não pagam.</p>
+
+      <div id="sg-options" class="mt-5 space-y-2" role="radiogroup" aria-label="Número de adultos"></div>
+
+      <a
+        id="sg-continue"
+        href="#"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primary mt-5 w-full"
+      >
+        Continuar para reserva
+      </a>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -668,32 +639,8 @@ const listHref = (item: (typeof listItems)[number]) =>
   viewBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view!)));
   setView('grid');
 
-  const filterBtns = section.querySelectorAll<HTMLButtonElement>('.filter-btn');
-  const setFilter = (filter: string) => {
-    filterBtns.forEach((b) => {
-      const on = b.dataset.filter === filter;
-      b.setAttribute('aria-pressed', String(on));
-      b.classList.toggle('border-accent-300', on);
-      b.classList.toggle('text-accent-200', on);
-    });
-    section
-      .querySelectorAll<HTMLElement>('.list-row, .card-item, .day-event')
-      .forEach((el) => {
-        el.classList.toggle(
-          'hidden',
-          filter !== 'all' && el.dataset.type !== filter
-        );
-      });
-  };
-  filterBtns.forEach((b) =>
-    b.addEventListener('click', () => setFilter(b.dataset.filter!))
-  );
-  setFilter('all');
-
   // ---- Navegação entre meses ----
-  const monthBlocks = section.querySelectorAll<HTMLElement>(
-    '.month-insights, .month-grid'
-  );
+  const monthBlocks = section.querySelectorAll<HTMLElement>('.month-grid');
   const lastIndex = Math.max(
     0,
     ...[...monthBlocks].map((el) => Number(el.dataset.i))
@@ -720,10 +667,12 @@ const listHref = (item: (typeof listItems)[number]) =>
     desc: string;
     available: boolean;
     href: string;
+    dateKey: string;
   };
   type NightEvent = { title: string; typeLabel: string; price: string; href: string };
   type Night = {
     day: number;
+    dateKey: string;
     weekday: string;
     dateLabel: string;
     illum: number;
@@ -732,17 +681,19 @@ const listHref = (item: (typeof listItems)[number]) =>
     verdict: string;
     phase: string | null;
     phaseTime: string | null;
-    peaks: string[];
     services: Service[];
     events: NightEvent[];
   };
   type MonthData = {
     monthLabel: string;
     milkyWay: boolean;
-    showers: { name: string; peakDay: number | null; zhr: number; note?: string }[];
     nights: Record<string, Night>;
   };
-  type Data = { months: MonthData[] };
+  type Data = {
+    stargazingLinks: Record<'1' | '2' | '3' | '4', string>;
+    stargazingPricePerAdult: number;
+    months: MonthData[];
+  };
 
   const data: Data = JSON.parse(
     document.getElementById('calendar-data')!.textContent!
@@ -778,16 +729,6 @@ const listHref = (item: (typeof listItems)[number]) =>
 
     // Céu desta noite
     const sky: string[] = [];
-    for (const p of n.peaks) {
-      const s = mv.showers.find((x) => x.name === p);
-      sky.push(
-        `☄ Pico das <strong>${p}</strong> esta noite${s ? ` (ZHR ~${s.zhr})` : ''}`
-      );
-    }
-    const activeShowers = mv.showers
-      .filter((s) => !n.peaks.includes(s.name))
-      .map((s) => s.name);
-    if (activeShowers.length) sky.push(`Meteoros ativos: ${activeShowers.join(', ')}`);
     if (mv.milkyWay && n.tone === 'dark')
       sky.push('Núcleo da Via Láctea bem visível');
     const skyEl = $('nm-sky');
@@ -811,7 +752,13 @@ const listHref = (item: (typeof listItems)[number]) =>
         <a href="${escAttr(e.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 shrink-0 !px-4 !py-2 text-xs">Reservar</a>
       </div>`;
 
-    const serviceCard = (s: Service) => `
+    const serviceCard = (s: Service) => {
+      const cta = !s.available
+        ? `<span class="btn !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40">Reservar agora</span>`
+        : s.type === 'stargazing'
+          ? `<button type="button" data-open-stargazing data-date="${escAttr(s.dateKey)}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</button>`
+          : `<a href="${escAttr(s.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</a>`;
+      return `
       <div class="rounded-xl border border-cream-50/12 bg-night-950/50 px-4 py-3">
         <div class="flex items-baseline gap-2">
           <p class="font-medium">${s.name}</p>
@@ -823,14 +770,11 @@ const listHref = (item: (typeof listItems)[number]) =>
           ${s.available ? 'Disponível' : 'Sem vagas nos próximos 30 dias'}
         </span>
         <div class="mt-3 flex items-center gap-2">
-          ${
-            s.available
-              ? `<a href="${escAttr(s.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</a>`
-              : `<span class="btn !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40">Reservar agora</span>`
-          }
+          ${cta}
           <span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>
         </div>
       </div>`;
+    };
 
     const cards: string[] = [
       ...n.events.map(eventCard),
@@ -854,10 +798,167 @@ const listHref = (item: (typeof listItems)[number]) =>
       openNight(Number(el.dataset.i), Number(el.dataset.day))
     );
   section.querySelectorAll<HTMLElement>('.day-cell').forEach(bindOpen);
-  section.querySelectorAll<HTMLElement>('.highlight-jump').forEach(bindOpen);
   modal.querySelector('.modal-close')!.addEventListener('click', closeModal);
   modal.querySelector('.modal-backdrop')!.addEventListener('click', closeModal);
+
+  // ---- Previsão meteorológica (nebulosidade) ----
+  // Open-Meteo: sem chave, sem limite relevante para este uso, até 16 dias.
+  // Pedido no browser (não no build) porque o tempo muda muito mais depressa
+  // do que a disponibilidade do site é publicada de novo. Mesmas coordenadas
+  // do observatório usadas no widget de seeing (Meteoblue.astro).
+  const WEATHER_URL =
+    'https://api.open-meteo.com/v1/forecast?latitude=38.742&longitude=-8.077&hourly=cloud_cover&timezone=Europe%2FLisbon&forecast_days=16';
+
+  // Mesmo ícone da legenda (cloudSvg no frontmatter) -- duplicado aqui porque
+  // o frontmatter corre no build e este <script> corre à parte, no browser.
+  const CLOUD_SVG =
+    '<svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M4.5 12.5a2.5 2.5 0 0 1-.3-4.98 3 3 0 0 1 5.6-1.7A2.6 2.6 0 0 1 13 8.4a2.1 2.1 0 0 1-.1 4.1H4.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // Agrupa as horas de cada previsão pela "noite" a que pertencem: janela
+  // 20h-00h do próprio dia (não atravessa a meia-noite, não precisa de
+  // aritmética de datas).
+  async function loadNightlyCloudCover(): Promise<Map<string, number>> {
+    try {
+      const res = await fetch(WEATHER_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const times: string[] = json.hourly.time;
+      const clouds: number[] = json.hourly.cloud_cover;
+
+      const byNight = new Map<string, number[]>();
+      for (let i = 0; i < times.length; i++) {
+        const date = times[i].slice(0, 10);
+        const hour = Number(times[i].slice(11, 13));
+        if (hour < 20) continue;
+        (byNight.get(date) ?? byNight.set(date, []).get(date)!).push(clouds[i]);
+      }
+
+      const avgByNight = new Map<string, number>();
+      byNight.forEach((vals, key) => {
+        avgByNight.set(key, Math.round(vals.reduce((a, b) => a + b, 0) / vals.length));
+      });
+      return avgByNight;
+    } catch (err) {
+      console.warn('[weather] falha ao obter previsão da Open-Meteo:', err);
+      return new Map();
+    }
+  }
+
+  loadNightlyCloudCover().then((avgByNight) => {
+    if (avgByNight.size === 0) return;
+    section.querySelectorAll<HTMLButtonElement>('.day-cell[data-day]').forEach((cell) => {
+      // Ignora noites já passadas -- não faz sentido mostrar previsão numa
+      // célula que já nem é clicável.
+      if (cell.disabled) return;
+
+      const mi = Number(cell.dataset.i);
+      const day = Number(cell.dataset.day);
+      const n = data.months[mi]?.nights[String(day)];
+      const badge = cell.querySelector<HTMLElement>('[data-weather-badge]');
+      const icon = badge?.querySelector<HTMLElement>('[data-weather-icon]');
+      const text = badge?.querySelector<HTMLElement>('[data-weather-text]');
+      if (!n || !badge || !icon || !text) return;
+
+      const cloud = avgByNight.get(n.dateKey);
+      if (cloud == null) return;
+
+      icon.innerHTML = CLOUD_SVG;
+      text.textContent = `${cloud}% de nuvens`;
+      badge.title = `${cloud}% de nebulosidade prevista para esta noite (Open-Meteo)`;
+      // "flex" só entra depois de tirar "hidden" -- os dois em simultâneo
+      // dependem da ordem das regras geradas pelo Tailwind, é frágil.
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+    });
+  });
+
+  // ---- Popup de quantidade — Stargazing ----
+  // Só adultos pagam; cada quantidade (1-4) é um event type próprio no
+  // Cal.com com o seu preço, e reservar qualquer um bloqueia os outros 3
+  // nessa noite (partilham o mesmo calendário). Este popup só escolhe qual
+  // dos 4 links abrir -- a pergunta sobre crianças fica no próprio Cal.com.
+  const sgModal = $('stargazing-modal');
+  const sgOptionsEl = $('sg-options');
+  const sgContinue = $('sg-continue') as HTMLAnchorElement;
+  const sgDateEl = $('sg-date');
+  let sgSelected = 1;
+
+  const renderStargazingOptions = () => {
+    sgOptionsEl.innerHTML = ([1, 2, 3, 4] as const)
+      .map((n) => {
+        const price = n * data.stargazingPricePerAdult;
+        const active = n === sgSelected;
+        return `
+          <button
+            type="button"
+            data-adults="${n}"
+            class="flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${
+              active
+                ? 'border-accent-300 bg-accent-400/10'
+                : 'border-cream-50/15 hover:border-cream-50/30'
+            }"
+          >
+            <span class="font-medium">${n} adulto${n > 1 ? 's' : ''}</span>
+            <span class="font-bold">${price}€</span>
+          </button>`;
+      })
+      .join('');
+    sgOptionsEl.querySelectorAll<HTMLButtonElement>('button[data-adults]').forEach((b) =>
+      b.addEventListener('click', () => {
+        sgSelected = Number(b.dataset.adults);
+        renderStargazingOptions();
+        updateStargazingHref();
+      })
+    );
+  };
+
+  const updateStargazingHref = () => {
+    const base = data.stargazingLinks[String(sgSelected) as '1' | '2' | '3' | '4'];
+    const date = sgModal.dataset.date;
+    sgContinue.href = date ? `${base}?date=${date}` : base;
+  };
+
+  const openStargazingModal = (dateKey?: string) => {
+    // Nunca deixar o modal de detalhe do dia aberto por baixo -- garante
+    // que o popup tem sempre o mesmo aspeto, venha de onde vier.
+    closeModal();
+    sgSelected = 1;
+    if (dateKey) {
+      sgModal.dataset.date = dateKey;
+      sgDateEl.textContent = 'Para esta noite';
+      sgDateEl.classList.remove('hidden');
+    } else {
+      delete sgModal.dataset.date;
+      sgDateEl.classList.add('hidden');
+    }
+    renderStargazingOptions();
+    updateStargazingHref();
+    sgModal.classList.remove('hidden');
+    sgModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeStargazingModal = () => {
+    sgModal.classList.add('hidden');
+    sgModal.classList.remove('flex');
+    document.body.style.overflow = '';
+  };
+
+  // Delegado no document (não só na section): apanha os botões estáticos
+  // (card "sempre", CTA da secção Pillar mais acima na página) e os
+  // injetados dinamicamente dentro do modal de detalhe da noite -- o
+  // popup tem de abrir sempre igual, venha o clique de onde vier.
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-open-stargazing]');
+    if (!trigger) return;
+    openStargazingModal(trigger.dataset.date || undefined);
+  });
+  sgModal.querySelector('.modal-close')!.addEventListener('click', closeStargazingModal);
+  sgModal.querySelector('.modal-backdrop')!.addEventListener('click', closeStargazingModal);
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    if (e.key !== 'Escape') return;
+    if (!modal.classList.contains('hidden')) closeModal();
+    if (!sgModal.classList.contains('hidden')) closeStargazingModal();
   });
 </script>

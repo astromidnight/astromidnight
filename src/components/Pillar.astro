@@ -91,13 +91,26 @@ const {
         <span class="text-3xl font-bold tracking-tight text-accent-200">{price}</span>
         {priceNote && <span class="ml-2 text-cream-50/55">{priceNote}</span>}
       </p>
-      <a
-        href="#calendario"
-        class="btn btn-primary reveal mt-8"
-        style="--reveal-delay: 0.2s"
-      >
-        {ctaLabel}
-      </a>
+      {
+        id === 'stargazing' ? (
+          <button
+            type="button"
+            data-open-stargazing
+            class="btn btn-primary reveal mt-8"
+            style="--reveal-delay: 0.2s"
+          >
+            {ctaLabel}
+          </button>
+        ) : (
+          <a
+            href="#calendario"
+            class="btn btn-primary reveal mt-8"
+            style="--reveal-delay: 0.2s"
+          >
+            {ctaLabel}
+          </a>
+        )
+      }
     </div>
   </div>
 </section>

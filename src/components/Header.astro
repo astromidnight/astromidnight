@@ -2,12 +2,26 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/Logo.png';
 
-const nav = [
-  { label: 'Stargazing', href: '#stargazing' },
-  { label: 'Retratos', href: '#retratos' },
-  { label: 'Workshops', href: '#workshops' },
-  { label: 'Loja', href: '#loja' },
-  { label: 'Galeria', href: '#galeria' },
+type Link = { label: string; href: string };
+type NavEntry = Link | { label: string; items: Link[] };
+
+const nav: NavEntry[] = [
+  {
+    label: 'Experiências noturnas',
+    items: [
+      { label: 'Observação noturna', href: '#stargazing' },
+      { label: 'Retratos sob as estrelas', href: '#retratos' },
+      { label: 'Para alojamentos locais', href: '#alojamentos' },
+    ],
+  },
+  {
+    label: 'Aprende',
+    items: [
+      { label: 'Astrofotografia', href: '#workshops' },
+      { label: 'Edição de imagem', href: '#workshops' },
+    ],
+  },
+  { label: 'Loja', href: '/loja' },
   { label: 'Sobre', href: '#sobre' },
   { label: 'Contacto', href: '#contacto' },
 ];
@@ -20,21 +34,59 @@ const nav = [
   <div
     class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8"
   >
-    <a href="#top" class="shrink-0" aria-label="Astromidnight — início">
+    <a href="/" class="shrink-0" aria-label="Astromidnight — início">
       <Image src={logo} alt="Astromidnight" class="h-9 w-auto sm:h-10" densities={[1, 2]} />
     </a>
 
     <nav class="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
       {
-        nav.map((item) => (
-          <a
-            href={item.href}
-            class="group relative text-sm font-normal text-cream-50/75 transition-colors hover:text-cream-50"
-          >
-            {item.label}
-            <span class="absolute -bottom-1 left-0 h-px w-0 bg-accent-300 transition-all duration-300 group-hover:w-full" />
-          </a>
-        ))
+        nav.map((entry) =>
+          'items' in entry ? (
+            <div class="nav-dropdown relative">
+              <button
+                type="button"
+                class="nav-dropdown-trigger flex items-center gap-1.5 text-sm font-normal text-cream-50/75 transition-colors hover:text-cream-50"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                {entry.label}
+                <svg
+                  class="nav-dropdown-chevron h-3.5 w-3.5 transition-transform duration-200"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div
+                class="nav-dropdown-panel pointer-events-none absolute left-0 top-full z-10 mt-3 w-64 origin-top-left -translate-y-1 scale-95 rounded-xl border border-cream-50/12 bg-night-900 p-2 opacity-0 shadow-2xl transition-all duration-200 ease-out"
+                role="menu"
+              >
+                {entry.items.map((sub) => (
+                  <a
+                    href={sub.href}
+                    role="menuitem"
+                    class="block rounded-lg px-3 py-2.5 text-sm text-cream-50/80 transition-colors hover:bg-night-800 hover:text-cream-50"
+                  >
+                    {sub.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <a
+              href={entry.href}
+              class="group relative text-sm font-normal text-cream-50/75 transition-colors hover:text-cream-50"
+            >
+              {entry.label}
+              <span class="absolute -bottom-1 left-0 h-px w-0 bg-accent-300 transition-all duration-300 group-hover:w-full" />
+            </a>
+          )
+        )
       }
     </nav>
 
@@ -70,14 +122,51 @@ const nav = [
   >
     <nav class="flex flex-col px-5 py-4" aria-label="Navegação móvel">
       {
-        nav.map((item) => (
-          <a
-            href={item.href}
-            class="border-b border-cream-50/5 py-3.5 text-base text-cream-50/85 last:border-none hover:text-accent-200"
-          >
-            {item.label}
-          </a>
-        ))
+        nav.map((entry) =>
+          'items' in entry ? (
+            <div class="border-b border-cream-50/5 last:border-none">
+              <button
+                type="button"
+                class="mobile-group-toggle flex w-full items-center justify-between py-3.5 text-base text-cream-50/85"
+                aria-expanded="false"
+              >
+                {entry.label}
+                <svg
+                  class="mobile-group-chevron h-4 w-4 shrink-0 transition-transform duration-200"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="mobile-group-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                  <div class="flex flex-col pb-3 pl-4">
+                    {entry.items.map((sub) => (
+                      <a
+                        href={sub.href}
+                        class="py-2.5 text-sm text-cream-50/65 hover:text-accent-200"
+                      >
+                        {sub.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <a
+              href={entry.href}
+              class="border-b border-cream-50/5 py-3.5 text-base text-cream-50/85 last:border-none hover:text-accent-200"
+            >
+              {entry.label}
+            </a>
+          )
+        )
       }
       <a href="#calendario" class="btn btn-primary mt-4">Reservar</a>
     </nav>
@@ -110,4 +199,51 @@ const nav = [
   menu.querySelectorAll('a').forEach((a) =>
     a.addEventListener('click', () => setOpen(false))
   );
+
+  // ---- Dropdowns do menu principal (desktop) ----
+  // Fica sempre no DOM (nunca "hidden") -- só assim a opacidade/escala
+  // conseguem transicionar; "aparecer/desaparecer" instantâneo com
+  // display:none não anima.
+  const DROPDOWN_CLOSED = ['opacity-0', 'scale-95', '-translate-y-1', 'pointer-events-none'];
+  const DROPDOWN_OPEN = ['opacity-100', 'scale-100', 'translate-y-0', 'pointer-events-auto'];
+  const dropdowns = document.querySelectorAll<HTMLElement>('.nav-dropdown');
+  const setDropdownOpen = (d: HTMLElement, open: boolean) => {
+    const trigger = d.querySelector<HTMLButtonElement>('.nav-dropdown-trigger')!;
+    const panel = d.querySelector<HTMLElement>('.nav-dropdown-panel')!;
+    panel.classList.remove(...(open ? DROPDOWN_CLOSED : DROPDOWN_OPEN));
+    panel.classList.add(...(open ? DROPDOWN_OPEN : DROPDOWN_CLOSED));
+    panel.toggleAttribute('inert', !open);
+    trigger.setAttribute('aria-expanded', String(open));
+    trigger.querySelector('.nav-dropdown-chevron')!.classList.toggle('rotate-180', open);
+  };
+  const closeAllDropdowns = () => dropdowns.forEach((d) => setDropdownOpen(d, false));
+  dropdowns.forEach((d) => {
+    const trigger = d.querySelector<HTMLButtonElement>('.nav-dropdown-trigger')!;
+    const panel = d.querySelector<HTMLElement>('.nav-dropdown-panel')!;
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = panel.classList.contains('pointer-events-auto');
+      closeAllDropdowns();
+      if (!wasOpen) setDropdownOpen(d, true);
+    });
+  });
+  document.addEventListener('click', () => closeAllDropdowns());
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllDropdowns();
+  });
+
+  // ---- Acordeão de grupos (mobile) ----
+  // Truque do grid-template-rows 0fr -> 1fr: anima de/para altura "auto"
+  // sem ter de medir scrollHeight em JS, e sem precisar de display:none.
+  document.querySelectorAll<HTMLButtonElement>('.mobile-group-toggle').forEach((btn) => {
+    const panel = btn.nextElementSibling as HTMLElement;
+    btn.addEventListener('click', () => {
+      const willOpen = !panel.classList.contains('grid-rows-[1fr]');
+      panel.classList.toggle('grid-rows-[0fr]', !willOpen);
+      panel.classList.toggle('grid-rows-[1fr]', willOpen);
+      panel.toggleAttribute('inert', !willOpen);
+      btn.setAttribute('aria-expanded', String(willOpen));
+      btn.querySelector('.mobile-group-chevron')!.classList.toggle('rotate-180', willOpen);
+    });
+  });
 </script>

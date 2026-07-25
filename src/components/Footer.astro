@@ -3,21 +3,29 @@ import { Image } from 'astro:assets';
 import logo from '../assets/Logo.png';
 
 const columns = [
-  [
-    { label: 'Stargazing', href: '#stargazing' },
-    { label: 'Loja', href: '#loja' },
-  ],
-  [
-    { label: 'Retratos', href: '#retratos' },
-    { label: 'Galeria', href: '#galeria' },
-  ],
-  [
-    { label: 'Workshops', href: '#workshops' },
-    { label: 'Sobre', href: '#sobre' },
-  ],
-  [
-    { label: 'Contacto', href: '#contacto' },
-  ],
+  {
+    heading: 'Experiências noturnas',
+    items: [
+      { label: 'Observação noturna', href: '#stargazing' },
+      { label: 'Retratos sob as estrelas', href: '#retratos' },
+      { label: 'Para alojamentos locais', href: '#alojamentos' },
+    ],
+  },
+  {
+    heading: 'Aprende',
+    items: [
+      { label: 'Astrofotografia', href: '#workshops' },
+      { label: 'Edição de imagem', href: '#workshops' },
+    ],
+  },
+  {
+    heading: null,
+    items: [
+      { label: 'Loja', href: '/loja' },
+      { label: 'Sobre', href: '#sobre' },
+      { label: 'Contacto', href: '#contacto' },
+    ],
+  },
 ];
 
 const legal = [
@@ -39,13 +47,16 @@ const legal = [
       </div>
 
       <nav
-        class="grid grid-cols-2 gap-x-12 gap-y-2 sm:grid-cols-4"
+        class="grid grid-cols-2 gap-x-12 gap-y-8 sm:grid-cols-3"
         aria-label="Navegação do rodapé"
       >
         {
           columns.map((col) => (
             <div class="flex flex-col gap-2">
-              {col.map((item) => (
+              {col.heading && (
+                <p class="mb-1 text-sm font-medium text-cream-50/85">{col.heading}</p>
+              )}
+              {col.items.map((item) => (
                 <a
                   href={item.href}
                   class="py-1 text-sm text-cream-50/60 transition-colors hover:text-accent-200"

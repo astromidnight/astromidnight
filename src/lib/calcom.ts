@@ -1,4 +1,5 @@
 export type ServiceType = 'stargazing' | 'retratos' | 'mentorship' | 'editing-mentorship';
+export type StargazingAdults = 1 | 2 | 3 | 4;
 
 // Por atividade: conjunto de datas ("AAAA-MM-DD") com pelo menos um
 // horário livre no Cal.com. `null` = a consulta falhou para esta
@@ -6,13 +7,32 @@ export type ServiceType = 'stargazing' | 'retratos' | 'mentorship' | 'editing-me
 // sempre disponível (fail-open), ver isAvailable().
 export type Availability = Record<ServiceType, Set<string> | null>;
 
+// Stargazing: só adultos pagam (crianças entram grátis, perguntado no
+// próprio formulário do Cal.com). Em vez de "offer seats", cada noite é um
+// só event type -- 4 no total, um por nº de adultos -- e reservar qualquer
+// um bloqueia os outros 3 nessa data porque todos escrevem no mesmo
+// calendário do Cal.com (conflict-checking cruzado entre event types é o
+// comportamento por omissão, ver help.cal.com/event-types/
+// eventtype-specific-checking-for-conflicts). Por isso a disponibilidade só
+// precisa de ser consultada numa das 4 variantes (usa-se a de 1 adulto).
+export const STARGAZING_PRICE_PER_ADULT = 45;
+
+export const STARGAZING_LINKS: Record<StargazingAdults, string> = {
+  1: 'https://cal.eu/astromidnight/stargazing',
+  2: 'https://cal.eu/astromidnight/stargazing-2-people',
+  3: 'https://cal.eu/astromidnight/stargazing-3-adults',
+  4: 'https://cal.eu/astromidnight/stargazing-4-adults',
+};
+
 // Links diretos de reserva, versão europeia do Cal.com (cal.eu, dados
-// alojados na UE) -- não cal.com.
+// alojados na UE) -- não cal.com. `stargazing` aponta à variante de 1
+// adulto -- serve de base para a consulta de disponibilidade e como
+// fallback para quem não passar por um seletor de quantidade.
 export const CAL_LINKS: Record<ServiceType, string> = {
-  stargazing: 'https://cal.eu/astromidnight/stargazing',
+  stargazing: STARGAZING_LINKS[1],
   retratos: 'https://cal.eu/astromidnight/portrait-session-under-the-stars',
   mentorship: 'https://cal.eu/astromidnight/astrophotography-mentorship',
-  'editing-mentorship': 'https://cal.eu/astromidnight/image-editing-mentorship',
+  'editing-mentorship': 'https://cal.eu/astromidnight/deepsky-image-processing',
 };
 
 const CAL_USERNAME = 'astromidnight';

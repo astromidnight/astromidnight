@@ -36,18 +36,32 @@ const stats = [
         style="--reveal-delay: 0.05s"
       >
         Olá, sou o David Cruz.<br />
-        <span class="text-cream-50/60">No Instagram sou o Astromidnight.</span>
+        <span class="text-cream-50/60"
+          >No Instagram sou o <a
+            href="https://www.instagram.com/astro.midnight"
+            target="_blank"
+            rel="noopener"
+            class="underline decoration-cream-50/30 underline-offset-4 hover:decoration-cream-50/60"
+            >Astromidnight</a
+          >.</span
+        >
       </h2>
       <p
         class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
         style="--reveal-delay: 0.1s"
       >
-        Fotografo a partir do meu observatório no Alentejo, sob céu Bortle 3, e
-        é aqui que recebo cada sessão, workshop e retrato.
+        Fotografo as estrelas a partir do meu observatório no Alentejo, sob céu livre de poluição luminosa, e
+        é aqui que faço cada sessão e workshop.
       </p>
 
+      <p
+        class="reveal mt-10 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/55"
+        style="--reveal-delay: 0.15s"
+      >
+        Reconhecimento
+      </p>
       <dl
-        class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
+        class="reveal mt-4 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
         style="--reveal-delay: 0.15s"
       >
         {
@@ -65,16 +79,17 @@ const stats = [
         }
       </dl>
 
-      <a
-        href="#sobre"
-        class="reveal group mt-10 inline-flex items-center gap-2 text-sm font-medium text-accent-200 transition-colors hover:text-accent-300"
-        style="--reveal-delay: 0.2s"
-      >
-        Sobre mim e o observatório
-        <span class="transition-transform duration-300 group-hover:translate-x-1"
-          >→</span
+      <div class="reveal mt-10 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
+        <a href="#sobre" class="btn btn-primary">Sobre mim</a>
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=S%C3%A3o+Pedro+da+Gafanhoeira"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-ghost"
         >
-      </a>
+          Como chegar
+        </a>
+      </div>
     </div>
   </div>
 </section>

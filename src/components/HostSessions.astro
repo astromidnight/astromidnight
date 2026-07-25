@@ -1,0 +1,109 @@
+---
+// Secção fullwidth de captação de leads para donos de alojamentos locais
+// que queiram sessões de observação no seu espaço, para os hóspedes/grupos.
+// Formato "maquete": o formulário mostra uma nota e ainda não liga a backend.
+---
+
+<section
+  id="alojamentos"
+  class="relative flex min-h-[70svh] items-center overflow-hidden border-y border-cream-50/8 py-24 sm:py-32"
+>
+  <video
+    class="absolute inset-0 h-full w-full object-cover"
+    src="/videos/starparty.mp4"
+    poster="/posters/starparty.jpg"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="none"
+    data-lazy
+    aria-hidden="true"></video>
+
+  <!-- Scrim leve: legibilidade do texto sem esconder o vídeo. Escurece só
+       as bordas para fundir com as secções adjacentes. -->
+  <div class="absolute inset-0 bg-night-950/30"></div>
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-night-950/85 via-transparent to-night-950/85"
+  >
+  </div>
+
+  <div class="relative mx-auto w-full max-w-3xl px-5 text-center sm:px-8">
+    <p class="eyebrow reveal mb-5">Para alojamentos locais</p>
+    <h2
+      class="reveal text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl lg:text-[3rem]"
+      style="--reveal-delay: 0.05s"
+    >
+      Traz o céu escuro aos teus hóspedes
+    </h2>
+    <p
+      class="reveal mx-auto mt-6 max-w-xl text-base leading-relaxed text-cream-50/80 sm:text-lg"
+      style="--reveal-delay: 0.1s"
+    >
+      Tens um alojamento local no Alentejo? Levo o observatório até ao teu
+      espaço e faço uma sessão de observação guiada para os teus grupos — uma
+      experiência que os hóspedes não esquecem.
+    </p>
+
+    <form
+      id="host-form"
+      class="reveal mx-auto mt-9 flex max-w-md flex-col gap-3 text-left"
+      style="--reveal-delay: 0.15s"
+    >
+      <label class="sr-only" for="host-name">O teu nome</label>
+      <input
+        id="host-name"
+        name="nome"
+        type="text"
+        required
+        placeholder="o teu nome"
+        autocomplete="name"
+        class="min-h-12 w-full rounded-2xl border border-cream-50/25 bg-night-950/60 px-5 text-cream-50 placeholder:text-cream-50/40 focus:border-accent-300"
+      />
+      <label class="sr-only" for="host-email">O teu email</label>
+      <input
+        id="host-email"
+        name="email"
+        type="email"
+        required
+        placeholder="o teu email"
+        autocomplete="email"
+        class="min-h-12 w-full rounded-2xl border border-cream-50/25 bg-night-950/60 px-5 text-cream-50 placeholder:text-cream-50/40 focus:border-accent-300"
+      />
+      <label class="sr-only" for="host-details">Detalhes</label>
+      <textarea
+        id="host-details"
+        name="detalhes"
+        rows="4"
+        required
+        placeholder="conta-me sobre o teu alojamento e o que procuras"
+        class="w-full rounded-2xl border border-cream-50/25 bg-night-950/60 px-5 py-3 text-cream-50 placeholder:text-cream-50/40 focus:border-accent-300"
+      ></textarea>
+      <button type="submit" class="btn btn-primary mt-1 w-full">
+        Quero saber mais
+      </button>
+    </form>
+
+    <p
+      id="host-note"
+      class="reveal mt-4 hidden text-sm text-accent-200"
+      role="status"
+    >
+      Recebido — entro em contacto contigo em breve. (Maquete: ainda não está
+      ligado a nenhum serviço.)
+    </p>
+
+    <p class="reveal mt-4 text-sm text-cream-50/50" style="--reveal-delay: 0.2s">
+      Sessões para grupos · equipamento incluído · a dois passos de Lisboa
+    </p>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('host-form') as HTMLFormElement;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('host-note')!.classList.remove('hidden');
+    form.reset();
+  });
+</script>
