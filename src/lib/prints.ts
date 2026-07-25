@@ -26,6 +26,8 @@ export type Print = {
 // Nunca rebenta o build: se o Supabase falhar, devolve lista vazia (a loja
 // simplesmente não mostra itens nesse build) em vez de falhar o deploy todo.
 export async function getPublishedPrints(): Promise<Print[]> {
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('prints')
     .select('*')
@@ -42,6 +44,8 @@ export async function getPublishedPrints(): Promise<Print[]> {
 // Últimos `n` itens publicados, em ordem ascendente de display_order (para
 // a mostra na homepage ficar pela ordem natural da loja).
 export async function getLatestPrints(n: number): Promise<Print[]> {
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('prints')
     .select('*')
@@ -57,6 +61,8 @@ export async function getLatestPrints(n: number): Promise<Print[]> {
 }
 
 export async function getPrintBySlug(slug: string): Promise<Print | null> {
+  if (!supabase) return null;
+
   const { data, error } = await supabase
     .from('prints')
     .select('*')
