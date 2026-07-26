@@ -1,0 +1,27 @@
+---
+import { CAL_LINKS } from '../lib/calcom';
+---
+
+<section class="relative border-t border-cream-50/8 py-20 pb-28 text-center sm:py-24 sm:pb-24">
+  <div class="mx-auto max-w-2xl px-5 sm:px-8">
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+      Pronto para o teu retrato sob as estrelas?
+    </h2>
+    <div class="reveal mt-8 flex flex-wrap items-center justify-center gap-4" style="--reveal-delay: 0.05s">
+      <a href={CAL_LINKS.retratos} target="_blank" rel="noopener" class="btn btn-primary">
+        Reservar sessão
+      </a>
+      <a href="#contacto" class="btn btn-ghost">Tens dúvidas? Contacta-nos</a>
+    </div>
+  </div>
+</section>
+
+<!-- Barra fixa em mobile: "Reservar sessão" fica sempre acessível sem scroll. -->
+<div
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-cream-50/10 bg-night-950/95 p-4 backdrop-blur sm:hidden"
+  style="padding-bottom: max(1rem, env(safe-area-inset-bottom));"
+>
+  <a href={CAL_LINKS.retratos} target="_blank" rel="noopener" class="btn btn-primary w-full">
+    Reservar sessão
+  </a>
+</div>

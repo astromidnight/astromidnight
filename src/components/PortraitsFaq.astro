@@ -1,0 +1,51 @@
+---
+// Nota: só a resposta da 1ª pergunta (prazo de entrega) veio confirmada da
+// maquete/brief. As outras 4 são rascunhos meus com base nos factos já
+// decididos (preço fixo até 2 pessoas, política de cancelamento igual à do
+// Stargazing, etc.) -- o David deve rever o texto antes de publicar.
+const faqs = [
+  {
+    q: 'Qual o prazo de entrega das fotos?',
+    a: 'Recebes o link com as fotos finais editadas por email, normalmente dentro de uma a duas semanas após a sessão.',
+  },
+  {
+    q: 'O que devo vestir?',
+    a: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer mais nada, o equipamento fotográfico é todo fornecido.',
+  },
+  {
+    q: 'Pode ser só uma pessoa, ou tem de ser casal?',
+    a: 'Pode ser só uma pessoa ou um casal — o preço da sessão (160€) é o mesmo até 2 pessoas.',
+  },
+  {
+    q: 'Se estiver mau tempo, o que acontece?',
+    a: 'Se as condições não permitirem a sessão, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+  },
+  {
+    q: 'As fotos são só para uso pessoal?',
+    a: 'As fotos são para uso pessoal, incluindo redes sociais. Para uso comercial, contacta-nos antes de reservar.',
+  },
+];
+---
+
+<section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
+  <div class="mx-auto max-w-4xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Perguntas frequentes</p>
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ainda tens dúvidas?</h2>
+
+    <div class="reveal mt-10 divide-y divide-cream-50/12 border-t border-cream-50/12" style="--reveal-delay: 0.05s">
+      {
+        faqs.map((faq) => (
+          <details class="group py-2 [&::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium text-cream-50">
+              <span>{faq.q}</span>
+              <span class="shrink-0 text-xl leading-none text-cream-50/60 transition-transform duration-200 group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <p class="pb-4 pr-10 text-sm leading-relaxed text-cream-50/70">{faq.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

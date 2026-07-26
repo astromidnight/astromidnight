@@ -360,7 +360,8 @@ const listHref = (item: (typeof listItems)[number]) =>
                         class="weather-badge hidden absolute inset-x-2 bottom-2 items-center justify-end gap-1 text-[0.6rem] leading-tight text-cream-50/55 sm:text-xs"
                         data-weather-badge
                       >
-                        <span class="min-w-0 truncate" data-weather-text />
+                        <span class="whitespace-nowrap" data-weather-text />
+                        <span class="hidden whitespace-nowrap lg:inline">&nbsp;de nuvens</span>
                         <span class="h-3 w-3 shrink-0" aria-hidden="true" data-weather-icon />
                       </span>
                       {cell.events.map((ev) => (
@@ -774,7 +775,9 @@ const listHref = (item: (typeof listItems)[number]) =>
           ${
             s.type === 'stargazing'
               ? `<a href="/observacao-noturna" class="btn btn-ghost !min-h-0 flex-1 !px-4 !py-2 text-xs">Saber mais</a>`
-              : `<span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>`
+              : s.type === 'retratos'
+                ? `<a href="/retratos" class="btn btn-ghost !min-h-0 flex-1 !px-4 !py-2 text-xs">Saber mais</a>`
+                : `<span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>`
           }
         </div>
       </div>`;
@@ -867,7 +870,7 @@ const listHref = (item: (typeof listItems)[number]) =>
       if (cloud == null) return;
 
       icon.innerHTML = CLOUD_SVG;
-      text.textContent = `${cloud}% de nuvens`;
+      text.textContent = `${cloud}%`;
       badge.title = `${cloud}% de nebulosidade prevista para esta noite (Open-Meteo)`;
       // "flex" só entra depois de tirar "hidden" -- os dois em simultâneo
       // dependem da ordem das regras geradas pelo Tailwind, é frágil.

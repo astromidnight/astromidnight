@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/PortraitsHero.jpg';
+---
+
+<section class="relative">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="reveal flex items-center justify-between gap-4">
+      <p class="text-sm text-cream-50/55">
+        <a href="/#retratos" class="transition-colors hover:text-cream-50">Início</a>
+        <span class="mx-1.5">/</span>
+        <span class="text-cream-50/80">Retratos sob as Estrelas</span>
+      </p>
+      <button
+        type="button"
+        id="share-button"
+        class="inline-flex items-center gap-1.5 rounded-full border border-cream-50/25 px-4 py-2 text-xs font-medium text-cream-50/75 transition-colors hover:border-accent-200 hover:text-accent-200"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 11L17 6M7 13l10 5M8 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm14-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm0 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+        </svg>
+        <span id="share-label">Partilhar</span>
+      </button>
+    </div>
+
+    <p class="eyebrow reveal mb-4 mt-8" style="--reveal-delay: 0.05s">Retratos sob as Estrelas</p>
+    <h1
+      class="reveal max-w-3xl text-4xl font-bold leading-tight tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]"
+      style="--reveal-delay: 0.1s"
+    >
+      O teu retrato, com um mar de estrelas
+    </h1>
+    <p
+      class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+      style="--reveal-delay: 0.15s"
+    >
+      Sessão dedicada de fotografia de retrato sob o céu estrelado. Não é um extra, é o serviço
+      todo: sessão privada de 60 minutos, com 5 a 10 fotos finais editadas.
+    </p>
+  </div>
+
+  <div class="reveal mt-10" style="--reveal-delay: 0.2s">
+    <Image
+      src={heroImage}
+      alt="Retrato de um homem sob a Via Láctea, junto a um azinheira, no observatório do Astromidnight"
+      class="aspect-[21/9] w-full object-cover object-[50%_62%]"
+      widths={[768, 1152, 1536, 1920]}
+      sizes="100vw"
+      priority
+    />
+  </div>
+</section>
+
+<script>
+  const btn = document.getElementById('share-button') as HTMLButtonElement;
+  const label = document.getElementById('share-label') as HTMLSpanElement;
+
+  btn.addEventListener('click', async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: document.title,
+          text: 'Retratos sob as Estrelas — Astromidnight',
+          url: window.location.href,
+        });
+      } catch {
+        // Utilizador cancelou a partilha nativa — não faz nada.
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const original = label.textContent;
+      label.textContent = 'Link copiado';
+      setTimeout(() => {
+        label.textContent = original;
+      }, 2000);
+    } catch {
+      // Sem Web Share API nem Clipboard API: não faz nada, o link já está na barra do browser.
+    }
+  });
+</script>

@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import slide01 from '../assets/PortraitsSlide01.jpg';
+import slide02 from '../assets/PortraitsSlide02.jpg';
+import slide03 from '../assets/PortraitsSlide03.jpg';
+import slide04 from '../assets/PortraitsSlide04.jpg';
+import slide05 from '../assets/PortraitsSlide05.jpg';
+import slide06 from '../assets/PortraitsSlide06.jpg';
+import slide07 from '../assets/PortraitsSlide07.jpg';
+import slide08 from '../assets/PortraitsSlide08.jpg';
+
+const slides = [
+  { src: slide01, alt: 'Grupo de três pessoas sob a Via Láctea, numa sessão de retrato' },
+  { src: slide02, alt: 'Retrato individual sob um céu cheio de estrelas' },
+  { src: slide03, alt: 'Três pessoas sentadas numa estrada sob a Via Láctea, junto a uma azinheira' },
+  { src: slide04, alt: 'Retrato sob as estrelas com os braços erguidos para o céu' },
+  { src: slide05, alt: 'Retrato individual junto a uma azinheira, sob a Via Láctea' },
+  { src: slide06, alt: 'Retrato sob as estrelas a apontar para o céu' },
+  { src: slide07, alt: 'Duas pessoas em retrato sob um céu estrelado' },
+  { src: slide08, alt: 'Retrato de costas, a contemplar a Via Láctea' },
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="reveal max-w-2xl">
+        <p class="eyebrow mb-4">Exemplos</p>
+        <h2 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+          Retratos de sessões anteriores
+        </h2>
+      </div>
+
+      <div class="reveal flex shrink-0 items-center gap-2" style="--reveal-delay: 0.1s">
+        <button
+          type="button"
+          data-examples-prev
+          class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50"
+          aria-label="Exemplo anterior"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        </button>
+        <button
+          type="button"
+          data-examples-next
+          class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50"
+          aria-label="Próximo exemplo"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div
+      data-examples-track
+      class="reveal mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      style="--reveal-delay: 0.05s"
+    >
+      {
+        slides.map((s) => (
+          <div class="w-[240px] shrink-0 snap-start overflow-hidden rounded-2xl border border-cream-50/10 sm:w-[280px] lg:w-[300px]">
+            <Image
+              src={s.src}
+              alt={s.alt}
+              class="aspect-[3/4] w-full object-cover"
+              widths={[320, 480, 640]}
+              sizes="(min-width: 1024px) 300px, 45vw"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-examples-track]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-examples-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-examples-next]');
+  if (track && prev && next) {
+    const scrollByCard = (dir: 1 | -1) => {
+      const card = track.querySelector<HTMLElement>(':scope > div');
+      const step = card ? card.offsetWidth + 20 : track.clientWidth * 0.8;
+      track.scrollBy({ left: dir * step, behavior: 'smooth' });
+    };
+    prev.addEventListener('click', () => scrollByCard(-1));
+    next.addEventListener('click', () => scrollByCard(1));
+  }
+</script>

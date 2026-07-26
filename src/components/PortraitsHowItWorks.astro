@@ -1,0 +1,29 @@
+---
+const steps = [
+  { n: '01', title: 'Reservas', desc: 'Escolhes o horário e pagas no ato, via Cal.com.' },
+  { n: '02', title: 'Sessão', desc: '60 minutos de fotografia sob o céu estrelado, no observatório.' },
+  { n: '03', title: 'Edição', desc: 'As fotos são tratadas com cuidado, uma a uma.' },
+  { n: '04', title: 'Entrega', desc: 'Recebes um link único com 5 a 10 fotos finais.' },
+];
+---
+
+<section class="relative border-y border-cream-50/8 bg-night-800/40 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Como funciona</p>
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+      Da reserva às fotos na tua mão
+    </h2>
+
+    <div class="reveal mt-9 grid grid-cols-2 gap-8 sm:grid-cols-4 sm:gap-10" style="--reveal-delay: 0.05s">
+      {
+        steps.map((s) => (
+          <div class="border-t-2 border-cream-50/30 pt-5">
+            <p class="text-sm font-medium text-cream-50/50">{s.n}</p>
+            <p class="mt-1.5 text-xl font-bold">{s.title}</p>
+            <p class="mt-2 text-sm leading-relaxed text-cream-50/70">{s.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
