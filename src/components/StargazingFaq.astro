@@ -1,0 +1,64 @@
+---
+// Nota: só a resposta da 1ª pergunta (mau tempo) veio confirmada da
+// maquete/brief. As outras 7 são rascunhos meus com base nos factos já
+// decididos (grupo até 4 adultos, sem sinal de identidade prévia exigida,
+// política de cancelamento, etc.) -- o David deve rever o texto antes de
+// publicar.
+const faqs = [
+  {
+    q: 'Se estiver mau tempo, o que acontece?',
+    a: 'Se as condições não permitirem a observação, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+  },
+  {
+    q: 'Qual a melhor altura para ver a Via Láctea ou a lua nova?',
+    a: 'A Via Láctea vê-se melhor entre março e outubro, e o ideal é escolher uma noite perto da lua nova, quando o céu está mais escuro. Fora dessa janela, continuas a ver estrelas, planetas e objetos mais brilhantes sem problema.',
+  },
+  {
+    q: 'Vou ver planetas ou galáxias — depende de quê?',
+    a: 'Depende da noite: perto da lua cheia vemos melhor a Lua e os planetas, que são alvos brilhantes; com lua nova e céu limpo, o telescópio revela galáxias e nebulosas mais ténues. Em qualquer dos casos, há sempre algo para ver.',
+  },
+  {
+    q: 'Há idade mínima para crianças?',
+    a: 'Não há idade mínima definida, mas a sessão dura 1 a 2 horas ao ar livre, de noite — para crianças muito pequenas pode ser um desafio aguentar o tempo todo. Se tiveres dúvidas sobre a idade do teu filho, contacta-nos antes de reservar.',
+  },
+  {
+    q: 'Preciso de saber alguma coisa de astronomia?',
+    a: 'Não é preciso qualquer conhecimento prévio. A sessão é guiada do início ao fim, com explicações acessíveis para quem nunca olhou por um telescópio.',
+  },
+  {
+    q: 'O que devo vestir ou levar?',
+    a: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer equipamento, o telescópio e tudo o resto já está no observatório.',
+  },
+  {
+    q: 'Posso remarcar depois de pagar?',
+    a: 'Sim. Além da remarcação automática por más condições, também podes pedir para remarcar por outros motivos — contacta-nos com alguma antecedência.',
+  },
+  {
+    q: 'O retrato casual está garantido?',
+    a: 'Não. É um bónus possível durante a sessão de observação, sujeito às condições dessa noite — se quiseres a garantia de um retrato, a sessão dedicada de Retratos sob as Estrelas é o serviço certo.',
+  },
+];
+---
+
+<section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
+  <div class="mx-auto max-w-4xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Perguntas frequentes</p>
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ainda tens dúvidas?</h2>
+
+    <div class="reveal mt-10 divide-y divide-cream-50/12 border-t border-cream-50/12" style="--reveal-delay: 0.05s">
+      {
+        faqs.map((faq) => (
+          <details class="group py-2 [&::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium text-cream-50">
+              <span>{faq.q}</span>
+              <span class="shrink-0 text-xl leading-none text-cream-50/60 transition-transform duration-200 group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <p class="pb-4 pr-10 text-sm leading-relaxed text-cream-50/70">{faq.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

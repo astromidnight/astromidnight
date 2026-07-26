@@ -93,14 +93,14 @@ const {
       </p>
       {
         id === 'stargazing' ? (
-          <button
-            type="button"
-            data-open-stargazing
-            class="btn btn-primary reveal mt-8"
-            style="--reveal-delay: 0.2s"
-          >
-            {ctaLabel}
-          </button>
+          <div class="reveal mt-8 flex flex-wrap items-center gap-5" style="--reveal-delay: 0.2s">
+            <button type="button" data-open-stargazing class="btn btn-primary">
+              {ctaLabel}
+            </button>
+            <a href="/observacao-noturna" class="btn btn-ghost">
+              Saber mais
+            </a>
+          </div>
         ) : (
           <a
             href="#calendario"

@@ -771,7 +771,11 @@ const listHref = (item: (typeof listItems)[number]) =>
         </span>
         <div class="mt-3 flex items-center gap-2">
           ${cta}
-          <span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>
+          ${
+            s.type === 'stargazing'
+              ? `<a href="/observacao-noturna" class="btn btn-ghost !min-h-0 flex-1 !px-4 !py-2 text-xs">Saber mais</a>`
+              : `<span class="btn btn-ghost !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40" title="Brevemente">Saber mais</span>`
+          }
         </div>
       </div>`;
     };

@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/StargazingPortrait.jpg';
+
+const items = [
+  'Sessão privada, grupo com um máximo de 4 adultos (crianças não pagam)',
+  'Telescópio de 250mm, guiada por um astrofotógrafo premiado pela NASA e pela ESA',
+  'Retrato casual como bónus possível durante a noite — não garantido, só se as condições permitirem (sessão dedicada de retrato é um serviço à parte)',
+  'Duração de 1 a 2 horas, consoante as condições da noite',
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-24">
+    <div class="reveal mx-auto w-full max-w-lg lg:max-w-none">
+      <p class="eyebrow mb-4">O que está incluído</p>
+      <h2 class="max-w-md text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
+        Tudo o que precisas de saber antes de reservar
+      </h2>
+
+      <ul class="mt-8 space-y-4">
+        {
+          items.map((item) => (
+            <li class="flex items-start gap-3 text-cream-50/80">
+              <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-300" />
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-8 border-l-2 border-accent-400/50 pl-5">
+        <h3 class="font-bold text-accent-200">Política de cancelamento</h3>
+        <p class="mt-1 text-sm text-cream-50/70">
+          Se as condições meteorológicas não permitirem a sessão, tens sempre opção de remarcar
+          ou reembolso total. Nunca perdes o que pagaste.
+        </p>
+      </div>
+    </div>
+
+    <div class="reveal mx-auto w-full max-w-lg lg:order-2 lg:max-w-none" style="--reveal-delay: 0.1s">
+      <div class="overflow-hidden rounded-2xl border border-cream-50/10">
+        <Image
+          src={portrait}
+          alt="Retrato casual sob um céu estrelado, durante uma sessão de observação"
+          class="aspect-[4/5] w-full object-cover"
+          widths={[480, 720, 960]}
+          sizes="(min-width: 1024px) 560px, 90vw"
+        />
+      </div>
+    </div>
+  </div>
+</section>

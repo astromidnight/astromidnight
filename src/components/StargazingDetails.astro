@@ -1,0 +1,37 @@
+---
+const stats = [
+  { value: '45€', label: 'por adulto · crianças grátis' },
+  { value: '1–2h', label: 'duração da sessão' },
+  { value: '4', label: 'adultos no máximo' },
+  { value: 'Retratos', label: 'no final da sessão' },
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Detalhes da sessão</p>
+    <p class="reveal max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg" style="--reveal-delay: 0.05s">
+      Uma experiência guiada, do início ao fim: contextualização do céu dessa noite, observação
+      direta pelo telescópio de 250mm e tempo para perguntas. Sessões de terça a sábado, a
+      começar cerca de uma hora após o pôr do sol.
+    </p>
+
+    <dl class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4" style="--reveal-delay: 0.1s">
+      {
+        stats.map((s) => (
+          <div class="border-l border-accent-400/30 pl-4">
+            <dt class="sr-only">{s.label}</dt>
+            <dd class="text-3xl font-bold tracking-tight text-accent-200 sm:text-4xl">{s.value}</dd>
+            <dd class="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/55">
+              {s.label}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <button type="button" data-open-stargazing class="btn btn-primary reveal mt-10" style="--reveal-delay: 0.15s">
+      Reservar sessão
+    </button>
+  </div>
+</section>
