@@ -6,6 +6,8 @@ import { getLumaEvents, type LumaEvent } from '../lib/luma';
 import {
   getAvailability,
   isAvailable,
+  getSlotTime,
+  calLinkPath,
   CAL_LINKS,
   STARGAZING_LINKS,
   STARGAZING_PRICE_PER_ADULT,
@@ -82,9 +84,23 @@ type Service = {
   available: boolean;
   href: string;
   dateKey: string;
+  slotTime?: string;
 };
 
+// Link de reserva para uma data: com hora de horário conhecida (`slotTime`),
+// salta o calendário do Cal.com e abre já no formulário de dados (ver
+// packages/features/bookings/Booker/store.ts do Cal.com -- o
+// `selectedTimeslot` é lido do query param `slot` no arranque, o que faz o
+// Booker mostrar logo o passo do formulário). Sem hora conhecida (API sem
+// chave, ou dia sem disponibilidade consultada), cai para o calendário
+// normal do Cal.com com a data pré-selecionada.
+const bookingHref = (baseHref: string, dateKey: string, slotTime?: string) =>
+  slotTime
+    ? `${baseHref}?date=${dateKey}&month=${dateKey.slice(0, 7)}&slot=${encodeURIComponent(slotTime)}`
+    : `${baseHref}?date=${dateKey}`;
+
 const servicesForNight = (illum: number, dateKey: string) => {
+  const stargazingSlot = getSlotTime(availability, 'stargazing', dateKey);
   const s: Service[] = [
     {
       name: 'Observação Noturna',
@@ -97,20 +113,24 @@ const servicesForNight = (illum: number, dateKey: string) => {
             ? 'Planetas, enxames estelares e objetos brilhantes.'
             : 'A Lua ao detalhe e os planetas do momento.',
       available: isAvailable(availability, 'stargazing', dateKey),
-      href: `${CAL_LINKS.stargazing}?date=${dateKey}`,
+      href: bookingHref(CAL_LINKS.stargazing, dateKey, stargazingSlot),
       dateKey,
+      slotTime: stargazingSlot,
     },
   ];
-  if (illum <= 15)
+  if (illum <= 15) {
+    const retratosSlot = getSlotTime(availability, 'retratos', dateKey);
     s.push({
       name: 'Retratos sob as Estrelas',
       type: 'retratos',
       price: '160€',
       desc: 'O teu retrato sob um céu cheio de estrelas. Só em noites de pouca ou nenhuma lua.',
       available: isAvailable(availability, 'retratos', dateKey),
-      href: `${CAL_LINKS.retratos}?date=${dateKey}`,
+      href: bookingHref(CAL_LINKS.retratos, dateKey, retratosSlot),
       dateKey,
+      slotTime: retratosSlot,
     });
+  }
   return s;
 };
 
@@ -222,8 +242,12 @@ const months = Array.from({ length: MONTHS_AHEAD + 1 }, (_, i) => {
 });
 const lastIndex = months.length - 1;
 
+const stargazingCalLinks = Object.fromEntries(
+  Object.entries(STARGAZING_LINKS).map(([n, href]) => [n, calLinkPath(href)])
+) as Record<'1' | '2' | '3' | '4', string>;
+
 const calendarData = {
-  stargazingLinks: STARGAZING_LINKS,
+  stargazingLinks: stargazingCalLinks,
   stargazingPricePerAdult: STARGAZING_PRICE_PER_ADULT,
   months: months.map((mv) => ({
     monthLabel: mv.monthLabel,
@@ -233,8 +257,13 @@ const calendarData = {
 };
 
 const listItems = [...lumaEvents, ...calendar.evergreen];
+// Link externo (Luma) vs. reserva no Cal.com: os primeiros abrem numa aba
+// nova, os segundos abrem no modal partilhado (ver data-book-link em
+// CalBookingModal.astro).
+const isExternalItem = (item: (typeof listItems)[number]) => 'href' in item;
 const listHref = (item: (typeof listItems)[number]) =>
-  'href' in item ? item.href : CAL_LINKS[item.type as ServiceType];
+  isExternalItem(item) ? item.href : CAL_LINKS[item.type as ServiceType];
+const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(item));
 ---
 
 <section id="calendario" class="relative py-24 sm:py-32">
@@ -468,7 +497,7 @@ const listHref = (item: (typeof listItems)[number]) =>
                   >
                     {item.cta}
                   </button>
-                ) : (
+                ) : isExternalItem(item) ? (
                   <a
                     href={listHref(item)}
                     target="_blank"
@@ -480,6 +509,17 @@ const listHref = (item: (typeof listItems)[number]) =>
                   >
                     {item.cta}
                   </a>
+                ) : (
+                  <button
+                    type="button"
+                    data-book-link={listCalLink(item)}
+                    class:list={[
+                      'btn btn-ghost w-fit !min-h-0 !px-5 !py-2 text-sm sm:col-start-auto',
+                      hasDate ? 'col-start-2' : 'col-start-1',
+                    ]}
+                  >
+                    {item.cta}
+                  </button>
                 )}
               </li>
             );
@@ -526,7 +566,7 @@ const listHref = (item: (typeof listItems)[number]) =>
                 >
                   {item.cta}
                 </button>
-              ) : (
+              ) : isExternalItem(item) ? (
                 <a
                   href={listHref(item)}
                   target="_blank"
@@ -535,6 +575,14 @@ const listHref = (item: (typeof listItems)[number]) =>
                 >
                   {item.cta}
                 </a>
+              ) : (
+                <button
+                  type="button"
+                  data-book-link={listCalLink(item)}
+                  class="btn btn-primary !min-h-0 !px-5 !py-2 text-sm"
+                >
+                  {item.cta}
+                </button>
               )}
             </div>
           </article>
@@ -605,15 +653,9 @@ const listHref = (item: (typeof listItems)[number]) =>
 
       <div id="sg-options" class="mt-5 space-y-2" role="radiogroup" aria-label="Número de adultos"></div>
 
-      <a
-        id="sg-continue"
-        href="#"
-        target="_blank"
-        rel="noopener"
-        class="btn btn-primary mt-5 w-full"
-      >
+      <button type="button" id="sg-continue" class="btn btn-primary mt-5 w-full">
         Continuar para reserva
-      </a>
+      </button>
     </div>
   </div>
 </section>
@@ -669,6 +711,7 @@ const listHref = (item: (typeof listItems)[number]) =>
     available: boolean;
     href: string;
     dateKey: string;
+    slotTime?: string;
   };
   type NightEvent = { title: string; typeLabel: string; price: string; href: string };
   type Night = {
@@ -757,8 +800,8 @@ const listHref = (item: (typeof listItems)[number]) =>
       const cta = !s.available
         ? `<span class="btn !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40">Reservar agora</span>`
         : s.type === 'stargazing'
-          ? `<button type="button" data-open-stargazing data-date="${escAttr(s.dateKey)}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</button>`
-          : `<a href="${escAttr(s.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</a>`;
+          ? `<button type="button" data-open-stargazing data-date="${escAttr(s.dateKey)}" data-slot="${escAttr(s.slotTime ?? '')}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</button>`
+          : `<button type="button" data-book-link="${escAttr(new URL(s.href).pathname.replace(/^\/+/, ''))}" data-book-date="${escAttr(s.dateKey)}" data-book-month="${escAttr(s.dateKey.slice(0, 7))}" data-book-slot="${escAttr(s.slotTime ?? '')}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">Reservar agora</button>`;
       return `
       <div class="rounded-xl border border-cream-50/12 bg-night-950/50 px-4 py-3">
         <div class="flex items-baseline gap-2">
@@ -886,7 +929,7 @@ const listHref = (item: (typeof listItems)[number]) =>
   // dos 4 links abrir -- a pergunta sobre crianças fica no próprio Cal.com.
   const sgModal = $('stargazing-modal');
   const sgOptionsEl = $('sg-options');
-  const sgContinue = $('sg-continue') as HTMLAnchorElement;
+  const sgContinue = $('sg-continue') as HTMLButtonElement;
   const sgDateEl = $('sg-date');
   let sgSelected = 1;
 
@@ -914,18 +957,11 @@ const listHref = (item: (typeof listItems)[number]) =>
       b.addEventListener('click', () => {
         sgSelected = Number(b.dataset.adults);
         renderStargazingOptions();
-        updateStargazingHref();
       })
     );
   };
 
-  const updateStargazingHref = () => {
-    const base = data.stargazingLinks[String(sgSelected) as '1' | '2' | '3' | '4'];
-    const date = sgModal.dataset.date;
-    sgContinue.href = date ? `${base}?date=${date}` : base;
-  };
-
-  const openStargazingModal = (dateKey?: string) => {
+  const openStargazingModal = (dateKey?: string, slotTime?: string) => {
     // Nunca deixar o modal de detalhe do dia aberto por baixo -- garante
     // que o popup tem sempre o mesmo aspeto, venha de onde vier.
     closeModal();
@@ -938,8 +974,12 @@ const listHref = (item: (typeof listItems)[number]) =>
       delete sgModal.dataset.date;
       sgDateEl.classList.add('hidden');
     }
+    if (slotTime) {
+      sgModal.dataset.slot = slotTime;
+    } else {
+      delete sgModal.dataset.slot;
+    }
     renderStargazingOptions();
-    updateStargazingHref();
     sgModal.classList.remove('hidden');
     sgModal.classList.add('flex');
     document.body.style.overflow = 'hidden';
@@ -951,6 +991,24 @@ const listHref = (item: (typeof listItems)[number]) =>
     document.body.style.overflow = '';
   };
 
+  sgContinue.addEventListener('click', () => {
+    const base = data.stargazingLinks[String(sgSelected) as '1' | '2' | '3' | '4'];
+    const date = sgModal.dataset.date;
+    const slot = sgModal.dataset.slot;
+    closeStargazingModal();
+    // Com hora de horário conhecida (`slot`), o embed salta o calendário do
+    // Cal.com e abre já no formulário de dados -- ver bookingHref() no
+    // frontmatter para a explicação de como isto funciona no lado do
+    // Cal.com. As 4 variantes de nº de adultos partilham o mesmo calendário
+    // (ver STARGAZING_LINKS em calcom.ts), por isso a hora consultada na
+    // variante de 1 adulto vale para todas.
+    (window as any).openCalModal(base, {
+      date: date || undefined,
+      month: date ? date.slice(0, 7) : undefined,
+      slot: slot || undefined,
+    });
+  });
+
   // Delegado no document (não só na section): apanha os botões estáticos
   // (card "sempre", CTA da secção Pillar mais acima na página) e os
   // injetados dinamicamente dentro do modal de detalhe da noite -- o
@@ -958,7 +1016,7 @@ const listHref = (item: (typeof listItems)[number]) =>
   document.addEventListener('click', (e) => {
     const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-open-stargazing]');
     if (!trigger) return;
-    openStargazingModal(trigger.dataset.date || undefined);
+    openStargazingModal(trigger.dataset.date || undefined, trigger.dataset.slot || undefined);
   });
   sgModal.querySelector('.modal-close')!.addEventListener('click', closeStargazingModal);
   sgModal.querySelector('.modal-backdrop')!.addEventListener('click', closeStargazingModal);

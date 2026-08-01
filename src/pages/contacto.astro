@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactHero from '../components/ContactHero.astro';
+import ContactChannels from '../components/ContactChannels.astro';
+import ContactForm from '../components/ContactForm.astro';
+import ContactLocation from '../components/ContactLocation.astro';
+---
+
+<Layout
+  title="Contacto — Astromidnight"
+  description="Fala diretamente com o David Cruz sobre sessões de observação, retratos sob as estrelas, workshops ou sessões para alojamentos rurais no observatório do Alentejo."
+>
+  <Header />
+  <main class="pt-28 sm:pt-32">
+    <ContactHero />
+    <ContactChannels />
+    <ContactForm />
+    <ContactLocation />
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,24 @@
+---
+// Percurso pessoal, adaptado do texto de astromidnight.pt/about para
+// português de Portugal.
+const paragraphs = [
+  'Desde novo que a astronomia me interessou. Habituei-me a ver a Via Láctea nas férias de verão, na aldeia dos meus pais. Em 2020 dei os primeiros passos na astrofotografia, num workshop de fim de semana no campo, e fiquei rendido ao que se conseguia fazer só com uma máquina e um tripé.',
+  'A partir daí nunca mais parei de explorar. Sou designer digital de profissão, o que me permitiu trazer esse conhecimento para o processamento de imagem astronómica, mas a curva de aprendizagem foi enorme. Ainda hoje há sempre muito para aprender, com equipamento novo e novas técnicas de processamento.',
+  'Nos primeiros anos andava sempre a viajar até ao campo para fotografar o céu noturno. Tudo mudou em 2023, quando comprei casa no céu escuro do Alentejo. Passei a ter muitas mais horas sob as estrelas e a minha astrofotografia deu um salto.',
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
+      <p class="eyebrow reveal">O percurso</p>
+      <div class="reveal max-w-2xl space-y-6" style="--reveal-delay: 0.05s">
+        {
+          paragraphs.map((text) => (
+            <p class="text-base leading-relaxed text-cream-50/75 sm:text-lg">{text}</p>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

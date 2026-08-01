@@ -1,0 +1,174 @@
+---
+// Modal de reserva partilhado por todo o site: embebe o Cal.eu (inline
+// embed oficial, script carregado de cal.eu/embed/embed.js) dentro do
+// mesmo invólucro visual dos outros modais do site (backdrop + painel
+// arredondado em night-900), em vez de abrir o Cal.eu numa aba nova.
+//
+// Qualquer botão com `data-cal-link="username/event-slug"` (mais
+// `data-cal-date`, `data-cal-month`, `data-cal-slot` opcionais) abre este
+// modal automaticamente -- ver o listener delegado no <script> abaixo.
+// Para fluxos com passo intermédio (ex.: escolher nº de adultos no
+// Stargazing), chama-se `window.openCalModal(calLink, config)`
+// diretamente em vez de usar os data-attributes.
+---
+
+<div
+  id="cal-booking-modal"
+  class="fixed inset-0 z-[70] hidden items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Reserva"
+>
+  <div class="modal-backdrop absolute inset-0 bg-night-950/80 backdrop-blur-sm"></div>
+  <div
+    class="relative flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-cream-50/12 bg-night-900 shadow-2xl"
+  >
+    <button
+      class="modal-close absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-night-900/80 text-cream-50/60 backdrop-blur transition-colors hover:bg-night-800 hover:text-cream-50"
+      aria-label="Fechar"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <div
+      id="cal-booking-spinner"
+      class="flex min-h-0 flex-1 items-center justify-center"
+    >
+      <span class="h-8 w-8 animate-spin rounded-full border-2 border-cream-50/20 border-t-accent-300"></span>
+    </div>
+    <div id="cal-booking-embed" class="min-h-0 flex-1 overflow-y-auto [&_iframe]:w-full"></div>
+  </div>
+</div>
+
+<script>
+  // Snippet oficial do Cal.com (embed.js), a apontar para o cal.eu em vez
+  // de app.cal.com -- confirmado que cal.eu serve o mesmo bundle em
+  // /embed/embed.js (instância white-label com dados na UE).
+  (function (C: any, A: string, L: string) {
+    let p = function (a: any, ar: any) {
+      a.q.push(ar);
+    };
+    const d = C.document;
+    C.Cal =
+      C.Cal ||
+      function (...args: any[]) {
+        const cal = C.Cal;
+        const ar = args;
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          d.head.appendChild(d.createElement('script')).src = A;
+          cal.loaded = true;
+        }
+        if (ar[0] === L) {
+          const api = function (...apiArgs: any[]) {
+            p(api, apiArgs);
+          };
+          const namespace = ar[1];
+          (api as any).q = (api as any).q || [];
+          if (typeof namespace === 'string') {
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ['initNamespace', namespace]);
+          } else {
+            p(cal, ar);
+          }
+          return;
+        }
+        p(cal, ar);
+      };
+  })(window, 'https://cal.eu/embed/embed.js', 'init');
+
+  const Cal = (window as any).Cal;
+  Cal('init', { origin: 'https://cal.eu' });
+
+  const modal = document.getElementById('cal-booking-modal')!;
+  const embedEl = document.getElementById('cal-booking-embed')!;
+  const spinner = document.getElementById('cal-booking-spinner')!;
+
+  // Some visível assim que o Cal.com sinaliza que o iframe carregou --
+  // registado uma única vez, vale para todos os opens seguintes.
+  Cal('on', {
+    action: 'linkReady',
+    callback: () => spinner.classList.add('hidden'),
+  });
+
+  let seq = 0;
+
+  type CalConfig = {
+    date?: string;
+    month?: string;
+    slot?: string;
+    theme?: string;
+    [key: string]: string | undefined;
+  };
+
+  function closeOtherModals() {
+    // Nunca deixar outro modal do site aberto por baixo deste -- mesma
+    // regra usada entre o modal de detalhe da noite e o de nº de adultos.
+    document.querySelectorAll<HTMLElement>('[role="dialog"]').forEach((m) => {
+      if (m === modal) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    });
+  }
+
+  function openCalModal(calLink: string, config: CalConfig = {}) {
+    closeOtherModals();
+
+    embedEl.innerHTML = '';
+    spinner.classList.remove('hidden');
+
+    const id = `cal-embed-${++seq}`;
+    const container = document.createElement('div');
+    container.id = id;
+    embedEl.appendChild(container);
+
+    Cal('inline', {
+      elementOrSelector: `#${id}`,
+      calLink,
+      config: { theme: 'dark', ...config },
+    });
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCalModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+    embedEl.innerHTML = '';
+    spinner.classList.remove('hidden');
+  }
+
+  modal.querySelector('.modal-close')!.addEventListener('click', closeCalModal);
+  modal.querySelector('.modal-backdrop')!.addEventListener('click', closeCalModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeCalModal();
+  });
+
+  // Qualquer botão com data-book-link abre este modal diretamente -- usado
+  // pelos CTAs que não precisam de passo intermédio (Retratos, Mentorship,
+  // etc.). O fluxo do Stargazing (escolha de nº de adultos) chama
+  // window.openCalModal() já com o link certo, em vez de usar isto.
+  //
+  // Nota: o atributo NÃO se pode chamar `data-cal-link` -- é um nome
+  // reservado que o próprio embed.js do Cal.com vigia no documento todo
+  // para acoplar automaticamente o SEU popup (tema/estilo deles, por cima
+  // deste modal) a qualquer elemento com esse atributo. Daí o prefixo
+  // `data-book-*` em vez de `data-cal-*`.
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-book-link]');
+    if (!trigger) return;
+    const { bookLink, bookDate, bookMonth, bookSlot } = trigger.dataset;
+    if (!bookLink) return;
+    openCalModal(bookLink, {
+      date: bookDate || undefined,
+      month: bookMonth || undefined,
+      slot: bookSlot || undefined,
+    });
+  });
+
+  (window as any).openCalModal = openCalModal;
+</script>

@@ -1,5 +1,7 @@
 ---
-import { CAL_LINKS } from '../lib/calcom';
+import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+
+const retratosLink = calLinkPath(CAL_LINKS.retratos);
 
 const stats = [
   { value: '160€', label: 'por sessão · 1-2 pessoas' },
@@ -32,14 +34,13 @@ const stats = [
       }
     </dl>
 
-    <a
-      href={CAL_LINKS.retratos}
-      target="_blank"
-      rel="noopener"
+    <button
+      type="button"
+      data-book-link={retratosLink}
       class="btn btn-primary reveal mt-10"
       style="--reveal-delay: 0.15s"
     >
       Reservar sessão
-    </a>
+    </button>
   </div>
 </section>

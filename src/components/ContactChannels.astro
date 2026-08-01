@@ -1,0 +1,108 @@
+---
+import {
+  WHATSAPP_URL,
+  EMAIL,
+  INSTAGRAM_HANDLE,
+  INSTAGRAM_URL,
+  hasWhatsapp,
+} from '../lib/contact';
+
+const whatsappSvg =
+  '<svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.5-1.4-.7-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s1 2.5 1.1 2.7c.1.2 1.9 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3Z"></path></svg>';
+
+const mailSvg =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7.5 9 6 9-6"/></svg>';
+
+const instagramSvg =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>';
+
+type Channel = {
+  name: string;
+  icon: string;
+  desc: string;
+  cta: string;
+  href: string | null;
+  badge?: string;
+  external?: boolean;
+};
+
+const channels: Channel[] = [
+  {
+    name: 'WhatsApp',
+    icon: whatsappSvg,
+    desc: 'Dúvidas rápidas, disponibilidade e o estado do tempo à hora da sessão.',
+    cta: 'Abrir WhatsApp',
+    // Fica inativo até haver número, ver WHATSAPP_URL em lib/contact.ts.
+    href: WHATSAPP_URL,
+    badge: 'Resposta mais rápida',
+    external: true,
+  },
+  {
+    name: 'Email',
+    icon: mailSvg,
+    desc: 'Propostas, parcerias, imprensa e tudo o que precise de anexos.',
+    cta: EMAIL,
+    href: `mailto:${EMAIL}`,
+  },
+  {
+    name: 'Instagram',
+    icon: instagramSvg,
+    desc: 'O trabalho mais recente, e a caixa de mensagens está aberta.',
+    cta: INSTAGRAM_HANDLE,
+    href: INSTAGRAM_URL,
+    external: true,
+  },
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        channels.map((c, i) => (
+          <li
+            class="reveal flex flex-col rounded-2xl border border-cream-50/10 bg-night-900 p-6"
+            style={`--reveal-delay: ${i * 0.05}s`}
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cream-50/15 text-accent-200" set:html={c.icon} />
+              {c.badge && (
+                <span class="rounded-full border border-accent-400/35 px-3 py-1 text-xs font-medium text-accent-200">
+                  {c.badge}
+                </span>
+              )}
+            </div>
+            <h2 class="mt-5 text-lg font-bold">{c.name}</h2>
+            <p class="mt-2 text-sm leading-relaxed text-cream-50/60">{c.desc}</p>
+            {c.href ? (
+              <a
+                href={c.href}
+                target={c.external ? '_blank' : undefined}
+                rel={c.external ? 'noopener' : undefined}
+                class="mt-auto inline-flex w-fit items-center gap-1.5 break-all pt-5 text-sm font-medium text-accent-200 transition-colors hover:text-accent-100"
+              >
+                {c.cta}
+              </a>
+            ) : (
+              <span
+                class="mt-auto inline-flex w-fit cursor-not-allowed items-center gap-1.5 pt-5 text-sm font-medium text-cream-50/35"
+                title="Brevemente"
+              >
+                {c.cta}
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      !hasWhatsapp() && (
+        <p class="reveal mt-6 text-sm text-cream-50/45" style="--reveal-delay: 0.15s">
+          O WhatsApp fica disponível em breve. Entretanto, usa o email ou o formulário
+          aqui em baixo.
+        </p>
+      )
+    }
+  </div>
+</section>

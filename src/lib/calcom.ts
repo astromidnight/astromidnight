@@ -1,11 +1,12 @@
 export type ServiceType = 'stargazing' | 'retratos' | 'mentorship' | 'editing-mentorship';
 export type StargazingAdults = 1 | 2 | 3 | 4;
 
-// Por atividade: conjunto de datas ("AAAA-MM-DD") com pelo menos um
-// horário livre no Cal.com. `null` = a consulta falhou para esta
-// atividade (sem chave, API em baixo, etc.) -- nesse caso assume-se
-// sempre disponível (fail-open), ver isAvailable().
-export type Availability = Record<ServiceType, Set<string> | null>;
+// Por atividade: data ("AAAA-MM-DD") -> hora ISO do primeiro horário livre
+// nesse dia no Cal.com. `null` = a consulta falhou para esta atividade (sem
+// chave, API em baixo, etc.) -- nesse caso assume-se sempre disponível
+// (fail-open), ver isAvailable(). A hora serve para saltar o calendário do
+// Cal.com e ir direto ao formulário de reserva, ver getSlotTime().
+export type Availability = Record<ServiceType, Map<string, string> | null>;
 
 // Stargazing: só adultos pagam (crianças entram grátis, perguntado no
 // próprio formulário do Cal.com). Em vez de "offer seats", cada noite é um
@@ -49,16 +50,22 @@ function slugFromLink(href: string): string {
   return href.split('/').filter(Boolean).pop()!;
 }
 
+// "username/event-slug" a partir de um URL completo do Cal.eu, no formato
+// que o embed inline do Cal.com espera em `calLink` (ver CalBookingModal.astro).
+export function calLinkPath(href: string): string {
+  return new URL(href).pathname.replace(/^\/+/, '');
+}
+
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-// Datas (AAAA-MM-DD) com pelo menos um horário livre, dentro da janela.
-// Um dia ausente da resposta do Cal.com é lido como sem vagas nesse dia --
-// é a leitura literal da própria API deles (range sem nada devolve
-// "data: {}"), por isso um dia sem chave dentro do range pedido significa
-// "sem horários livres esse dia".
-async function fetchSlotDates(base: string, slug: string, apiKey: string): Promise<Set<string>> {
+// Datas (AAAA-MM-DD) com pelo menos um horário livre, dentro da janela,
+// mapeadas para a hora ISO do primeiro horário desse dia. Um dia ausente da
+// resposta do Cal.com é lido como sem vagas nesse dia -- é a leitura literal
+// da própria API deles (range sem nada devolve "data: {}"), por isso um dia
+// sem chave dentro do range pedido significa "sem horários livres esse dia".
+async function fetchSlotDates(base: string, slug: string, apiKey: string): Promise<Map<string, string>> {
   const start = new Date();
   const end = new Date(start.getTime() + HORIZON_DAYS * 24 * 60 * 60 * 1000);
   const params = new URLSearchParams({
@@ -78,12 +85,17 @@ async function fetchSlotDates(base: string, slug: string, apiKey: string): Promi
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
   const data = json?.data ?? {};
-  return new Set(
-    Object.keys(data).filter((day) => Array.isArray(data[day]) && data[day].length > 0)
-  );
+  const byDate = new Map<string, string>();
+  for (const day of Object.keys(data)) {
+    const slots = data[day];
+    if (Array.isArray(slots) && slots.length > 0 && slots[0]?.start) {
+      byDate.set(day, slots[0].start);
+    }
+  }
+  return byDate;
 }
 
-async function fetchOneType(slug: string, apiKey: string): Promise<Set<string>> {
+async function fetchOneType(slug: string, apiKey: string): Promise<Map<string, string>> {
   let lastErr: unknown;
   for (const base of API_BASES) {
     try {
@@ -127,4 +139,14 @@ export async function getAvailability(): Promise<Availability> {
 export function isAvailable(availability: Availability, type: ServiceType, dateKey: string): boolean {
   const dates = availability[type];
   return dates === null ? true : dates.has(dateKey);
+}
+
+// Hora ISO do primeiro horário livre nesse dia, se conhecida. Usado para
+// construir um link de reserva que salta o calendário do Cal.com e abre já
+// no formulário (ver query params `date`+`month`+`slot` em Calendar.astro).
+// `undefined` quando a disponibilidade não foi consultada (sem API key) ou
+// não há horário para esse dia -- nesses casos o link cai para o calendário
+// normal do Cal.com.
+export function getSlotTime(availability: Availability, type: ServiceType, dateKey: string): string | undefined {
+  return availability[type]?.get(dateKey);
 }

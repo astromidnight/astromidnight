@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import observatory from '../assets/AboutLocation.jpg';
+
+const ASTROBIN_URL = 'https://app.astrobin.com/u/astro.midnight';
+---
+
+<section class="relative border-t border-cream-50/8 bg-night-900 py-16 sm:py-20">
+  <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-24">
+    <div class="reveal mx-auto w-full max-w-lg lg:max-w-none">
+      <Image
+        src={observatory}
+        alt="O observatório iluminado a vermelho, com a constelação de Orionte no céu"
+        class="aspect-[4/5] w-full rounded-2xl border border-cream-50/10 object-cover"
+        widths={[480, 720, 960]}
+        sizes="(min-width: 1024px) 560px, 90vw"
+      />
+    </div>
+
+    <div class="reveal mx-auto w-full max-w-lg lg:max-w-none" style="--reveal-delay: 0.1s">
+      <p class="eyebrow mb-4">Localização</p>
+      <h2 class="max-w-md text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
+        No céu escuro do Alentejo
+      </h2>
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg">
+        Vivo no Alentejo, com acesso a um céu Bortle 3. Foi aqui que construí um pequeno
+        observatório dedicado ao céu profundo, e tenho por perto zonas muito bonitas para
+        fotografia de paisagem noturna.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href={ASTROBIN_URL} target="_blank" rel="noopener" class="btn btn-primary">
+          Ver a galeria no Astrobin
+        </a>
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=S%C3%A3o+Pedro+da+Gafanhoeira"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-ghost"
+        >
+          Como chegar
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

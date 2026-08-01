@@ -1,0 +1,220 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import banner from '../assets/AboutAwards.jpg';
+import apodGeminids from '../assets/AwardApodGeminids.jpg';
+import apodMilkyWay from '../assets/AwardApodMilkyWay.jpg';
+import apodMuCephei from '../assets/AwardApodMuCephei.jpg';
+import apyComet from '../assets/AwardApyComet.jpg';
+import esa from '../assets/AwardEsa.jpg';
+import iotdCygnus from '../assets/AwardIotdCygnus.jpg';
+import iotdBoogeyman from '../assets/AwardIotdBoogeyman.jpg';
+import iotdCocoon from '../assets/AwardIotdCocoon.jpg';
+import iotdPazmino from '../assets/AwardIotdPazmino.jpg';
+import zwoDragon from '../assets/AwardZwoDragon.jpg';
+import zwoLemmon from '../assets/AwardZwoLemmon.jpg';
+
+type Award = {
+  source: string;
+  date: string;
+  title: string;
+  desc: string;
+  image: ImageMetadata;
+  alt: string;
+  // Destino original da publicação (APOD, Astrobin, Facebook da ZWO,
+  // Instagram da ESA). O texto do botão sai daqui, ver linkLabel().
+  href: string;
+};
+
+const awards: Award[] = [
+  {
+    source: 'NASA APOD',
+    date: '18 de dezembro de 2025',
+    title: 'Chuva de meteoros Gemínidas 2025',
+    desc: 'O meu terceiro APOD da NASA, desta vez com uma imagem muito especial das Gemínidas, com Júpiter bem brilhante no centro do radiante.',
+    image: apodGeminids,
+    alt: 'Dezenas de meteoros das Gemínidas a irradiar de um ponto do céu, sobre a paisagem alentejana',
+    href: 'https://apod.nasa.gov/apod/ap251218.html',
+  },
+  {
+    source: 'Astrobin IOTD',
+    date: '17 de dezembro de 2025',
+    title: 'Enxame de Pazmino',
+    desc: 'A minha quarta imagem do dia no Astrobin e provavelmente a minha imagem de céu profundo preferida. O enxame de Pazmino imerso num campo de Ha, com as estrelas a brilhar intensamente.',
+    image: iotdPazmino,
+    alt: 'Enxame de Pazmino, com estrelas azuis brilhantes sobre um campo vermelho de hidrogénio',
+    href: 'https://app.astrobin.com/u/astro.midnight?i=6zsbbs#gallery',
+  },
+  {
+    source: 'ZWO IOTW',
+    date: '6 de outubro de 2025',
+    title: 'Cometa C/2025 A6 (Lemmon)',
+    desc: 'A minha segunda imagem da semana da ZWO, com o cometa mais espetacular de 2025. Captada com o setup de céu profundo, ainda com o cometa demasiado longe para uma captura de paisagem noturna.',
+    image: zwoLemmon,
+    alt: 'Cometa Lemmon com coma esverdeada e uma longa cauda de iões',
+    href: 'https://www.facebook.com/photo/?fbid=1263442959144549&set=a.1263443705811141',
+  },
+  {
+    source: 'Astrobin IOTD',
+    date: '26 de junho de 2025',
+    title: 'Nebulosa Little Cocoon',
+    desc: 'A minha terceira imagem do dia no Astrobin foi esta nebulosa Little Cocoon, um alvo muito interessante imerso num campo de estrelas douradas.',
+    image: iotdCocoon,
+    alt: 'Nebulosa Little Cocoon, em tons de rosa e azul, num campo denso de estrelas douradas',
+    href: 'https://app.astrobin.com/u/astro.midnight?i=mx0zk1#gallery',
+  },
+  {
+    source: 'Astrobin IOTD',
+    date: '29 de dezembro de 2024',
+    title: 'Nebulosa Boogeyman',
+    desc: 'A minha segunda imagem do dia no Astrobin foi esta nebulosa Boogeyman, em Orionte. Captada com o meu Newtoniano de 10 polegadas, com filtro dual band e câmara a cores.',
+    image: iotdBoogeyman,
+    alt: 'Nebulosa escura Boogeyman recortada contra nebulosidade vermelha, em Orionte',
+    href: 'https://app.astrobin.com/u/astro.midnight?i=16uhej#gallery',
+  },
+  {
+    source: 'ESA',
+    date: '16 de outubro de 2024',
+    title: 'Agência Espacial Europeia',
+    desc: 'Fui destacado na página de Instagram da Agência Espacial Europeia, numa publicação colaborativa onde me apresento com algumas das minhas melhores imagens. Foi um enorme sucesso, com mais de 47 mil gostos.',
+    image: esa,
+    alt: 'Cometa com uma cauda larga e azulada, ao crepúsculo',
+    href: 'https://www.instagram.com/p/DBMOd0eoguH/',
+  },
+  {
+    source: 'ZWO IOTW',
+    date: '15 de outubro de 2024',
+    title: 'Nebulosa do Dragão Chinês',
+    desc: 'A minha primeira imagem da semana da ZWO, com a nebulosa do Dragão Chinês, uma região incrível dentro da bem conhecida nebulosa da Lagoa.',
+    image: zwoDragon,
+    alt: 'Nebulosa do Dragão Chinês, com emissão rosada e nebulosas de reflexão azuis',
+    href: 'https://www.facebook.com/photo/?fbid=975440124611502&set=a.975519611270220',
+  },
+  {
+    source: 'Astrobin IOTD',
+    date: '29 de maio de 2024',
+    title: 'Ondas do Cisne',
+    desc: 'A minha primeira imagem do dia no Astrobin foi esta imagem das ondas na constelação do Cisne, na paleta HOO. Um total de 20 horas de exposição, com filtro dual band e câmara a cores.',
+    image: iotdCygnus,
+    alt: 'Filamentos vermelhos de gás na constelação do Cisne',
+    href: 'https://app.astrobin.com/i/x2fsch',
+  },
+  {
+    source: 'NASA APOD',
+    date: '12 de outubro de 2023',
+    title: 'Mu Cephei',
+    desc: 'O meu segundo APOD da NASA e o primeiro com um objeto de céu profundo. Quis fotografar a supergigante vermelha Mu Cephei e a nebulosidade em redor da nebulosa da Tromba do Elefante. Resultou num enquadramento muito original, e as hastes de difração deram-lhe um toque especial.',
+    image: apodMuCephei,
+    alt: 'A estrela supergigante vermelha Mu Cephei rodeada de nebulosidade avermelhada',
+    href: 'https://apod.nasa.gov/apod/ap231012.html',
+  },
+  {
+    source: 'Astronomy Photographer of the Year',
+    date: '2023',
+    title: 'Finalista, Cometa 2022 E3 (ZTF)',
+    desc: 'O cometa 2022 E3 (ZTF) foi o primeiro cometa que fotografei e chegou à lista final do concurso Astronomy Photographer of the Year. Tive a sorte de apanhar o momento em que a cauda se desligou, o que tornou esta imagem ainda mais especial.',
+    image: apyComet,
+    alt: 'Cometa 2022 E3 (ZTF) com coma verde e a cauda de iões a desligar-se',
+    href: 'https://app.astrobin.com/i/0p19ky',
+  },
+  {
+    source: 'NASA APOD',
+    date: '11 de junho de 2022',
+    title: 'Arco da Via Láctea de verão',
+    desc: 'O meu primeiro APOD da NASA foi esta imagem do arco da Via Láctea de verão a nascer sobre uma estrada no Alentejo. Chamei-lhe Estrada para as Estrelas. Fica no meio da área protegida Dark Sky Alqueva, um dos melhores sítios de Portugal para observar e fotografar as estrelas.',
+    image: apodMilkyWay,
+    alt: 'Arco da Via Láctea sobre uma estrada alentejana, ao fim da noite',
+    href: 'https://apod.nasa.gov/apod/ap220611.html',
+  },
+];
+
+// Diz para onde vai o link em vez de um "Ver imagem" genérico, para o
+// utilizador saber que sai do site antes de clicar.
+const linkLabel = (href: string) => {
+  const host = new URL(href).hostname;
+  if (host.endsWith('apod.nasa.gov')) return 'Ver no APOD';
+  if (host.includes('astrobin')) return 'Ver no Astrobin';
+  if (host.includes('facebook')) return 'Ver no Facebook';
+  if (host.includes('instagram')) return 'Ver no Instagram';
+  return 'Ver imagem';
+};
+---
+
+<section id="premios" class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Reconhecimento</p>
+    <h2
+      class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
+      style="--reveal-delay: 0.05s"
+    >
+      Prémios e reconhecimentos
+    </h2>
+    <p
+      class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+      style="--reveal-delay: 0.1s"
+    >
+      Ao longo destes anos como astrofotógrafo tive a sorte de ver algumas das minhas
+      imagens reconhecidas. Esta é a lista dos destaques até hoje.
+    </p>
+
+    <div class="reveal mt-10" style="--reveal-delay: 0.15s">
+      <Image
+        src={banner}
+        alt="Cartaz da exposição Astronomy Photographer of the Year no National Maritime Museum, em Greenwich"
+        class="aspect-[16/9] w-full rounded-2xl border border-cream-50/10 object-cover sm:aspect-[21/9]"
+        widths={[768, 1152, 1536]}
+        sizes="(min-width: 1280px) 1216px, 100vw"
+      />
+    </div>
+
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        awards.map((a, i) => (
+          <li class="reveal" style={`--reveal-delay: ${Math.min(i, 5) * 0.05}s`}>
+            <a
+              href={a.href}
+              target="_blank"
+              rel="noopener"
+              class="group flex h-full flex-col overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900 transition-colors duration-300 hover:border-accent-400/40"
+            >
+              <div class="overflow-hidden">
+                <Image
+                  src={a.image}
+                  alt={a.alt}
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  widths={[400, 600, 800]}
+                  sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 90vw"
+                />
+              </div>
+              <div class="flex flex-1 flex-col p-5">
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span class="rounded-full border border-accent-400/35 px-3 py-1 text-xs font-medium text-accent-200">
+                    {a.source}
+                  </span>
+                  <span class="text-xs text-cream-50/45">{a.date}</span>
+                </div>
+                <h3 class="mt-3 text-lg font-bold leading-snug">{a.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-cream-50/60">{a.desc}</p>
+                <span class="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium text-accent-200">
+                  {linkLabel(a.href)}
+                  <svg
+                    class="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M7 17L17 7M7 7h10v10" />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

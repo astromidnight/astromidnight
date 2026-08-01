@@ -1,0 +1,23 @@
+---
+import { LOCATION, MAPS_URL } from '../lib/contact';
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
+      <p class="eyebrow reveal">Onde estamos</p>
+      <div class="reveal max-w-xl" style="--reveal-delay: 0.05s">
+        <h2 class="text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
+          Observatório privado, {LOCATION}
+        </h2>
+        <p class="mt-4 text-base leading-relaxed text-cream-50/75">
+          É aqui que decorre cada sessão, workshop e retrato. Como é um espaço privado, a
+          morada exata segue no email de confirmação da reserva.
+        </p>
+        <a href={MAPS_URL} target="_blank" rel="noopener" class="btn btn-ghost mt-8">
+          Ver no mapa
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

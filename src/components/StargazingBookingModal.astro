@@ -3,7 +3,11 @@
 // por qualquer página que tenha um botão/elemento com [data-open-stargazing]
 // (mesma convenção usada em Calendar.astro e Pillar.astro). Standalone: não
 // depende de dados do calendário, só dos links fixos do Cal.com.
-import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
+import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT, calLinkPath } from '../lib/calcom';
+
+const stargazingCalLinks = Object.fromEntries(
+  Object.entries(STARGAZING_LINKS).map(([n, href]) => [n, calLinkPath(href)])
+) as Record<'1' | '2' | '3' | '4', string>;
 ---
 
 <div
@@ -27,19 +31,13 @@ import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
 
     <div id="sg-options" class="mt-5 space-y-2" role="radiogroup" aria-label="Número de adultos"></div>
 
-    <a
-      id="sg-continue"
-      href="#"
-      target="_blank"
-      rel="noopener"
-      class="btn btn-primary mt-5 w-full"
-    >
+    <button type="button" id="sg-continue" class="btn btn-primary mt-5 w-full">
       Continuar para reserva
-    </a>
+    </button>
   </div>
 </div>
 
-<script define:vars={{ links: STARGAZING_LINKS, pricePerAdult: STARGAZING_PRICE_PER_ADULT }}>
+<script define:vars={{ links: stargazingCalLinks, pricePerAdult: STARGAZING_PRICE_PER_ADULT }}>
   const $ = (id) => document.getElementById(id);
   const sgModal = $('stargazing-modal');
   const sgOptionsEl = $('sg-options');
@@ -70,19 +68,13 @@ import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
       b.addEventListener('click', () => {
         sgSelected = Number(b.dataset.adults);
         renderStargazingOptions();
-        updateStargazingHref();
       })
     );
-  };
-
-  const updateStargazingHref = () => {
-    sgContinue.href = links[String(sgSelected)];
   };
 
   const openStargazingModal = () => {
     sgSelected = 1;
     renderStargazingOptions();
-    updateStargazingHref();
     sgModal.classList.remove('hidden');
     sgModal.classList.add('flex');
     document.body.style.overflow = 'hidden';
@@ -100,6 +92,10 @@ import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
       openStargazingModal();
       return;
     }
+  });
+  sgContinue.addEventListener('click', () => {
+    closeStargazingModal();
+    window.openCalModal(links[String(sgSelected)], {});
   });
   sgModal.querySelector('.modal-close').addEventListener('click', closeStargazingModal);
   sgModal.querySelector('.modal-backdrop').addEventListener('click', closeStargazingModal);
