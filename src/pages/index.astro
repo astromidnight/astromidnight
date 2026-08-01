@@ -23,18 +23,18 @@ import portraits from '../assets/Portraits.jpg';
     <Pillar
       id="stargazing"
       eyebrow="Observação Noturna"
-      title="Uma noite privada no observatório"
-      description="Até quatro adultos (crianças não pagam), telescópio de 250mm, Saturno e nebulosas que a olho nu ninguém vê. Uma experiência guiada por um astrofotógrafo premiado, no céu escuro do Alentejo."
+      title="Sessões privadas no observatório"
+      description="Aqui não há grupos numerosos. Cada sessão tem um limite de quatro adultos (as crianças não pagam) e é guiada por mim num ambiente descontraído. No final, fazemos alguns retratos para levarem para casa uma lembrança sob as estrelas."
       price="45€"
-      priceNote="por adulto · preço de lançamento"
-      ctaLabel="Reservar noite"
+      priceNote="por adulto"
+      ctaLabel="Reservar sessão"
       video={{ src: '/videos/observatory.mp4', poster: '/posters/observatory.jpg' }}
     />
     <Pillar
       id="retratos"
       eyebrow="Retratos sob as Estrelas"
       title="O teu retrato, com um mar de estrelas"
-      description="Sessão dedicada de fotografia de retrato sob o céu estrelado. Não é um extra, é o serviço todo: sessão privada de 60 minutos, com 5 a 10 fotos finais editadas."
+      description="Sessão de fotografia de retrato sob o céu estrelado do Alentejo, com a duração aproximada de 60 minutos. Entrega de 7 a 10 fotos finais editadas."
       price="160€"
       priceNote="por sessão · 1-2 pessoas"
       ctaLabel="Reservar sessão"
@@ -46,11 +46,19 @@ import portraits from '../assets/Portraits.jpg';
     />
     <Pillar
       id="workshops"
-      eyebrow="Workshops"
-      title="Aprende, evolui, disfruta"
-      description="Nightscape, Deepsky, troubleshooting do teu setup e mentoria de edição online. Formatos presenciais no observatório ou ao vivo, sempre em grupos pequenos."
-      price="desde 40€"
-      ctaLabel="Ver workshops"
+      eyebrow="Aprende"
+      title="Da captura à imagem final"
+      description="Workshops de astrofotografia e cursos de edição de imagem. Acelera a tua curva de aprendizagem, desenvolve as tuas capacidades técnicas de forma estruturada e supera os obstáculos mais comuns na captura e pós-processamento."
+      offers={[
+        {
+          label: 'Astrofotografia',
+          href: '/astrofotografia',
+        },
+        {
+          label: 'Edição de imagem deep-sky',
+          href: '/edicao-de-imagem',
+        },
+      ]}
       video={{ src: '/videos/workshops.mp4', poster: '/posters/workshops.jpg' }}
     />
     <Testimonials />

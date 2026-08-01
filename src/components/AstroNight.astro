@@ -1,0 +1,54 @@
+---
+// Como correm as até 4 horas. Rascunho meu, a rever pelo David.
+const steps = [
+  {
+    title: 'Planeamos a noite',
+    desc: 'Antes de pegar na máquina vemos o que está no céu nessa noite, e escolhemos os alvos que fazem sentido para o teu equipamento.',
+  },
+  {
+    title: 'Montamos o equipamento',
+    desc: 'Alinhamento, focagem e enquadramento. É aqui que se ganha ou se perde a noite toda, e é por isso que damos tempo a este passo.',
+  },
+  {
+    title: 'Fotografamos',
+    desc: 'Captação acompanhada do princípio ao fim, com espaço para errares e perceberes porquê. É a errar que se aprende isto.',
+  },
+  {
+    title: 'Primeiro processamento',
+    desc: 'Antes de ires embora vês os teus próprios dados a transformar-se em imagem, para saíres daqui a perceber o caminho todo.',
+  },
+];
+---
+
+<section class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
+      <div class="reveal">
+        <p class="eyebrow mb-4">A noite</p>
+        <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
+          Passo a passo, do plano à imagem
+        </h2>
+        <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
+          São até quatro horas, e o ritmo é o teu. Se quiseres passar metade da noite só a
+          acertar o alinhamento até ficares confortável, passamos.
+        </p>
+      </div>
+
+      <ol class="reveal max-w-2xl" style="--reveal-delay: 0.05s">
+        {
+          steps.map((s, i) => (
+            <li class="flex gap-5 border-b border-cream-50/10 py-5 last:border-none">
+              <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent-400/35 text-sm font-medium text-accent-200">
+                {i + 1}
+              </span>
+              <div>
+                <p class="font-medium text-cream-50">{s.title}</p>
+                <p class="mt-1 text-sm leading-relaxed text-cream-50/60">{s.desc}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

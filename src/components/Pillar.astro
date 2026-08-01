@@ -2,14 +2,24 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
+// Bloco que junta mais do que um produto (ver "Aprende" na homepage): em vez
+// do preço e de um único par de botões, mostra "Saber mais" e um botão
+// primário por produto, cada um a levar à sua página de detalhe (a reserva
+// em si acontece lá, não aqui).
+type Offer = {
+  label: string;
+  href: string;
+};
+
 interface Props {
   id: string;
   eyebrow: string;
   title: string;
   description: string;
-  price: string;
+  price?: string;
   priceNote?: string;
-  ctaLabel: string;
+  ctaLabel?: string;
+  offers?: Offer[];
   flip?: boolean;
   video?: { src: string; poster: string };
   image?: { src: ImageMetadata; alt: string };
@@ -24,6 +34,7 @@ const {
   price,
   priceNote,
   ctaLabel,
+  offers,
   flip = false,
   video,
   image,
@@ -87,12 +98,30 @@ const {
       >
         {description}
       </p>
-      <p class="reveal mt-8" style="--reveal-delay: 0.15s">
-        <span class="text-3xl font-bold tracking-tight text-accent-200">{price}</span>
-        {priceNote && <span class="ml-2 text-cream-50/55">{priceNote}</span>}
-      </p>
+      {price && (
+        <p class="reveal mt-8" style="--reveal-delay: 0.15s">
+          <span class="text-3xl font-bold tracking-tight text-accent-200">{price}</span>
+          {priceNote && <span class="ml-2 text-cream-50/55">{priceNote}</span>}
+        </p>
+      )}
       {
-        id === 'stargazing' ? (
+        offers ? (
+          <div class="mt-9">
+            <p
+              class="reveal text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40"
+              style="--reveal-delay: 0.15s"
+            >
+              Saber mais
+            </p>
+            <div class="reveal mt-4 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
+              {offers.map((o) => (
+                <a href={o.href} class="btn btn-primary">
+                  {o.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : id === 'stargazing' ? (
           <div class="reveal mt-8 flex flex-wrap items-center gap-5" style="--reveal-delay: 0.2s">
             <button type="button" data-open-stargazing class="btn btn-primary">
               {ctaLabel}

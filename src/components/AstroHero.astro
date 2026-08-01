@@ -1,0 +1,76 @@
+---
+import MediaPlaceholder from './MediaPlaceholder.astro';
+import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+
+const ASTRO_PRICE = 95;
+const calLink = calLinkPath(CAL_LINKS.mentorship);
+
+const facts = [
+  { value: 'Até 4h', label: 'por sessão' },
+  { value: `${ASTRO_PRICE}€`, label: 'preço fixo' },
+  { value: '1 para 1', label: 'sessão personalizada' },
+  { value: 'Presencial', label: 'no observatório' },
+];
+---
+
+<section class="relative pb-16 sm:pb-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="reveal text-sm text-cream-50/55">
+      <a href="/" class="transition-colors hover:text-cream-50">Início</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-cream-50/80">Astrofotografia</span>
+    </p>
+
+    <div class="mt-10 grid items-center gap-12 lg:grid-cols-[6fr_5fr] lg:gap-16">
+      <div>
+        <p class="eyebrow reveal mb-4">Astrofotografia</p>
+        <h1
+          class="reveal max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]"
+          style="--reveal-delay: 0.05s"
+        >
+          Uma noite, o teu caminho
+        </h1>
+        <p
+          class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+          style="--reveal-delay: 0.1s"
+        >
+          Workshop privado no observatório, só para ti. Escolhes se queres levar a Via
+          Láctea sobre a paisagem alentejana ou mergulhar no céu profundo ao telescópio.
+        </p>
+
+        <dl
+          class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
+          style="--reveal-delay: 0.15s"
+        >
+          {
+            facts.map((f) => (
+              <div class="border-l border-accent-400/30 pl-4">
+                <dt class="sr-only">{f.label}</dt>
+                <dd class="text-2xl font-bold tracking-tight text-accent-200 sm:text-3xl">
+                  {f.value}
+                </dd>
+                <dd class="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/55">
+                  {f.label}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="reveal mt-10 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
+          <button type="button" data-book-link={calLink} class="btn btn-primary">
+            Reservar workshop
+          </button>
+          <a href="#caminhos" class="btn btn-ghost">Ver os dois caminhos</a>
+        </div>
+      </div>
+
+      <div class="reveal mx-auto w-full max-w-lg lg:max-w-none" style="--reveal-delay: 0.1s">
+        <MediaPlaceholder
+          label="Sessão de astrofotografia no observatório"
+          class="aspect-[4/3]"
+        />
+      </div>
+    </div>
+  </div>
+</section>

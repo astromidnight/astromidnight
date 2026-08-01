@@ -450,9 +450,11 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
               <li
                 class:list={[
                   'list-row -mx-4 grid items-center gap-x-5 gap-y-3 rounded-lg px-4 py-5 transition-colors duration-300 hover:bg-night-900 sm:-mx-6 sm:gap-x-8 sm:px-6',
+                  // Uma coluna a menos desde que o chip de tipo saiu daqui:
+                  // data (opcional), texto, preço e botão.
                   hasDate
-                    ? 'grid-cols-[auto_1fr] sm:grid-cols-[6rem_1fr_auto_auto_auto]'
-                    : 'grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto]',
+                    ? 'grid-cols-[auto_1fr] sm:grid-cols-[6rem_1fr_auto_auto]'
+                    : 'grid-cols-1 sm:grid-cols-[1fr_auto_auto]',
                 ]}
                 data-type={item.type}
               >
@@ -469,21 +471,17 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
                 </div>
                 <span
                   class:list={[
-                    'w-fit rounded-full border border-cream-50/15 px-3 py-1 text-xs text-cream-50/60 sm:col-start-auto',
-                    hasDate ? 'col-start-2' : 'col-start-1',
-                  ]}
-                >
-                  {item.typeLabel}
-                </span>
-                <span
-                  class:list={[
-                    'sm:col-start-auto',
+                    // Empilhado e encostado à direita a partir de sm: assim os
+                    // preços de todas as linhas alinham pela mesma margem, que
+                    // o "por adulto" inline desalinhava. Em mobile a linha é
+                    // uma coluna só, por isso fica tudo à esquerda como o resto.
+                    'flex flex-col leading-tight sm:col-start-auto sm:items-end sm:text-right',
                     hasDate ? 'col-start-2' : 'col-start-1',
                   ]}
                 >
                   <span class="text-lg font-bold text-cream-50">{item.price}</span>
                   {'priceUnit' in item && item.priceUnit && (
-                    <span class="ml-1 text-sm text-cream-50/50">{item.priceUnit}</span>
+                    <span class="mt-0.5 text-sm text-cream-50/50">{item.priceUnit}</span>
                   )}
                 </span>
                 {item.type === 'stargazing' ? (

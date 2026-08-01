@@ -1,0 +1,171 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import ldn1622Before from '../assets/BaLdn1622Before.jpg';
+import ldn1622After from '../assets/BaLdn1622After.jpg';
+import ldn1251Before from '../assets/BaLdn1251Before.jpg';
+import ldn1251After from '../assets/BaLdn1251After.jpg';
+import m101Before from '../assets/BaM101Before.jpg';
+import m101After from '../assets/BaM101After.jpg';
+import veilBefore from '../assets/BaVeilBefore.jpg';
+import veilAfter from '../assets/BaVeilAfter.jpg';
+
+// Os quatro pares têm o mesmo enquadramento dentro de cada par (verificado
+// nas dimensões originais) e rondam todos 3:2, por isso o contentor pode ter
+// um aspeto fixo sem desalinhar o antes do depois.
+type Pair = {
+  name: string;
+  before: ImageMetadata;
+  after: ImageMetadata;
+};
+
+const pairs: Pair[] = [
+  { name: 'LDN 1622', before: ldn1622Before, after: ldn1622After },
+  { name: 'LDN 1251', before: ldn1251Before, after: ldn1251After },
+  { name: 'M101', before: m101Before, after: m101After },
+  { name: 'Veil', before: veilBefore, after: veilAfter },
+];
+
+const imgClass = 'absolute inset-0 h-full w-full object-cover';
+---
+
+<section id="antes-depois" class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Antes e depois</p>
+    <h2
+      class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
+      style="--reveal-delay: 0.05s"
+    >
+      Dos dados em bruto à imagem final
+    </h2>
+    <p
+      class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+      style="--reveal-delay: 0.1s"
+    >
+      Arrasta para veres a diferença. É este o tipo de salto que trabalhamos na
+      sessão, sempre com edição não destrutiva em PixInsight e Photoshop.
+    </p>
+
+    <div class="reveal mt-10" style="--reveal-delay: 0.15s">
+      <div id="ba-stage">
+        {
+          pairs.map((p, i) => (
+            <div class="ba-item" data-ba data-index={i} hidden={i !== 0}>
+              <div class="relative aspect-[3/2] w-full overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900 select-none">
+                <Image
+                  src={p.after}
+                  alt={`${p.name} depois da edição`}
+                  class={imgClass}
+                  widths={[768, 1152, 1536]}
+                  sizes="(min-width: 1280px) 1216px, 100vw"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+                <div class="absolute inset-0" data-ba-before style="clip-path: inset(0 50% 0 0)">
+                  <Image
+                    src={p.before}
+                    alt={`${p.name} antes da edição`}
+                    class={imgClass}
+                    widths={[768, 1152, 1536]}
+                    sizes="(min-width: 1280px) 1216px, 100vw"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
+
+                <span class="pointer-events-none absolute left-3 top-3 rounded-full bg-night-950/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/80 backdrop-blur sm:left-4 sm:top-4">
+                  Antes
+                </span>
+                <span class="pointer-events-none absolute right-3 top-3 rounded-full bg-night-950/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/80 backdrop-blur sm:right-4 sm:top-4">
+                  Depois
+                </span>
+
+                <div
+                  class="pointer-events-none absolute inset-y-0 w-px bg-cream-50/80"
+                  data-ba-line
+                  style="left: 50%"
+                >
+                  <span class="absolute top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cream-50/70 bg-night-950/80 text-cream-50 backdrop-blur">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M9 6L3 12l6 6M15 6l6 6-6 6" />
+                    </svg>
+                  </span>
+                </div>
+
+                <label class="sr-only" for={`ba-range-${i}`}>
+                  Comparar antes e depois de {p.name}
+                </label>
+                <input
+                  id={`ba-range-${i}`}
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  step="1"
+                  data-ba-range
+                  class="absolute inset-0 h-full w-full cursor-ew-resize appearance-none bg-transparent focus:outline-none [&::-moz-range-thumb]:h-10 [&::-moz-range-thumb]:w-10 [&::-moz-range-thumb]:cursor-ew-resize [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent [&::-webkit-slider-thumb]:h-10 [&::-webkit-slider-thumb]:w-10 [&::-webkit-slider-thumb]:cursor-ew-resize [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-transparent"
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Escolher exemplo">
+        {
+          pairs.map((p, i) => (
+            <button
+              type="button"
+              class="ba-tab btn !min-h-0 !px-5 !py-2 text-sm"
+              data-ba-tab={i}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls="ba-stage"
+            >
+              {p.name}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const section = document.getElementById('antes-depois')!;
+  const items = section.querySelectorAll<HTMLElement>('[data-ba]');
+  const tabs = section.querySelectorAll<HTMLButtonElement>('.ba-tab');
+  const activeTab = ['bg-accent-400', 'text-night-950', 'font-medium'];
+
+  // Cada exemplo guarda a sua própria posição, para trocar de alvo não
+  // reiniciar o que a pessoa estava a comparar.
+  items.forEach((item) => {
+    const range = item.querySelector<HTMLInputElement>('[data-ba-range]')!;
+    const clip = item.querySelector<HTMLElement>('[data-ba-before]')!;
+    const line = item.querySelector<HTMLElement>('[data-ba-line]')!;
+
+    const paint = () => {
+      const pos = Number(range.value);
+      clip.style.clipPath = `inset(0 ${100 - pos}% 0 0)`;
+      line.style.left = `${pos}%`;
+    };
+
+    range.addEventListener('input', paint);
+    paint();
+  });
+
+  const show = (index: number) => {
+    items.forEach((item) => {
+      item.hidden = Number(item.dataset.index) !== index;
+    });
+    tabs.forEach((tab) => {
+      const on = Number(tab.dataset.baTab) === index;
+      tab.classList.toggle('text-cream-50/70', !on);
+      activeTab.forEach((c) => tab.classList.toggle(c, on));
+      tab.setAttribute('aria-selected', String(on));
+    });
+  };
+
+  tabs.forEach((tab) =>
+    tab.addEventListener('click', () => show(Number(tab.dataset.baTab)))
+  );
+  show(0);
+</script>

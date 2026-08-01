@@ -1,0 +1,55 @@
+---
+// Os seis princípios de "Editing approach" do site atual, em PT-PT.
+const principles = [
+  {
+    title: 'Referências visuais',
+    desc: 'Trabalhamos sempre com uma referência à vista, para saberes para onde estás a levar a imagem.',
+  },
+  {
+    title: 'Tirar partido dos scripts',
+    desc: 'O PixInsight tem scripts poderosos. O truque está em saber o que cada um faz bem.',
+  },
+  {
+    title: 'A ordem certa',
+    desc: 'Aplicar os scripts pela ordem correta muda o resultado mais do que qualquer afinação.',
+  },
+  {
+    title: 'Sem complicar',
+    desc: 'Nada de complicações de PixelMath. Se há um caminho simples que dá o mesmo, é esse que seguimos.',
+  },
+  {
+    title: 'PixInsight para preparar',
+    desc: 'Corrigir, calibrar a cor e esticar. É aqui que a imagem fica pronta para o resto.',
+  },
+  {
+    title: 'Photoshop para levar mais além',
+    desc: 'É na edição não destrutiva em Photoshop que a imagem ganha o acabamento final.',
+  },
+];
+---
+
+<section class="relative border-t border-cream-50/8 bg-night-900 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">A minha abordagem</p>
+    <h2
+      class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
+      style="--reveal-delay: 0.05s"
+    >
+      Simples, pela ordem certa
+    </h2>
+
+    <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        principles.map((p, i) => (
+          <li
+            class="reveal rounded-2xl border border-cream-50/10 bg-night-950/50 p-6"
+            style={`--reveal-delay: ${Math.min(i, 3) * 0.05}s`}
+          >
+            <p class="font-medium text-cream-50">{p.title}</p>
+            <p class="mt-2 text-sm leading-relaxed text-cream-50/60">{p.desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

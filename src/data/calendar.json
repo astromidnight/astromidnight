@@ -3,7 +3,7 @@
     {
       "dateLabel": "Sempre",
       "title": "Observação Noturna",
-      "subtitle": "Quase todas as noites de céu limpo, até 4 adultos (crianças não pagam)",
+      "subtitle": "Todas as noites de céu limpo, até 4 adultos (crianças não pagam)",
       "type": "stargazing",
       "typeLabel": "Observação Noturna",
       "price": "45€",
@@ -13,7 +13,7 @@
     {
       "dateLabel": "Sempre",
       "title": "Retratos sob as Estrelas",
-      "subtitle": "Sessão dedicada, individual",
+      "subtitle": "Sessão de uma hora dedicada a retratos",
       "type": "retratos",
       "typeLabel": "Retratos",
       "price": "160€",
@@ -21,8 +21,8 @@
     },
     {
       "dateLabel": "Sempre",
-      "title": "Astrophotography Mentoria",
-      "subtitle": "Sessão privada até 4h, setup e processamento deep-sky",
+      "title": "Astrofotografia",
+      "subtitle": "Sessão privada de até 4 horas dedicada a astrofotografia de paisagem ou céu profundo.",
       "type": "mentorship",
       "typeLabel": "Mentorship",
       "price": "95€",
@@ -30,8 +30,8 @@
     },
     {
       "dateLabel": "Sempre",
-      "title": "Edição de imagem Deep-sky",
-      "subtitle": "Sessão online de 120 min, tratamento de imagem astro",
+      "title": "Edição de imagem deep-sky",
+      "subtitle": "Sessão online de duas horas dedicada à edição de imagem deep-sky.",
       "type": "editing-mentorship",
       "typeLabel": "Mentorship",
       "price": "75€",

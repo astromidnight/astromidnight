@@ -1,0 +1,107 @@
+---
+import MediaPlaceholder from './MediaPlaceholder.astro';
+
+// ATENÇÃO: os tópicos dos dois caminhos são um rascunho meu, feito a pedido
+// do David por não existir conteúdo de origem (o site antigo não tem página
+// de workshops de astrofotografia). Tem de ser revisto por ele antes de
+// publicar, tal como aconteceu com o FAQ da observação noturna.
+type Path = {
+  tag: string;
+  title: string;
+  desc: string;
+  topics: string[];
+  gear: string;
+  placeholder: string;
+};
+
+const paths: Path[] = [
+  {
+    tag: 'Nightscape',
+    title: 'Astrofotografia de paisagem',
+    desc: 'A Via Láctea sobre o Alentejo, com máquina e tripé. Aprendes a planear a noite, a fotografar no escuro e a montar a imagem final.',
+    topics: [
+      'Planear a noite: fase da lua, posição da Via Láctea e escolha do local',
+      'Definições da máquina no escuro: ISO, abertura e tempo de exposição',
+      'Focar nas estrelas, que é onde quase toda a gente falha',
+      'Composição com primeiro plano, o que faz uma paisagem noturna funcionar',
+      'Painéis e panorâmicas para apanhar o arco da Via Láctea',
+      'Captar o céu e a terra em separado, para expor bem os dois',
+    ],
+    gear: 'Trazes a tua máquina, uma objetiva grande angular luminosa e um tripé estável. Se não tiveres tripé, empresto eu.',
+    placeholder: 'Via Láctea sobre a paisagem',
+  },
+  {
+    tag: 'Deep-sky',
+    title: 'Astrofotografia de céu profundo',
+    desc: 'Nebulosas e galáxias com telescópio e montagem equatorial. Do alinhamento polar às primeiras imagens.',
+    topics: [
+      'Montar e equilibrar a montagem equatorial',
+      'Alinhamento polar, que decide a qualidade de tudo o resto',
+      'Focagem precisa com máscara de Bahtinov',
+      'Escolher o alvo certo para a noite e para o teu equipamento',
+      'Enquadrar e centrar o alvo com plate solving',
+      'Autoguiagem, e porque é que as estrelas saem alongadas',
+      'Planear a sessão: tempos de exposição, ganho e filtros',
+      'Calibração: darks, flats e bias, e para que servem',
+    ],
+    gear: 'Se tens telescópio e montagem, trabalhamos com o teu equipamento. Se não tens, usamos o do observatório.',
+    placeholder: 'Telescópio a fotografar céu profundo',
+  },
+];
+---
+
+<section id="caminhos" class="relative border-t border-cream-50/8 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="eyebrow reveal mb-4">Os dois caminhos</p>
+    <h2
+      class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
+      style="--reveal-delay: 0.05s"
+    >
+      Escolhes tu, a reserva é a mesma
+    </h2>
+    <p
+      class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
+      style="--reveal-delay: 0.1s"
+    >
+      Não tens de decidir na altura de pagar. Depois de reservares, dizes-me qual dos dois
+      caminhos queres seguir e eu preparo a noite a pensar nisso.
+    </p>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-8">
+      {
+        paths.map((p, i) => (
+          <article
+            class="reveal flex flex-col overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900"
+            style={`--reveal-delay: ${0.15 + i * 0.05}s`}
+          >
+            <MediaPlaceholder label={p.placeholder} class="aspect-[16/9] rounded-none border-0 border-b border-dashed" />
+
+            <div class="flex flex-1 flex-col p-6 sm:p-8">
+              <span class="w-fit rounded-full border border-accent-400/35 px-3 py-1 text-xs font-medium text-accent-200">
+                {p.tag}
+              </span>
+              <h3 class="mt-4 text-xl font-bold leading-snug sm:text-2xl">{p.title}</h3>
+              <p class="mt-3 text-base leading-relaxed text-cream-50/70">{p.desc}</p>
+
+              <p class="mt-7 text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
+                O que vamos ver
+              </p>
+              <ul class="mt-4 space-y-2">
+                {p.topics.map((t) => (
+                  <li class="flex gap-3 text-sm leading-relaxed text-cream-50/70">
+                    <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent-300/70" aria-hidden="true" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+
+              <p class="mt-auto pt-7 text-sm leading-relaxed text-cream-50/55">
+                <span class="font-medium text-cream-50/80">Equipamento.</span> {p.gear}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

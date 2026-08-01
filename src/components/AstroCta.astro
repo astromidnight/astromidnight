@@ -1,0 +1,25 @@
+---
+import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+
+const calLink = calLinkPath(CAL_LINKS.mentorship);
+---
+
+<section class="relative border-t border-cream-50/8 py-20 text-center sm:py-24">
+  <div class="mx-auto max-w-2xl px-5 sm:px-8">
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+      Traz a tua máquina
+    </h2>
+    <p class="reveal mt-4 text-cream-50/70" style="--reveal-delay: 0.05s">
+      Até quatro horas, numa sessão 1 para 1, sob um dos céus mais escuros de Portugal.
+    </p>
+    <div
+      class="reveal mt-8 flex flex-wrap items-center justify-center gap-4"
+      style="--reveal-delay: 0.1s"
+    >
+      <button type="button" data-book-link={calLink} class="btn btn-primary">
+        Reservar workshop
+      </button>
+      <a href="/contacto" class="btn btn-ghost">Tens dúvidas? Contacta-nos</a>
+    </div>
+  </div>
+</section>

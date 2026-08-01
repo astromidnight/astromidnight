@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AstroHero from '../components/AstroHero.astro';
+import AstroPaths from '../components/AstroPaths.astro';
+import AstroWhoFor from '../components/AstroWhoFor.astro';
+import AstroNight from '../components/AstroNight.astro';
+import AstroHowItWorks from '../components/AstroHowItWorks.astro';
+import AstroCta from '../components/AstroCta.astro';
+---
+
+<Layout
+  title="Astrofotografia — Astromidnight"
+  description="Workshop privado de astrofotografia no observatório do Alentejo, até 4 horas e 1 para 1. Escolhes entre paisagem noturna ou céu profundo, com um astrofotógrafo premiado pela NASA e pela ESA."
+>
+  <Header />
+  <main class="pt-28 sm:pt-32">
+    <AstroHero />
+    <AstroPaths />
+    <AstroWhoFor />
+    <AstroNight />
+    <AstroHowItWorks />
+    <AstroCta />
+  </main>
+  <Footer />
+</Layout>
