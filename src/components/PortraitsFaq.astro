@@ -25,7 +25,19 @@ const faqs = [
     a: 'As fotos são para uso pessoal, incluindo redes sociais. Para uso comercial, contacta-nos antes de reservar.',
   },
 ];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
 <section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-4xl px-5 sm:px-8">

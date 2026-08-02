@@ -38,7 +38,19 @@ const faqs = [
     a: 'Não. É um bónus possível durante a sessão de observação, sujeito às condições dessa noite — se quiseres a garantia de um retrato, a sessão dedicada de Retratos sob as Estrelas é o serviço certo.',
   },
 ];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
 <section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-4xl px-5 sm:px-8">

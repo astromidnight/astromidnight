@@ -1,0 +1,91 @@
+---
+// JSON-LD sitewide (Person + LocalBusiness), incluído no Layout. Ajuda
+// motores de busca e assistentes de IA a identificar quem é o David Cruz e
+// o que é a Astromidnight -- entidade, morada, preços, prémios -- em vez de
+// terem de adivinhar a partir do texto da página. Ver EMAIL/INSTAGRAM_URL em
+// lib/contact.ts e STARGAZING_PRICE_PER_ADULT em lib/calcom.ts.
+import { EMAIL, INSTAGRAM_URL } from '../lib/contact';
+import { STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
+
+const ASTROBIN_URL = 'https://app.astrobin.com/u/astro.midnight';
+const SITE_URL = 'https://astromidnight.pt';
+
+const person = {
+  '@type': 'Person',
+  '@id': `${SITE_URL}/#david-cruz`,
+  name: 'David Cruz',
+  jobTitle: 'Astrofotógrafo',
+  url: SITE_URL,
+  image: `${SITE_URL}/share_thumb.jpg`,
+  sameAs: [INSTAGRAM_URL, ASTROBIN_URL],
+  award: [
+    'NASA Astronomy Picture of the Day (3×)',
+    'Astrobin Image of the Day (4×)',
+    'ZWO Image of the Week (2×)',
+    'Astronomy Photographer of the Year — Finalista (2023)',
+    'Destacado pela Agência Espacial Europeia (ESA)',
+  ],
+};
+
+const localBusiness = {
+  '@type': 'LocalBusiness',
+  '@id': `${SITE_URL}/#astromidnight`,
+  name: 'Astromidnight',
+  description:
+    'Observatório privado no Alentejo, Portugal, com sessões de observação noturna, retratos sob as estrelas e workshops de astrofotografia, guiados por David Cruz, astrofotógrafo premiado pela NASA e pela ESA.',
+  url: SITE_URL,
+  image: `${SITE_URL}/share_thumb.jpg`,
+  email: EMAIL,
+  priceRange: '€€',
+  founder: { '@id': `${SITE_URL}/#david-cruz` },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'São Pedro da Gafanhoeira',
+    addressRegion: 'Alentejo',
+    addressCountry: 'PT',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 38.742,
+    longitude: -8.077,
+  },
+  sameAs: [INSTAGRAM_URL, ASTROBIN_URL],
+  makesOffer: [
+    {
+      '@type': 'Offer',
+      name: 'Observação Noturna',
+      price: STARGAZING_PRICE_PER_ADULT,
+      priceCurrency: 'EUR',
+      url: `${SITE_URL}/observacao-noturna`,
+    },
+    {
+      '@type': 'Offer',
+      name: 'Retratos sob as Estrelas',
+      price: 160,
+      priceCurrency: 'EUR',
+      url: `${SITE_URL}/retratos`,
+    },
+    {
+      '@type': 'Offer',
+      name: 'Astrofotografia',
+      price: 95,
+      priceCurrency: 'EUR',
+      url: `${SITE_URL}/astrofotografia`,
+    },
+    {
+      '@type': 'Offer',
+      name: 'Edição de imagem deep-sky',
+      price: 75,
+      priceCurrency: 'EUR',
+      url: `${SITE_URL}/edicao-de-imagem`,
+    },
+  ],
+};
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [person, localBusiness],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(graph)} />

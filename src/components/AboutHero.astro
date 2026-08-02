@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import portrait from '../assets/AboutMe.jpg';
+import BreadcrumbSchema from './BreadcrumbSchema.astro';
 
 // Contagens que batem certo com a lista completa em AboutAwards.astro
 // (3 APOD, 4 IOTD, 2 IOTW, 1 ESA). Se lá for acrescentado um prémio novo,
@@ -14,6 +15,7 @@ const stats = [
 ---
 
 <section class="relative pb-16 sm:pb-20">
+  <BreadcrumbSchema label="Sobre" />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
       <a href="/" class="transition-colors hover:text-cream-50">Início</a>

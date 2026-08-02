@@ -4,17 +4,32 @@ import '@fontsource/work-sans/500.css';
 import '@fontsource/work-sans/700.css';
 import '../styles/global.css';
 import CalBookingModal from '../components/CalBookingModal.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import Analytics from '../components/Analytics.astro';
+import StructuredData from '../components/StructuredData.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  // Imagem de partilha específica da página (ex.: a foto de um print na
+  // loja) -- absoluta ou relativa a `site`. Sem isto, cai no thumb genérico.
+  image?: string;
 }
 
 const {
   title = 'Astromidnight — O céu que já não vês',
   description =
-    'Noites privadas de observação, retratos sob as estrelas e workshops de astrofotografia num observatório próprio em céu Bortle 3, no Alentejo. Por David Cruz, astrofotógrafo premiado pela NASA e pela ESA.',
+    'Observações noturnas, retratos sob as estrelas e workshops de astrofotografia, no céu escuro do Alentejo, com o astrofotógrafo David Cruz.',
+  image,
 } = Astro.props;
+
+// Astro.site vem do `site` em astro.config.mjs -- URLs sempre absolutos,
+// para canonical/og:url/twitter:image funcionarem em qualquer plataforma
+// que os consuma (Facebook, X, LinkedIn, WhatsApp preview, etc.).
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = image
+  ? new URL(image, Astro.site)
+  : new URL('/share_thumb.jpg', Astro.site);
 ---
 
 <!doctype html>
@@ -25,14 +40,24 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="canonical" href={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="/share_thumb.jpg" />
+    <meta property="og:image" content={ogImageURL} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <StructuredData />
+    <Analytics />
   </head>
   <body>
     <slot />
     <CalBookingModal />
+    <CookieBanner />
     <script>
       // Revelação ao scroll
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

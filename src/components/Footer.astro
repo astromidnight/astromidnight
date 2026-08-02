@@ -30,9 +30,9 @@ const columns = [
 
 const legal = [
   { label: 'Instagram', href: 'https://www.instagram.com/astro.midnight/' },
-  { label: 'Astrobin', href: '#galeria' },
-  { label: 'Termos', href: '#' },
-  { label: 'Privacidade', href: '#' },
+  { label: 'Astrobin', href: 'https://app.astrobin.com/u/astro.midnight' },
+  { label: 'Termos', href: '/termos' },
+  { label: 'Privacidade', href: '/privacidade' },
 ];
 ---
 
@@ -87,6 +87,13 @@ const legal = [
             </a>
           ))
         }
+        <button
+          type="button"
+          id="footer-manage-cookies"
+          class="text-sm text-cream-50/45 transition-colors hover:text-accent-200"
+        >
+          Gerir cookies
+        </button>
       </div>
       <p class="text-sm text-cream-50/35">
         © {new Date().getFullYear()} Astromidnight · David Cruz
@@ -94,3 +101,9 @@ const legal = [
     </div>
   </div>
 </footer>
+
+<script>
+  document.getElementById('footer-manage-cookies')!.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('am-cookie-manage'));
+  });
+</script>

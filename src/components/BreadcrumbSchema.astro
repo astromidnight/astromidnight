@@ -1,0 +1,31 @@
+---
+// BreadcrumbList JSON-LD para acompanhar o breadcrumb visual ("Início / X")
+// já existente em cada Hero/página. "Início" e o passo atual são derivados
+// automaticamente; `trail` serve para níveis intermédios (ex.: "Loja" antes
+// do nome do print).
+interface Props {
+  label: string;
+  trail?: { label: string; href: string }[];
+}
+const { label, trail = [] } = Astro.props;
+const SITE_URL = 'https://astromidnight.pt';
+
+const items = [
+  { name: 'Início', url: `${SITE_URL}/` },
+  ...trail.map((t) => ({ name: t.label, url: new URL(t.href, SITE_URL).href })),
+  { name: label, url: new URL(Astro.url.pathname, SITE_URL).href },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: item.url,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

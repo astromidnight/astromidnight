@@ -1,5 +1,6 @@
 ---
 import MediaPlaceholder from './MediaPlaceholder.astro';
+import BreadcrumbSchema from './BreadcrumbSchema.astro';
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
 
 const ASTRO_PRICE = 95;
@@ -14,6 +15,7 @@ const facts = [
 ---
 
 <section class="relative pb-16 sm:pb-20">
+  <BreadcrumbSchema label="Astrofotografia" />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
       <a href="/" class="transition-colors hover:text-cream-50">Início</a>

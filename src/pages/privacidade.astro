@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LegalContent from '../components/LegalContent.astro';
+import { EMAIL } from '../lib/contact';
+---
+
+<Layout
+  title="Política de Privacidade — Astromidnight"
+  description="Como a Astromidnight recolhe, usa e protege os teus dados pessoais ao reservares uma sessão, escreveres pelo formulário ou comprares um print."
+>
+  <Header />
+  <main class="pt-28 pb-24 sm:pt-32">
+    <LegalContent title="Política de Privacidade" updated="2 de agosto de 2026">
+      <h2>1. Quem trata os teus dados</h2>
+      <p>
+        O responsável pelo tratamento dos dados recolhidos através deste site é David
+        Cruz, exercendo a atividade Astromidnight a título individual, com sede em São
+        Pedro da Gafanhoeira, Alentejo, Portugal (NIF: 205254128). Para
+        qualquer questão sobre os teus dados, escreve para <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+      </p>
+
+      <h2>2. Que dados recolhemos e para quê</h2>
+      <ul>
+        <li>
+          <strong>Formulários de contacto</strong> (contacto geral e alojamentos
+          rurais): nome, email e o texto da mensagem, para te podermos responder.
+        </li>
+        <li>
+          <strong>Reservas de sessões</strong>: nome, email e outros dados que
+          preenchas no motor de reservas, para organizar e confirmar a sessão.
+        </li>
+        <li>
+          <strong>Compras na loja</strong>: dados de entrega e pagamento, recolhidos e
+          processados diretamente pela plataforma de checkout externa — não passam
+          pelos nossos servidores nem ficam guardados por nós.
+        </li>
+      </ul>
+
+      <h2>3. Com quem partilhamos dados</h2>
+      <p>Usamos os seguintes serviços de terceiros para operar o site e os nossos serviços:</p>
+      <ul>
+        <li><strong>Web3Forms</strong> — processa e reencaminha as mensagens dos formulários de contacto por email.</li>
+        <li><strong>Cal.com / Cal.eu</strong> — motor de reservas e calendário; trata os dados que preenches ao reservar uma sessão.</li>
+        <li><strong>Supabase</strong> — armazena a lista de prints disponíveis na loja (não recolhe dados pessoais na navegação).</li>
+        <li><strong>meteoblue</strong> — widget de previsão do tempo embutido no site.</li>
+        <li><strong>Google Analytics</strong> (Google Ireland Limited) — estatísticas de utilização do site, só depois de aceitares o aviso de cookies.</li>
+      </ul>
+      <p>
+        Cada um destes serviços tem a sua própria política de privacidade, que se
+        aplica aos dados que processam em nome da Astromidnight. Não vendemos nem
+        cedemos os teus dados a terceiros para fins de marketing.
+      </p>
+
+      <h2>4. Cookies</h2>
+      <p id="cookies">
+        Usamos o Google Analytics para perceber como o site é usado (páginas
+        visitadas, origem das visitas, dados agregados) — mas só depois de
+        aceitares o aviso de cookies na tua primeira visita; se rejeitares ou
+        ignorares o aviso, o Google Analytics não chega a carregar. Os IPs são
+        anonimizados. Podes mudar de ideias a qualquer momento em "Gerir
+        cookies", no rodapé do site. Mais detalhes na <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">política de privacidade da Google</a>.
+      </p>
+      <p>
+        O motor de reservas (Cal.com/Cal.eu) e o widget do tempo (meteoblue),
+        embutidos em algumas páginas, são essenciais ao funcionamento do site e
+        carregam sempre — podem definir os seus próprios cookies quando os usas,
+        e não temos controlo direto sobre eles.
+      </p>
+
+      <h2>5. Base legal e prazo de conservação</h2>
+      <p>
+        Tratamos os teus dados com base na execução de um contrato (quando reservas
+        uma sessão ou compras um print) ou no teu consentimento (quando nos escreves
+        por iniciativa própria). Guardamos os dados de contacto e reserva pelo tempo
+        necessário para prestar o serviço e cumprir obrigações fiscais, e apagamo-los
+        ou anonimizamo-los depois disso.
+      </p>
+
+      <h2>6. Os teus direitos</h2>
+      <p>
+        Nos termos do RGPD, tens direito a aceder, retificar, apagar ou limitar o
+        tratamento dos teus dados, a pedir a sua portabilidade e a opor-te ao
+        tratamento. Para exercer qualquer um destes direitos, escreve para <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+        Tens também o direito de apresentar reclamação junto da Comissão Nacional de
+        Proteção de Dados (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).
+      </p>
+
+      <h2>7. Segurança</h2>
+      <p>
+        Tomamos medidas razoáveis para proteger os dados que tratamos diretamente,
+        mas nenhuma transmissão pela internet é 100% segura. Recomendamos que não
+        partilhes dados sensíveis (como dados de cartões de pagamento) por email ou
+        pelo formulário de contacto.
+      </p>
+
+      <h2>8. Menores</h2>
+      <p>
+        Este site não se dirige a menores de 16 anos para efeitos de recolha direta de
+        dados. Sessões com menores devem ser reservadas por um adulto responsável.
+      </p>
+
+      <h2>9. Alterações a esta política</h2>
+      <p>
+        Podemos atualizar esta política periodicamente. A versão em vigor é sempre a
+        publicada nesta página, com a data de atualização indicada no topo.
+      </p>
+    </LegalContent>
+  </main>
+  <Footer />
+</Layout>

@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import heroImage from '../assets/EditingHero.jpg';
+import BreadcrumbSchema from './BreadcrumbSchema.astro';
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
 
 const EDITING_PRICE = 75;
@@ -15,6 +16,7 @@ const facts = [
 ---
 
 <section class="relative pb-16 sm:pb-20">
+  <BreadcrumbSchema label="Edição de imagem deep-sky" />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
       <a href="/" class="transition-colors hover:text-cream-50">Início</a>

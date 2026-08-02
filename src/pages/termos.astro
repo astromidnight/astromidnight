@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LegalContent from '../components/LegalContent.astro';
+import { EMAIL } from '../lib/contact';
+---
+
+<Layout
+  title="Termos e Condições — Astromidnight"
+  description="Termos e condições de utilização do site e de reserva dos serviços da Astromidnight: observação noturna, retratos, workshops e loja de prints."
+>
+  <Header />
+  <main class="pt-28 pb-24 sm:pt-32">
+    <LegalContent title="Termos e Condições" updated="2 de agosto de 2026">
+      <h2>1. Quem somos</h2>
+      <p>
+        A Astromidnight é a atividade de astrofotografia e observação noturna de David
+        Cruz, exercida a título individual a partir de um observatório privado em São
+        Pedro da Gafanhoeira, Alentejo, Portugal (NIF: 205254128). Estes
+        termos aplicam-se ao site astromidnight.pt e a todos os serviços e produtos
+        reservados ou comprados através dele.
+      </p>
+
+      <h2>2. Serviços</h2>
+      <p>Prestamos os seguintes serviços, sempre no observatório ou noutro local combinado:</p>
+      <ul>
+        <li>Observação Noturna, individual ou em grupo;</li>
+        <li>Retratos sob as Estrelas;</li>
+        <li>Sessões de astrofotografia e mentoria de edição de imagem deep-sky;</li>
+        <li>Sessões de observação para grupos e hóspedes de alojamentos rurais;</li>
+        <li>Venda de impressões fotográficas (prints) na loja do site.</li>
+      </ul>
+
+      <h2>3. Reservas e pagamento</h2>
+      <p>
+        As reservas de sessões e workshops são feitas através do nosso motor de
+        reservas (Cal.com/Cal.eu), embutido no site ou aberto diretamente. O pagamento
+        é processado nesse momento, pelo meio indicado no próprio formulário de
+        reserva. Os preços apresentados no site estão em euros e podem ser alterados
+        sem aviso prévio para reservas futuras — o preço válido é sempre o confirmado
+        no momento da reserva.
+      </p>
+
+      <h2>4. Cancelamento, reagendamento e mau tempo</h2>
+      <p>
+        Se as condições meteorológicas não permitirem a realização de uma sessão de
+        observação, retrato ou astrofotografia, tens sempre a opção de remarcar para
+        outra noite ou de receber reembolso total — nunca perdes o valor pago por
+        causa das nuvens. Podes também pedir para remarcar por outros motivos,
+        contactando-nos com alguma antecedência; remarcações fora da política de mau
+        tempo são avaliadas caso a caso.
+      </p>
+
+      <h2>5. Loja de prints</h2>
+      <p>
+        Cada print é impresso sob encomenda após a compra, com um prazo de preparação
+        até 3 dias úteis, seguido do envio (2 a 5 dias úteis para a Europa, até 7 dias
+        úteis para os EUA e Canadá, e até 14 dias úteis para outros destinos). O
+        pagamento é processado pela plataforma de checkout externa indicada em cada
+        produto — não guardamos dados de cartões de pagamento nos nossos sistemas.
+      </p>
+
+      <h2>6. Participação em sessões de observação</h2>
+      <p>
+        As sessões decorrem ao ar livre, de noite, em terreno rural. Participantes
+        devem vestir-se adequadamente para o frio noturno e seguir as instruções dadas
+        no local, nomeadamente sobre o manuseamento do equipamento. Menores de idade
+        devem estar sempre acompanhados por um adulto responsável. A participação é
+        por conta e risco de cada pessoa, dentro do que for razoável face à natureza
+        da atividade.
+      </p>
+
+      <h2>7. Propriedade intelectual</h2>
+      <p>
+        As fotografias, textos e restante conteúdo publicado no site são propriedade
+        de David Cruz, salvo indicação em contrário. Não podem ser copiados,
+        redistribuídos ou usados comercialmente sem autorização prévia por escrito —
+        incluindo as fotografias entregues em sessões de retrato, cujos termos de uso
+        pessoal são acordados no momento da entrega.
+      </p>
+
+      <h2>8. Reclamações</h2>
+      <p>
+        Em caso de reclamação, contacta-nos diretamente — resolvemos com muito mais
+        rapidez do que qualquer entidade externa. Este estabelecimento dispõe também
+        de Livro de Reclamações Eletrónico, disponível em <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">livroreclamacoes.pt</a>.
+        Em caso de litígio de consumo não resolvido diretamente, podes recorrer a uma
+        entidade de resolução alternativa de litígios — consulta a lista em <a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">consumidor.gov.pt</a>.
+      </p>
+
+      <h2>9. Alterações a estes termos</h2>
+      <p>
+        Podemos atualizar estes termos periodicamente. A versão em vigor é sempre a
+        publicada nesta página, com a data de atualização indicada no topo.
+      </p>
+
+      <h2>10. Lei aplicável</h2>
+      <p>
+        Estes termos regem-se pela lei portuguesa. Para qualquer litígio que não seja
+        resolvido por via extrajudicial, é competente o tribunal da comarca da área de
+        residência do consumidor, nos termos da lei aplicável.
+      </p>
+
+      <h2>11. Contacto</h2>
+      <p>
+        Para qualquer questão sobre estes termos, escreve para <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+      </p>
+    </LegalContent>
+  </main>
+  <Footer />
+</Layout>

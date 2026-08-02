@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import BreadcrumbSchema from '../../components/BreadcrumbSchema.astro';
 import {
   getPublishedPrints,
   formatPrice,
@@ -38,13 +39,36 @@ if (print.distance_ly != null && print.distance_unit) {
 if (print.capture_date_start && print.capture_date_end) {
   legendLines.push(formatDateRange(print.capture_date_start, print.capture_date_end));
 }
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: print.title,
+  description: printSubtitle(print),
+  image: print.detail_image_1_url ?? print.thumb_url,
+  url: `https://astromidnight.pt/loja/${print.slug}`,
+  ...(print.price_cents != null && {
+    offers: {
+      '@type': 'Offer',
+      price: (print.price_cents / 100).toFixed(2),
+      priceCurrency: print.currency,
+      url: `https://astromidnight.pt/loja/${print.slug}`,
+      availability: print.order_url
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/PreOrder',
+    },
+  }),
+};
 ---
 
 <Layout
   title={`${print.title} — Loja Astromidnight`}
   description={`Print de "${print.title}" (${printSubtitle(print)}). Impressão sob encomenda, envio grátis.`}
+  image={print.detail_image_1_url ?? print.thumb_url}
 >
   <Header />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <BreadcrumbSchema label={print.title} trail={[{ label: 'Loja', href: '/loja' }]} />
   <main class="pt-32 pb-24 sm:pt-36">
     <div class="mx-auto max-w-7xl px-5 sm:px-8">
       <p class="text-sm text-cream-50/55">

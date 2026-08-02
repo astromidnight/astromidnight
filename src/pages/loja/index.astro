@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import BreadcrumbSchema from '../../components/BreadcrumbSchema.astro';
 import { getPublishedPrints, formatPrice, printSubtitle } from '../../lib/prints';
 
 const prints = await getPublishedPrints();
@@ -12,6 +13,7 @@ const prints = await getPublishedPrints();
   description="Compra um print do meu trabalho para a tua parede. Edições impressas sob encomenda, envio grátis."
 >
   <Header />
+  <BreadcrumbSchema label="Loja" />
   <main class="pt-32 pb-24 sm:pt-36">
     <div class="mx-auto max-w-7xl px-5 sm:px-8">
       <p class="reveal text-sm text-cream-50/55">

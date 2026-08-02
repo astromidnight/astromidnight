@@ -1,0 +1,64 @@
+---
+// Aviso de cookies, sitewide (incluído no Layout). "Aceitar" dispara o evento
+// 'am-cookie-consent' que o Analytics.astro ouve para só aí carregar o Google
+// Analytics -- nunca antes (opt-in real, exigido pelo RGPD para cookies de
+// analítica). Cal.com e meteoblue são embeds essenciais ao funcionamento do
+// site e carregam sempre, ver secção "Cookies" em /privacidade.
+//
+// "Gerir cookies" no rodapé (Footer.astro) dispara 'am-cookie-manage' para
+// reabrir este aviso e permitir mudar de ideias.
+---
+
+<div
+  id="cookie-banner"
+  class="fixed inset-x-0 bottom-0 z-[80] hidden justify-center p-4 sm:p-6"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Aviso de cookies"
+>
+  <div
+    class="flex w-full max-w-3xl flex-col items-start gap-4 rounded-2xl border border-cream-50/12 bg-night-900 p-5 shadow-2xl sm:flex-row sm:items-center sm:p-6"
+  >
+    <p class="text-sm leading-relaxed text-cream-50/75">
+      Usamos o Google Analytics para perceber como o site é usado — só com a
+      tua autorização. O motor de reservas e o widget do tempo, de terceiros,
+      podem definir os seus próprios cookies.
+      <a href="/privacidade#cookies" class="whitespace-nowrap text-cream-50 underline underline-offset-2 hover:text-accent-200">
+        Saber mais
+      </a>
+    </p>
+    <div class="flex w-full shrink-0 gap-2 sm:w-auto">
+      <button type="button" id="cookie-reject" class="btn btn-ghost !min-h-0 flex-1 !px-5 !py-2.5 text-sm sm:flex-none">
+        Rejeitar
+      </button>
+      <button type="button" id="cookie-accept" class="btn btn-primary !min-h-0 flex-1 !px-5 !py-2.5 text-sm sm:flex-none">
+        Aceitar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'am-cookie-consent';
+  const banner = document.getElementById('cookie-banner')!;
+
+  if (!localStorage.getItem(KEY)) {
+    banner.classList.remove('hidden');
+    banner.classList.add('flex');
+  }
+
+  const dismiss = (value: 'accepted' | 'rejected') => {
+    localStorage.setItem(KEY, value);
+    window.dispatchEvent(new CustomEvent('am-cookie-consent', { detail: value }));
+    banner.classList.add('hidden');
+    banner.classList.remove('flex');
+  };
+
+  document.getElementById('cookie-accept')!.addEventListener('click', () => dismiss('accepted'));
+  document.getElementById('cookie-reject')!.addEventListener('click', () => dismiss('rejected'));
+
+  window.addEventListener('am-cookie-manage', () => {
+    banner.classList.remove('hidden');
+    banner.classList.add('flex');
+  });
+</script>
