@@ -1,8 +1,9 @@
 ---
-// Formato "maquete", igual ao formulário dos alojamentos (HostSessions.astro)
-// e ao da newsletter: mostra uma nota ao submeter e ainda não liga a backend.
-// Por decidir se vai por Supabase (já é dependência do projeto, para a loja)
-// ou por um serviço de formulários.
+// Envia por Web3Forms (web3forms.com) direto do browser, mesmo padrão do
+// formulário de alojamentos rurais (HostSessions.astro) -- chave própria
+// deste form, ver PUBLIC_WEB3FORMS_CONTACT_KEY no .env.
+const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_CONTACT_KEY;
+
 const subjects = [
   'Reservar uma sessão',
   'Alojamentos rurais',
@@ -25,17 +26,31 @@ const field =
           Preferes escrever?
         </h2>
         <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
-          Diz-me do que precisas e eu respondo. Se for sobre uma noite específica, indica
-          a data que tens em mente.
+          Se ainda tens dúvidas escolhe um tema e envia uma mensagem.
         </p>
       </div>
 
       <form id="contact-form" class="reveal max-w-xl" style="--reveal-delay: 0.05s">
+        <input type="hidden" name="subject" value="Novo contacto — Astromidnight" />
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none" tabindex="-1" autocomplete="off" />
+
         <div class="flex flex-col gap-3">
           <label class="sr-only" for="contact-subject">Assunto</label>
-          <select id="contact-subject" name="assunto" required class:list={[field, 'appearance-none']}>
-            {subjects.map((s) => <option value={s}>{s}</option>)}
-          </select>
+          <div class="relative">
+            <select id="contact-subject" name="assunto" required class:list={[field, 'appearance-none pr-11']}>
+              {subjects.map((s) => <option value={s}>{s}</option>)}
+            </select>
+            <svg
+              class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cream-50/50"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            ><path d="M6 9l6 6 6-6" /></svg>
+          </div>
 
           <label class="sr-only" for="contact-name">O teu nome</label>
           <input
@@ -69,25 +84,55 @@ const field =
             class="w-full rounded-2xl border border-cream-50/25 bg-night-950/60 px-5 py-3 text-cream-50 placeholder:text-cream-50/40 focus:border-accent-300"
           ></textarea>
 
-          <button type="submit" class="btn btn-primary mt-1 w-full sm:w-fit sm:px-10">
+          <button type="submit" id="contact-submit" class="btn btn-primary mt-1 w-full sm:w-fit sm:px-10">
             Enviar mensagem
           </button>
         </div>
 
         <p id="contact-note" class="mt-4 hidden text-sm text-accent-200" role="status">
-          Recebido, respondo assim que puder. (Maquete: ainda não está ligado a nenhum
-          serviço.)
+          Recebido, respondo assim que puder.
+        </p>
+        <p id="contact-error" class="mt-4 hidden text-sm text-red-300" role="status">
+          Não foi possível enviar. Tenta de novo ou escreve para o email de contacto.
         </p>
       </form>
     </div>
   </div>
 </section>
 
-<script>
-  const form = document.getElementById('contact-form') as HTMLFormElement;
-  form.addEventListener('submit', (e) => {
+<script define:vars={{ web3formsKey }}>
+  const form = document.getElementById('contact-form');
+  const submitBtn = document.getElementById('contact-submit');
+  const note = document.getElementById('contact-note');
+  const errorNote = document.getElementById('contact-error');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    document.getElementById('contact-note')!.classList.remove('hidden');
-    form.reset();
+    note.classList.add('hidden');
+    errorNote.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'A enviar…';
+
+    try {
+      const data = new FormData(form);
+      data.append('access_key', web3formsKey);
+
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || `HTTP ${res.status}`);
+
+      note.classList.remove('hidden');
+      form.reset();
+    } catch (err) {
+      console.warn('[contact-form] falha ao enviar via Web3Forms:', err);
+      errorNote.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar mensagem';
+    }
   });
 </script>

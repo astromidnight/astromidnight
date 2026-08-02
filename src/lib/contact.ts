@@ -1,14 +1,13 @@
 // Canais de contacto, num sítio só para não ficarem meio-atualizados
 // espalhados pelo site (secção da comunidade na homepage + página /contacto).
 
-// WhatsApp Business ainda por definir. Assim que houver número, trocar por
-// 'https://wa.me/351XXXXXXXXX' e os botões passam a funcionar em todo o
-// lado sozinhos -- ver hasWhatsapp() para o estado desativado.
-export const WHATSAPP_URL: string | null = null;
+const WHATSAPP_NUMBER = '351966702498';
+const WHATSAPP_MESSAGE = 'Olá! Vim do site da Astromidnight e tenho uma dúvida.';
 
-// Email que está publicado no site atual (astromidnight.pt/contacts). Por
-// decidir se passa para um do domínio, ex. ola@astromidnight.pt.
-export const EMAIL = 'davidbernardocruz@gmail.com';
+export const WHATSAPP_URL: string | null =
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
+export const EMAIL = 'info@astromidnight.pt';
 
 export const INSTAGRAM_HANDLE = '@astro.midnight';
 export const INSTAGRAM_URL = 'https://www.instagram.com/astro.midnight/';
