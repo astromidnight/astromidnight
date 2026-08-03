@@ -190,6 +190,13 @@ function buildMonth(y: number, m: number) {
     const phase = phasesByDay.get(day);
     const inDark =
       !!darkWindow && day >= darkWindow.start && day <= darkWindow.end;
+    const dateKey = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dayEvents = evByDay.get(day) ?? [];
+    // Sem eventos e sem nenhum serviço com vaga: noite fechada, tratamento
+    // visual próprio na célula (ver .day-cell.is-closed abaixo).
+    const closed =
+      dayEvents.length === 0 &&
+      servicesForNight(illum, dateKey).every((s) => !s.available);
     return {
       day,
       illum,
@@ -200,8 +207,9 @@ function buildMonth(y: number, m: number) {
       isToday: day === todayDay,
       isPast: y === CUR_Y && m === CUR_M && day < TODAY,
       inDark,
+      closed,
       verdict: nightQuality(illum, lang).verdict,
-      events: evByDay.get(day) ?? [],
+      events: dayEvents,
     };
   });
 
@@ -394,24 +402,31 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
                           ? 'ring-1 ring-inset ring-accent-300/40'
                           : cell.inDark && 'ring-1 ring-inset ring-accent-300/20',
                       ]}
-                      style={`background-color: rgba(232,232,232,${cell.wash})`}
+                      style={
+                        cell.closed
+                          ? `background-color: rgba(232,232,232,${cell.wash}); background-image: repeating-linear-gradient(135deg, rgba(232,232,232,0.06) 0px, rgba(232,232,232,0.06) 1px, transparent 1px, transparent 7px);`
+                          : `background-color: rgba(232,232,232,${cell.wash})`
+                      }
                       data-i={i}
                       data-day={cell.day}
-                      aria-label={`${lang === 'en' ? `${mv.monthName} ${cell.day}` : `${cell.day} de ${mv.monthName}`} — ${cell.isPast ? t('calendar.alreadyPast') : `${cell.verdict}, ${t('calendar.moonWordLower')} ${cell.illum}%`}`}
+                      aria-label={`${lang === 'en' ? `${mv.monthName} ${cell.day}` : `${cell.day} de ${mv.monthName}`} — ${cell.isPast ? t('calendar.alreadyPast') : cell.closed ? t('calendar.observatorioFechado') : `${cell.verdict}, ${t('calendar.moonWordLower')} ${cell.illum}%`}`}
                     >
                       <span
                         class:list={[
                           'text-xs',
+                          cell.closed && 'absolute left-2 top-1/2 -translate-y-1/2',
                           cell.isToday
                             ? 'font-semibold text-accent-200'
-                            : cell.events.length || cell.inDark
-                              ? 'font-medium text-cream-50'
-                              : 'text-cream-50/40',
+                            : cell.closed
+                              ? 'text-cream-50/25'
+                              : cell.events.length || cell.inDark
+                                ? 'font-medium text-cream-50'
+                                : 'text-cream-50/40',
                         ]}
                       >
                         {cell.day}
                       </span>
-                      {cell.phaseType && (
+                      {cell.phaseType && !cell.closed && (
                         <span
                           class="absolute right-2 top-1/2 h-5 w-5 shrink-0 -translate-y-1/2 text-cream-50 sm:h-6 sm:w-6"
                           role="img"
@@ -420,14 +435,21 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
                           set:html={moonSvg(cell.phaseType)}
                         />
                       )}
-                      <span
-                        class="weather-badge hidden absolute inset-x-2 bottom-2 items-center justify-end gap-1 text-[0.6rem] leading-tight text-cream-50/55 sm:text-xs"
-                        data-weather-badge
-                      >
-                        <span class="whitespace-nowrap" data-weather-text />
-                        <span class="hidden whitespace-nowrap lg:inline">&nbsp;{t('calendar.cloudsSuffix')}</span>
-                        <span class="h-3 w-3 shrink-0" aria-hidden="true" data-weather-icon />
-                      </span>
+                      {cell.closed ? (
+                        <span class="absolute inset-x-2 top-2 text-[0.65rem] leading-tight text-cream-50/45">
+                          <span class="hidden sm:inline">{t('calendar.observatorioFechado')}</span>
+                          <span class="block h-1 w-1 rounded-full bg-cream-50/25 sm:hidden" aria-hidden="true" />
+                        </span>
+                      ) : (
+                        <span
+                          class="weather-badge hidden absolute inset-x-2 bottom-2 items-center justify-end gap-1 text-[0.6rem] leading-tight text-cream-50/55 sm:text-xs"
+                          data-weather-badge
+                        >
+                          <span class="whitespace-nowrap" data-weather-text />
+                          <span class="hidden whitespace-nowrap lg:inline">&nbsp;{t('calendar.cloudsSuffix')}</span>
+                          <span class="h-3 w-3 shrink-0" aria-hidden="true" data-weather-icon />
+                        </span>
+                      )}
                       {cell.events.map((ev) => (
                         <span
                           class="day-event mt-1.5 block truncate rounded bg-accent-400/15 px-1.5 py-1 text-[0.65rem] leading-tight text-accent-200"
