@@ -2,7 +2,11 @@
 // cada build via Places API -- nunca no browser, a chave fica só no
 // servidor (ver GOOGLE_PLACES_API_KEY no .env). Sem chave ou em caso de
 // falha, devolve null e a secção cai no que já lá estiver -- nunca rebenta
-// o build (mesmo princípio de lib/prints.ts e lib/calcom.ts).
+// o build (mesmo princípio de lib/prints.ts e lib/calcom.ts). Como o
+// número de reviews muda sem alterar código nenhum, um "Redeploy" na
+// Vercel sobre um deployment já existente pode reaproveitar o output
+// antigo -- só um build novo a partir de um commit garante ir buscar as
+// reviews atuais.
 const PLACE_ID = 'ChIJsTSYGOLBGQ0RVFFE5LTN1bI';
 
 export type PlaceReview = {
