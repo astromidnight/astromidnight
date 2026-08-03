@@ -2,13 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import EditingHero from '../components/EditingHero.astro';
-import EditingWhoFor from '../components/EditingWhoFor.astro';
-import EditingBeforeAfter from '../components/EditingBeforeAfter.astro';
-import EditingTopics from '../components/EditingTopics.astro';
-import EditingApproach from '../components/EditingApproach.astro';
-import EditingHowItWorks from '../components/EditingHowItWorks.astro';
-import EditingCta from '../components/EditingCta.astro';
+import EdicaoDeImagemPageContent from '../components/EdicaoDeImagemPageContent.astro';
 ---
 
 <Layout
@@ -16,14 +10,6 @@ import EditingCta from '../components/EditingCta.astro';
   description="Sessão individual de 2 horas, online, para editares os teus dados de céu profundo com confiança. Do PixInsight à edição não destrutiva em Photoshop."
 >
   <Header />
-  <main class="pt-28 sm:pt-32">
-    <EditingHero />
-    <EditingWhoFor />
-    <EditingBeforeAfter />
-    <EditingTopics />
-    <EditingApproach />
-    <EditingHowItWorks />
-    <EditingCta />
-  </main>
+  <EdicaoDeImagemPageContent />
   <Footer />
 </Layout>

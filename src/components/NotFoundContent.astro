@@ -1,0 +1,36 @@
+---
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
+const links = [
+  { label: t('nav.observacao'), href: '/observacao-noturna' },
+  { label: t('nav.retratos'), href: '/retratos' },
+  { label: t('notfound.lojaLink'), href: '/loja' },
+  { label: t('nav.contacto'), href: '/contacto' },
+];
+---
+
+<main class="starfield flex min-h-[80svh] items-center pt-28 sm:pt-32">
+  <div class="mx-auto w-full max-w-3xl px-5 text-center sm:px-8">
+    <p class="eyebrow mb-4">{t('notfound.eyebrow')}</p>
+    <h1 class="text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]">
+      {t('notfound.title')}
+    </h1>
+    <p class="mx-auto mt-6 max-w-lg text-base leading-relaxed text-cream-50/75 sm:text-lg">
+      {t('notfound.desc')}
+    </p>
+
+    <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a href={localizeHref('/', lang)} class="btn btn-primary">{t('notfound.backHome')}</a>
+      {
+        links.map((l) => (
+          <a href={localizeHref(l.href, lang)} class="btn btn-ghost">
+            {l.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</main>

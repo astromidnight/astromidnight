@@ -1,43 +1,45 @@
 ---
-import MediaPlaceholder from './MediaPlaceholder.astro';
 import BreadcrumbSchema from './BreadcrumbSchema.astro';
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const ASTRO_PRICE = 95;
 const calLink = calLinkPath(CAL_LINKS.mentorship);
 
 const facts = [
-  { value: 'Até 4h', label: 'por sessão' },
-  { value: `${ASTRO_PRICE}€`, label: 'preço fixo' },
-  { value: '1 para 1', label: 'sessão personalizada' },
-  { value: 'Presencial', label: 'no observatório' },
+  { value: t('astro.factDuration'), label: t('astro.factDurationLabel') },
+  { value: `${ASTRO_PRICE}€`, label: t('astro.factPriceLabel') },
+  { value: t('astro.fact1to1'), label: t('astro.fact1to1Label') },
+  { value: t('astro.factPresencial'), label: t('astro.factPresencialLabel') },
 ];
 ---
 
 <section class="relative pb-16 sm:pb-20">
-  <BreadcrumbSchema label="Astrofotografia" />
+  <BreadcrumbSchema label={t('nav.astrofotografia')} />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
-      <a href="/" class="transition-colors hover:text-cream-50">Início</a>
+      <a href={localizeHref('/', lang)} class="transition-colors hover:text-cream-50">{t('breadcrumb.inicio')}</a>
       <span class="mx-1.5">/</span>
-      <span class="text-cream-50/80">Astrofotografia</span>
+      <span class="text-cream-50/80">{t('nav.astrofotografia')}</span>
     </p>
 
     <div class="mt-10 grid items-center gap-12 lg:grid-cols-[6fr_5fr] lg:gap-16">
       <div>
-        <p class="eyebrow reveal mb-4">Astrofotografia</p>
+        <p class="eyebrow reveal mb-4">{t('nav.astrofotografia')}</p>
         <h1
           class="reveal max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]"
           style="--reveal-delay: 0.05s"
         >
-          Uma noite, o teu caminho
+          {t('astro.title')}
         </h1>
         <p
           class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
           style="--reveal-delay: 0.1s"
         >
-          Workshop privado no observatório, só para ti. Escolhes se queres levar a Via
-          Láctea sobre a paisagem alentejana ou mergulhar no céu profundo ao telescópio.
+          {t('astro.heroDesc')}
         </p>
 
         <dl
@@ -61,17 +63,22 @@ const facts = [
 
         <div class="reveal mt-10 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
           <button type="button" data-book-link={calLink} class="btn btn-primary">
-            Reservar workshop
+            {t('astro.bookWorkshop')}
           </button>
-          <a href="#caminhos" class="btn btn-ghost">Ver os dois caminhos</a>
+          <a href="#caminhos" class="btn btn-ghost">{t('astro.seeTwoPaths')}</a>
         </div>
       </div>
 
       <div class="reveal mx-auto w-full max-w-lg lg:max-w-none" style="--reveal-delay: 0.1s">
-        <MediaPlaceholder
-          label="Sessão de astrofotografia no observatório"
-          class="aspect-[4/3]"
-        />
+        <video
+          class="aspect-[4/3] w-full rounded-2xl object-cover"
+          src="/videos/astrofotografia.mp4"
+          poster="/posters/astrofotografia.jpg"
+          autoplay
+          muted
+          loop
+          playsinline
+          aria-hidden="true"></video>
       </div>
     </div>
   </div>

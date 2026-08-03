@@ -11,15 +11,23 @@ export type PhaseType = 'new' | 'first' | 'full' | 'last';
 export interface MoonPhase {
   day: number; // dia do mês (hora local)
   type: PhaseType;
-  label: string; // rótulo em pt-PT
+  label: string; // rótulo no idioma pedido a moonPhasesInMonth (pt por omissão)
   time: string; // "HH:MM" hora local
 }
 
-const PHASE_LABEL: Record<PhaseType, string> = {
-  new: 'Lua Nova',
-  first: 'Quarto Crescente',
-  full: 'Lua Cheia',
-  last: 'Quarto Minguante',
+const PHASE_LABEL: Record<'pt' | 'en', Record<PhaseType, string>> = {
+  pt: {
+    new: 'Lua Nova',
+    first: 'Quarto Crescente',
+    full: 'Lua Cheia',
+    last: 'Quarto Minguante',
+  },
+  en: {
+    new: 'New Moon',
+    first: 'First Quarter',
+    full: 'Full Moon',
+    last: 'Last Quarter',
+  },
 };
 
 const PHASE_OFFSET: Record<PhaseType, number> = {
@@ -250,13 +258,20 @@ export function moonIlluminationByDay(
   return map;
 }
 
+/** Nome da fase num idioma -- mesma fonte usada em moonPhasesInMonth, para a
+ * legenda do calendário (Calendar.astro) nunca ficar dessincronizada. */
+export function phaseLabel(type: PhaseType, lang: 'pt' | 'en' = 'pt'): string {
+  return PHASE_LABEL[lang][type];
+}
+
 /**
  * Fases principais da Lua que ocorrem no mês indicado (1-12), ordenadas por dia.
  */
 export function moonPhasesInMonth(
   year: number,
   month: number,
-  timeZone = 'Europe/Lisbon'
+  timeZone = 'Europe/Lisbon',
+  lang: 'pt' | 'en' = 'pt'
 ): MoonPhase[] {
   const decimalYear = year + (month - 0.5) / 12;
   const kBase = Math.round((decimalYear - 2000) * 12.3685);
@@ -270,7 +285,7 @@ export function moonPhasesInMonth(
         timeZone
       );
       if (y === year && m === month) {
-        out.push({ day, type, label: PHASE_LABEL[type], time });
+        out.push({ day, type, label: PHASE_LABEL[lang][type], time });
       }
     }
   }

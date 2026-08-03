@@ -1,6 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 // Bloco que junta mais do que um produto (ver "Aprende" na homepage): em vez
 // do preço e de um único par de botões, mostra "Saber mais" e um botão
@@ -111,11 +115,11 @@ const {
               class="reveal text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40"
               style="--reveal-delay: 0.15s"
             >
-              Saber mais
+              {t('pillar.saberMais')}
             </p>
             <div class="reveal mt-4 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
               {offers.map((o) => (
-                <a href={o.href} class="btn btn-primary">
+                <a href={localizeHref(o.href, lang)} class="btn btn-primary">
                   {o.label}
                 </a>
               ))}
@@ -126,8 +130,8 @@ const {
             <button type="button" data-open-stargazing class="btn btn-primary">
               {ctaLabel}
             </button>
-            <a href="/observacao-noturna" class="btn btn-ghost">
-              Saber mais
+            <a href={localizeHref('/observacao-noturna', lang)} class="btn btn-ghost">
+              {t('pillar.saberMais')}
             </a>
           </div>
         ) : id === 'retratos' ? (
@@ -135,8 +139,8 @@ const {
             <a href="#calendario" class="btn btn-primary">
               {ctaLabel}
             </a>
-            <a href="/retratos" class="btn btn-ghost">
-              Saber mais
+            <a href={localizeHref('/retratos', lang)} class="btn btn-ghost">
+              {t('pillar.saberMais')}
             </a>
           </div>
         ) : (

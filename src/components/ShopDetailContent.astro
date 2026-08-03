@@ -1,0 +1,166 @@
+---
+import BreadcrumbSchema from './BreadcrumbSchema.astro';
+import {
+  formatPrice,
+  formatDistance,
+  formatExposure,
+  formatDateRange,
+  printSubtitle,
+  type Print,
+} from '../lib/prints';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+interface Props {
+  print: Print;
+}
+
+const { print } = Astro.props;
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
+const legendLines: string[] = [];
+if (print.category === 'deep-sky' && print.constellation) {
+  legendLines.push(
+    print.constellation === 'Solar System Event'
+      ? print.constellation
+      : `${t('shop.constellationPrefix')} ${print.constellation}`
+  );
+}
+if (print.category === 'nightscape' && print.location) legendLines.push(print.location);
+if (print.exposure_minutes != null) legendLines.push(formatExposure(print.exposure_minutes, lang));
+if (print.distance_ly != null && print.distance_unit) {
+  legendLines.push(formatDistance(print.distance_ly, print.distance_unit, lang));
+}
+if (print.capture_date_start && print.capture_date_end) {
+  legendLines.push(formatDateRange(print.capture_date_start, print.capture_date_end, lang));
+}
+
+const productUrl = `https://astromidnight.pt${localizeHref(`/loja/${print.slug}`, lang)}`;
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: print.title,
+  description: printSubtitle(print),
+  image: print.detail_image_1_url ?? print.thumb_url,
+  url: productUrl,
+  ...(print.price_cents != null && {
+    offers: {
+      '@type': 'Offer',
+      price: (print.price_cents / 100).toFixed(2),
+      priceCurrency: print.currency,
+      url: productUrl,
+      availability: print.order_url
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/PreOrder',
+    },
+  }),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+<BreadcrumbSchema label={print.title} trail={[{ label: t('nav.loja'), href: '/loja' }]} />
+<main class="pt-32 pb-24 sm:pt-36">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <p class="text-sm text-cream-50/55">
+      <a href={localizeHref('/', lang)} class="transition-colors hover:text-cream-50">{t('breadcrumb.inicio')}</a>
+      <span class="mx-1.5">/</span>
+      <a href={localizeHref('/loja', lang)} class="transition-colors hover:text-cream-50">{t('nav.loja')}</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-cream-50/80">{print.title}</span>
+    </p>
+
+    <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div class="flex flex-col gap-4">
+        <div class="overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900">
+          <img
+            src={print.detail_image_1_url ?? print.thumb_url}
+            alt={`Print «${print.title}» ${t('shop.printAltSuffix')}`}
+            class="w-full object-cover"
+          />
+        </div>
+        {print.detail_image_2_url && (
+          <div class="overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900">
+            <img
+              src={print.detail_image_2_url}
+              alt={`Print «${print.title}» ${t('shop.detailAltSuffix')}`}
+              loading="lazy"
+              class="w-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h1 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{print.title}</h1>
+        <p class="mt-2 text-cream-50/60">{printSubtitle(print)}</p>
+
+        {print.size && (
+          <div class="mt-8">
+            <p class="text-sm text-cream-50/70">{t('shop.sizeLabel')}</p>
+            <span
+              class="mt-2 inline-flex rounded-full border border-cream-50/20 px-4 py-2 text-sm"
+            >
+              {print.size}
+            </span>
+          </div>
+        )}
+
+        {print.price_cents != null && (
+          <p class="mt-6 text-3xl font-bold text-accent-200">
+            {formatPrice(print.price_cents, print.currency)}
+          </p>
+        )}
+        {print.free_shipping && (
+          <p class="mt-1 text-sm text-cream-50/70">{t('shop.freeShipping')}</p>
+        )}
+
+        {print.order_url ? (
+          <a
+            href={print.order_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary mt-6"
+          >
+            {t('shop.order')}
+          </a>
+        ) : (
+          <p class="mt-6 text-sm text-cream-50/50">{t('shop.comingSoon')}</p>
+        )}
+
+        {legendLines.length > 0 && (
+          <div class="mt-10">
+            <p class="font-bold">{t('shop.captionLabel')}</p>
+            <div class="mt-3 flex flex-col gap-1 text-sm text-cream-50/70">
+              <p>{print.title}</p>
+              {legendLines.map((line) => (
+                <p>{line}</p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="mt-10">
+          <p class="font-bold">{t('shop.paperLabel')}</p>
+          <p class="mt-3 text-sm leading-relaxed text-cream-50/70">
+            {t('shop.paperDesc')}
+          </p>
+          <ul class="mt-3 list-disc pl-5 text-sm text-cream-50/70">
+            <li>FUJIFILM Crystal Archive DP II</li>
+            <li>{t('shop.paperBullet2')}</li>
+          </ul>
+        </div>
+
+        <div class="mt-10">
+          <p class="font-bold">{t('shop.shippingLabel')}</p>
+          <ul class="mt-3 list-disc pl-5 text-sm leading-relaxed text-cream-50/70">
+            <li>{t('shop.shipBullet1')}</li>
+            <li>{t('shop.shipBullet2')}</li>
+            <li>{t('shop.shipBullet3')}</li>
+            <li>{t('shop.shipBullet4')}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

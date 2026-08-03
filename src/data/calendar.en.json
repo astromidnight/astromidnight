@@ -1,0 +1,41 @@
+{
+  "evergreen": [
+    {
+      "dateLabel": "Sempre",
+      "title": "Stargazing",
+      "subtitle": "Every clear night, up to 4 adults (kids go free)",
+      "type": "stargazing",
+      "typeLabel": "Stargazing",
+      "price": "45€",
+      "priceUnit": "per adult",
+      "cta": "Book"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Portraits Under the Stars",
+      "subtitle": "A one-hour session dedicated to portraits",
+      "type": "retratos",
+      "typeLabel": "Portraits",
+      "price": "160€",
+      "cta": "Book"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Astrophotography",
+      "subtitle": "A private session of up to 4 hours dedicated to landscape or deep-sky astrophotography.",
+      "type": "mentorship",
+      "typeLabel": "Mentorship",
+      "price": "95€",
+      "cta": "Book"
+    },
+    {
+      "dateLabel": "Sempre",
+      "title": "Deep-sky image editing",
+      "subtitle": "A two-hour online session dedicated to deep-sky image editing.",
+      "type": "editing-mentorship",
+      "typeLabel": "Mentorship",
+      "price": "75€",
+      "cta": "Book"
+    }
+  ]
+}

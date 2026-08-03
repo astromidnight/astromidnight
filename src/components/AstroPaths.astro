@@ -1,70 +1,99 @@
 ---
-import MediaPlaceholder from './MediaPlaceholder.astro';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import nightscapeImg from '../assets/AstroNightscape.jpg';
+import deepskyImg from '../assets/AstroDeepsky.jpg';
+import { useTranslations } from '../i18n/utils';
 
 // ATENÇÃO: os tópicos dos dois caminhos são um rascunho meu, feito a pedido
 // do David por não existir conteúdo de origem (o site antigo não tem página
 // de workshops de astrofotografia). Tem de ser revisto por ele antes de
-// publicar, tal como aconteceu com o FAQ da observação noturna.
+// publicar, tal como aconteceu com o FAQ da observação noturna. Conteúdo
+// bilingue inline (não no dicionário i18n/ui.ts): só usado aqui.
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
+type Bi = { pt: string; en: string };
 type Path = {
   tag: string;
-  title: string;
-  desc: string;
-  topics: string[];
-  gear: string;
-  placeholder: string;
+  title: Bi;
+  desc: Bi;
+  topics: Bi[];
+  gear: Bi;
+  image: ImageMetadata;
+  alt: Bi;
 };
 
 const paths: Path[] = [
   {
     tag: 'Nightscape',
-    title: 'Astrofotografia de paisagem',
-    desc: 'A Via Láctea sobre o Alentejo, com máquina e tripé. Aprendes a planear a noite, a fotografar no escuro e a montar a imagem final.',
+    title: { pt: 'Astrofotografia de paisagem', en: 'Landscape astrophotography' },
+    desc: {
+      pt: 'A Via Láctea sobre o Alentejo, com máquina e tripé. Aprendes a planear a noite, a fotografar no escuro e a montar a imagem final.',
+      en: 'The Milky Way over Alentejo, with a camera and a tripod. You learn to plan the night, shoot in the dark and put together the final image.',
+    },
     topics: [
-      'Planear a noite: fase da lua, posição da Via Láctea e escolha do local',
-      'Definições da máquina no escuro: ISO, abertura e tempo de exposição',
-      'Focar nas estrelas, que é onde quase toda a gente falha',
-      'Composição com primeiro plano, o que faz uma paisagem noturna funcionar',
-      'Painéis e panorâmicas para apanhar o arco da Via Láctea',
-      'Captar o céu e a terra em separado, para expor bem os dois',
+      { pt: 'Planear a noite: fase da lua, posição da Via Láctea e escolha do local', en: 'Planning the night: moon phase, Milky Way position and choosing the spot' },
+      { pt: 'Definições da máquina no escuro: ISO, abertura e tempo de exposição', en: 'Camera settings in the dark: ISO, aperture and exposure time' },
+      { pt: 'Focar nas estrelas, que é onde quase toda a gente falha', en: 'Focusing on the stars, where almost everyone struggles' },
+      { pt: 'Composição com primeiro plano, o que faz uma paisagem noturna funcionar', en: 'Composing with a foreground, what makes a nightscape work' },
+      { pt: 'Painéis e panorâmicas para apanhar o arco da Via Láctea', en: 'Panels and panoramas to capture the Milky Way arch' },
+      { pt: 'Captar o céu e a terra em separado, para expor bem os dois', en: 'Capturing sky and land separately, to expose both correctly' },
     ],
-    gear: 'Trazes a tua máquina, uma objetiva grande angular luminosa e um tripé estável. Se não tiveres tripé, empresto eu.',
-    placeholder: 'Via Láctea sobre a paisagem',
+    gear: {
+      pt: 'Trazes a tua máquina, uma objetiva grande angular luminosa e um tripé estável. Se não tiveres tripé, empresto eu.',
+      en: "Bring your camera, a fast wide-angle lens and a sturdy tripod. If you don't have a tripod, I'll lend you one.",
+    },
+    image: nightscapeImg,
+    alt: {
+      pt: 'Arco da Via Láctea sobre uma albufeira no Alentejo, com o horizonte iluminado ao fundo',
+      en: 'The Milky Way arch over a reservoir in Alentejo, with a lit-up horizon in the background',
+    },
   },
   {
     tag: 'Deep-sky',
-    title: 'Astrofotografia de céu profundo',
-    desc: 'Nebulosas e galáxias com telescópio e montagem equatorial. Do alinhamento polar às primeiras imagens.',
+    title: { pt: 'Astrofotografia de céu profundo', en: 'Deep-sky astrophotography' },
+    desc: {
+      pt: 'Nebulosas e galáxias com telescópio e montagem equatorial. Do alinhamento polar às primeiras imagens.',
+      en: 'Nebulae and galaxies with a telescope and equatorial mount. From polar alignment to your first images.',
+    },
     topics: [
-      'Montar e equilibrar a montagem equatorial',
-      'Alinhamento polar, que decide a qualidade de tudo o resto',
-      'Focagem precisa com máscara de Bahtinov',
-      'Escolher o alvo certo para a noite e para o teu equipamento',
-      'Enquadrar e centrar o alvo com plate solving',
-      'Autoguiagem, e porque é que as estrelas saem alongadas',
-      'Planear a sessão: tempos de exposição, ganho e filtros',
-      'Calibração: darks, flats e bias, e para que servem',
+      { pt: 'Montar e equilibrar a montagem equatorial', en: 'Setting up and balancing the equatorial mount' },
+      { pt: 'Alinhamento polar, que decide a qualidade de tudo o resto', en: 'Polar alignment, which decides the quality of everything else' },
+      { pt: 'Focagem precisa com máscara de Bahtinov', en: 'Precise focusing with a Bahtinov mask' },
+      { pt: 'Escolher o alvo certo para a noite e para o teu equipamento', en: 'Choosing the right target for the night and your gear' },
+      { pt: 'Enquadrar e centrar o alvo com plate solving', en: 'Framing and centering the target with plate solving' },
+      { pt: 'Autoguiagem, e porque é que as estrelas saem alongadas', en: 'Autoguiding, and why stars come out elongated' },
+      { pt: 'Planear a sessão: tempos de exposição, ganho e filtros', en: 'Planning the session: exposure times, gain and filters' },
+      { pt: 'Calibração: darks, flats e bias, e para que servem', en: 'Calibration: darks, flats and bias, and what they do' },
     ],
-    gear: 'Se tens telescópio e montagem, trabalhamos com o teu equipamento. Se não tens, usamos o do observatório.',
-    placeholder: 'Telescópio a fotografar céu profundo',
+    gear: {
+      pt: 'Se tens telescópio e montagem, trabalhamos com o teu equipamento. Se não tens, usamos o do observatório.',
+      en: "If you have a telescope and mount, we'll work with your gear. If not, we'll use the observatory's.",
+    },
+    image: deepskyImg,
+    alt: {
+      pt: 'Enxame estelar azul imerso em nebulosidade vermelha, num campo denso de estrelas',
+      en: 'A blue star cluster immersed in red nebulosity, in a dense field of stars',
+    },
   },
 ];
 ---
 
 <section id="caminhos" class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Os dois caminhos</p>
+    <p class="eyebrow reveal mb-4">{t('astro.pathsEyebrow')}</p>
     <h2
       class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
       style="--reveal-delay: 0.05s"
     >
-      Escolhes tu, a reserva é a mesma
+      {t('astro.pathsTitle')}
     </h2>
     <p
       class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
       style="--reveal-delay: 0.1s"
     >
-      Não tens de decidir na altura de pagar. Depois de reservares, dizes-me qual dos dois
-      caminhos queres seguir e eu preparo a noite a pensar nisso.
+      {t('astro.pathsDesc')}
     </p>
 
     <div class="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-8">
@@ -74,29 +103,35 @@ const paths: Path[] = [
             class="reveal flex flex-col overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900"
             style={`--reveal-delay: ${0.15 + i * 0.05}s`}
           >
-            <MediaPlaceholder label={p.placeholder} class="aspect-[16/9] rounded-none border-0 border-b border-dashed" />
+            <Image
+              src={p.image}
+              alt={p.alt[lang]}
+              class="aspect-[16/9] w-full object-cover"
+              widths={[400, 600, 900]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
 
             <div class="flex flex-1 flex-col p-6 sm:p-8">
               <span class="w-fit rounded-full border border-accent-400/35 px-3 py-1 text-xs font-medium text-accent-200">
                 {p.tag}
               </span>
-              <h3 class="mt-4 text-xl font-bold leading-snug sm:text-2xl">{p.title}</h3>
-              <p class="mt-3 text-base leading-relaxed text-cream-50/70">{p.desc}</p>
+              <h3 class="mt-4 text-xl font-bold leading-snug sm:text-2xl">{p.title[lang]}</h3>
+              <p class="mt-3 text-base leading-relaxed text-cream-50/70">{p.desc[lang]}</p>
 
               <p class="mt-7 text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
-                O que vamos ver
+                {t('astro.whatWeSee')}
               </p>
               <ul class="mt-4 space-y-2">
-                {p.topics.map((t) => (
+                {p.topics.map((topic) => (
                   <li class="flex gap-3 text-sm leading-relaxed text-cream-50/70">
                     <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent-300/70" aria-hidden="true" />
-                    {t}
+                    {topic[lang]}
                   </li>
                 ))}
               </ul>
 
               <p class="mt-auto pt-7 text-sm leading-relaxed text-cream-50/55">
-                <span class="font-medium text-cream-50/80">Equipamento.</span> {p.gear}
+                <span class="font-medium text-cream-50/80">{t('astro.gear')}</span> {p.gear[lang]}
               </p>
             </div>
           </article>

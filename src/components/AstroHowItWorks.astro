@@ -1,25 +1,20 @@
 ---
 import { LOCATION, MAPS_URL } from '../lib/contact';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 // A política de mau tempo é a mesma da observação noturna, confirmada pelo
 // David: remarcação ou reembolso total.
 const steps = [
+  { title: t('astro.howStep1Title'), desc: t('astro.howStep1Desc') },
+  { title: t('astro.howStep2Title'), desc: t('astro.howStep2Desc') },
   {
-    title: 'Reservas a sessão',
-    desc: 'Escolhes no calendário e pagas na reserva. São até 4 horas, sigas o caminho que seguires.',
+    title: t('astro.howStep3Title'),
+    desc: `${t('astro.howStep3DescPrefix')} ${LOCATION}${t('astro.howStep3DescSuffix')}`,
   },
-  {
-    title: 'Combinamos a noite',
-    desc: 'Depois da reserva falo contigo para acertarmos a data e qual dos dois caminhos queres seguir.',
-  },
-  {
-    title: 'Vens ao observatório',
-    desc: `A sessão é presencial, em ${LOCATION}. Como é um espaço privado, a morada exata segue no email de confirmação.`,
-  },
-  {
-    title: 'Se o tempo não ajudar',
-    desc: 'Remarcamos para outra noite ou devolvo o valor por inteiro. Nunca perdes o que pagaste por causa das nuvens.',
-  },
+  { title: t('astro.howStep4Title'), desc: t('astro.howStep4Desc') },
 ];
 ---
 
@@ -27,16 +22,15 @@ const steps = [
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
       <div class="reveal">
-        <p class="eyebrow mb-4">Como funciona</p>
+        <p class="eyebrow mb-4">{t('howItWorks.eyebrow')}</p>
         <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-          Da reserva à noite no observatório
+          {t('astro.howTitle')}
         </h2>
         <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
-          Traz roupa quente e calçado fechado. Mesmo no verão, as noites no Alentejo
-          arrefecem bastante depois do pôr do sol.
+          {t('astro.howDesc')}
         </p>
         <a href={MAPS_URL} target="_blank" rel="noopener" class="btn btn-ghost mt-8">
-          Ver no mapa
+          {t('contact.seeMap')}
         </a>
       </div>
 

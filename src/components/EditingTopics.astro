@@ -1,79 +1,103 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
 // Os seis cursos separados do site atual (astromidnight.pt/courses) passam
 // aqui a temas possíveis para a MESMA sessão de 2h, em vez de produtos
 // distintos. As agendas e requisitos são os que já lá estavam, traduzidos.
 // Nomes de processos e scripts ficam em inglês, que é como aparecem no
-// PixInsight e no Photoshop.
+// PixInsight e no Photoshop. Conteúdo bilingue inline (não no i18n/ui.ts):
+// técnico e só usado aqui.
+type Bi = { pt: string; en: string };
 type Topic = {
   code: string;
-  title: string;
-  desc: string;
-  agenda: string[];
-  needs: string[];
+  title: Bi;
+  desc: Bi;
+  agenda: Bi[];
+  needs: Bi[];
 };
 
 const foundations: Topic[] = [
   {
     code: '1.1',
-    title: 'Fluxo cor ou mono',
-    desc: 'As bases do processamento de imagem one-shot color ou mono em PixInsight.',
+    title: { pt: 'Fluxo cor ou mono', en: 'Color or mono workflow' },
+    desc: {
+      pt: 'As bases do processamento de imagem one-shot color ou mono em PixInsight.',
+      en: 'The basics of one-shot color or mono image processing in PixInsight.',
+    },
     agenda: [
-      'Análise do stack',
-      'Visão geral do fluxo de trabalho',
-      'Corte da imagem',
-      'Image solver',
-      'Correção de estrelas',
-      'Remoção de gradientes',
-      'Calibração de cor',
-      'Redução e sharpening de estrelas',
-      'Redução de ruído',
-      'Separar as estrelas',
-      'Stretch da imagem starless',
-      'Stretch das estrelas',
-      'Máscaras de intervalo',
-      'Juntar estrelas e starless',
-      'Curvas',
+      { pt: 'Análise do stack', en: 'Stack analysis' },
+      { pt: 'Visão geral do fluxo de trabalho', en: 'Workflow overview' },
+      { pt: 'Corte da imagem', en: 'Cropping the image' },
+      { pt: 'Image solver', en: 'Image solver' },
+      { pt: 'Correção de estrelas', en: 'Star correction' },
+      { pt: 'Remoção de gradientes', en: 'Gradient removal' },
+      { pt: 'Calibração de cor', en: 'Color calibration' },
+      { pt: 'Redução e sharpening de estrelas', en: 'Star reduction and sharpening' },
+      { pt: 'Redução de ruído', en: 'Noise reduction' },
+      { pt: 'Separar as estrelas', en: 'Separating the stars' },
+      { pt: 'Stretch da imagem starless', en: 'Stretching the starless image' },
+      { pt: 'Stretch das estrelas', en: 'Stretching the stars' },
+      { pt: 'Máscaras de intervalo', en: 'Range masks' },
+      { pt: 'Juntar estrelas e starless', en: 'Combining stars and starless' },
+      { pt: 'Curvas', en: 'Curves' },
     ],
-    needs: ['Stacks a cor ou mono', 'PixInsight', 'Scripts RC-Astro (opcional)'],
+    needs: [
+      { pt: 'Stacks a cor ou mono', en: 'Color or mono stacks' },
+      { pt: 'PixInsight', en: 'PixInsight' },
+      { pt: 'Scripts RC-Astro (opcional)', en: 'RC-Astro scripts (optional)' },
+    ],
   },
   {
     code: '1.2',
-    title: 'Fluxo dualband ou narrowband',
-    desc: 'As bases do processamento de imagem dualband ou narrowband em PixInsight.',
+    title: { pt: 'Fluxo dualband ou narrowband', en: 'Dualband or narrowband workflow' },
+    desc: {
+      pt: 'As bases do processamento de imagem dualband ou narrowband em PixInsight.',
+      en: 'The basics of dualband or narrowband image processing in PixInsight.',
+    },
     agenda: [
-      'Análise do stack',
-      'Visão geral do fluxo de trabalho',
-      'Corte da imagem',
-      'Image solver',
-      'Correção de estrelas',
-      'Remoção de gradientes',
-      'Calibração de cor (HOO)',
-      'Redução e sharpening de estrelas',
-      'Redução de ruído',
-      'Separar as estrelas',
-      'Stretch da imagem starless',
-      'Stretch das estrelas',
-      'Máscaras de intervalo',
-      'Juntar estrelas e starless',
-      'Curvas',
+      { pt: 'Análise do stack', en: 'Stack analysis' },
+      { pt: 'Visão geral do fluxo de trabalho', en: 'Workflow overview' },
+      { pt: 'Corte da imagem', en: 'Cropping the image' },
+      { pt: 'Image solver', en: 'Image solver' },
+      { pt: 'Correção de estrelas', en: 'Star correction' },
+      { pt: 'Remoção de gradientes', en: 'Gradient removal' },
+      { pt: 'Calibração de cor (HOO)', en: 'Color calibration (HOO)' },
+      { pt: 'Redução e sharpening de estrelas', en: 'Star reduction and sharpening' },
+      { pt: 'Redução de ruído', en: 'Noise reduction' },
+      { pt: 'Separar as estrelas', en: 'Separating the stars' },
+      { pt: 'Stretch da imagem starless', en: 'Stretching the starless image' },
+      { pt: 'Stretch das estrelas', en: 'Stretching the stars' },
+      { pt: 'Máscaras de intervalo', en: 'Range masks' },
+      { pt: 'Juntar estrelas e starless', en: 'Combining stars and starless' },
+      { pt: 'Curvas', en: 'Curves' },
     ],
-    needs: ['Stacks dualband ou narrowband', 'PixInsight', 'Scripts RC-Astro (opcional)'],
+    needs: [
+      { pt: 'Stacks dualband ou narrowband', en: 'Dualband or narrowband stacks' },
+      { pt: 'PixInsight', en: 'PixInsight' },
+      { pt: 'Scripts RC-Astro (opcional)', en: 'RC-Astro scripts (optional)' },
+    ],
   },
   {
     code: '1.3',
-    title: 'Crítica e edição da tua imagem',
-    desc: 'Para quem está preso numa imagem específica e quer conselhos e orientação a dois.',
+    title: { pt: 'Crítica e edição da tua imagem', en: 'Critique and editing of your image' },
+    desc: {
+      pt: 'Para quem está preso numa imagem específica e quer conselhos e orientação a dois.',
+      en: 'For anyone stuck on a specific image who wants advice and one-on-one guidance.',
+    },
     agenda: [
-      'Análise do stack',
-      'Revisão do teu fluxo de trabalho',
-      'Crítica da imagem',
-      'Edição a dois',
-      'Conselhos para chegares a melhores resultados',
+      { pt: 'Análise do stack', en: 'Stack analysis' },
+      { pt: 'Revisão do teu fluxo de trabalho', en: 'Review of your workflow' },
+      { pt: 'Crítica da imagem', en: 'Image critique' },
+      { pt: 'Edição a dois', en: 'Editing together' },
+      { pt: 'Conselhos para chegares a melhores resultados', en: 'Advice to get better results' },
     ],
     needs: [
-      'Stacks a cor, dualband, mono ou narrowband',
-      'PixInsight',
-      'Scripts RC-Astro (opcional)',
+      { pt: 'Stacks a cor, dualband, mono ou narrowband', en: 'Color, dualband, mono or narrowband stacks' },
+      { pt: 'PixInsight', en: 'PixInsight' },
+      { pt: 'Scripts RC-Astro (opcional)', en: 'RC-Astro scripts (optional)' },
     ],
   },
 ];
@@ -81,69 +105,78 @@ const foundations: Topic[] = [
 const advanced: Topic[] = [
   {
     code: '2.1',
-    title: 'Edição não destrutiva avançada',
-    desc: 'Levar a imagem mais além com técnicas de edição não destrutiva em Photoshop.',
+    title: { pt: 'Edição não destrutiva avançada', en: 'Advanced non-destructive editing' },
+    desc: {
+      pt: 'Levar a imagem mais além com técnicas de edição não destrutiva em Photoshop.',
+      en: 'Taking the image further with non-destructive editing techniques in Photoshop.',
+    },
     agenda: [
-      'Perceber camadas e camadas de ajuste',
-      'Construir a imagem com canais em camadas',
-      'Camadas de ajuste para afinar a intensidade',
-      'Curvas e máscaras',
-      'Camera Raw',
-      'Exportação',
+      { pt: 'Perceber camadas e camadas de ajuste', en: 'Understanding layers and adjustment layers' },
+      { pt: 'Construir a imagem com canais em camadas', en: 'Building the image with layered channels' },
+      { pt: 'Camadas de ajuste para afinar a intensidade', en: 'Adjustment layers to fine-tune intensity' },
+      { pt: 'Curvas e máscaras', en: 'Curves and masks' },
+      { pt: 'Camera Raw', en: 'Camera Raw' },
+      { pt: 'Exportação', en: 'Export' },
     ],
     needs: [
-      'Imagem starless não linear (RGB, dualband ou narrowband)',
-      'Imagem de estrelas não linear (RGB, dualband ou narrowband)',
-      'Photoshop',
+      { pt: 'Imagem starless não linear (RGB, dualband ou narrowband)', en: 'Non-linear starless image (RGB, dualband or narrowband)' },
+      { pt: 'Imagem de estrelas não linear (RGB, dualband ou narrowband)', en: 'Non-linear stars image (RGB, dualband or narrowband)' },
+      { pt: 'Photoshop', en: 'Photoshop' },
     ],
   },
   {
     code: '2.2',
-    title: 'Star stretch avançado, com spikes de difração',
-    desc: 'Os Newtonianos são famosos pelos spikes de difração. Como esticar as estrelas para os pôr bonitos.',
+    title: { pt: 'Star stretch avançado, com spikes de difração', en: 'Advanced star stretch, with diffraction spikes' },
+    desc: {
+      pt: 'Os Newtonianos são famosos pelos spikes de difração. Como esticar as estrelas para os pôr bonitos.',
+      en: 'Newtonians are famous for diffraction spikes. How to stretch stars to make them look good.',
+    },
     agenda: [
-      'Porque é que as estrelas importam',
-      'Separar as estrelas',
-      'Stretch da imagem starless com GHS',
-      'Star stretch (HT) versus star stretch avançado (GHS)',
-      'Juntar as estrelas ao starless, em Photoshop',
-      'Fazer brilhar os spikes com curvas, em Photoshop',
+      { pt: 'Porque é que as estrelas importam', en: 'Why stars matter' },
+      { pt: 'Separar as estrelas', en: 'Separating the stars' },
+      { pt: 'Stretch da imagem starless com GHS', en: 'Stretching the starless image with GHS' },
+      { pt: 'Star stretch (HT) versus star stretch avançado (GHS)', en: 'Star stretch (HT) versus advanced star stretch (GHS)' },
+      { pt: 'Juntar as estrelas ao starless, em Photoshop', en: 'Combining stars with starless, in Photoshop' },
+      { pt: 'Fazer brilhar os spikes com curvas, em Photoshop', en: 'Making the spikes shine with curves, in Photoshop' },
     ],
     needs: [
-      'Stack OSC ou mono RGB com spikes de difração',
-      'PixInsight',
-      'Scripts RC-Astro',
-      'Photoshop',
+      { pt: 'Stack OSC ou mono RGB com spikes de difração', en: 'OSC or mono RGB stack with diffraction spikes' },
+      { pt: 'PixInsight', en: 'PixInsight' },
+      { pt: 'Scripts RC-Astro', en: 'RC-Astro scripts' },
+      { pt: 'Photoshop', en: 'Photoshop' },
     ],
   },
   {
     code: '2.3',
-    title: 'Subtração de contínuo',
-    desc: 'Misturar dados narrowband nos teus dados broadband, com subtração de contínuo em Photoshop.',
+    title: { pt: 'Subtração de contínuo', en: 'Continuum subtraction' },
+    desc: {
+      pt: 'Misturar dados narrowband nos teus dados broadband, com subtração de contínuo em Photoshop.',
+      en: 'Blending narrowband data into your broadband data, with continuum subtraction in Photoshop.',
+    },
     agenda: [
-      'Perceber o conceito de subtração de contínuo',
-      'Juntar Ha ao RGB com subtração de contínuo',
-      'Camadas de ajuste para afinar e chegar ao melhor resultado',
-      'Curvas',
+      { pt: 'Perceber o conceito de subtração de contínuo', en: 'Understanding the continuum subtraction concept' },
+      { pt: 'Juntar Ha ao RGB com subtração de contínuo', en: 'Combining Ha into RGB with continuum subtraction' },
+      { pt: 'Camadas de ajuste para afinar e chegar ao melhor resultado', en: 'Adjustment layers to fine-tune and reach the best result' },
+      { pt: 'Curvas', en: 'Curves' },
     ],
     needs: [
-      'Imagem RGB starless não linear',
-      'Imagem RGB de estrelas não linear',
-      'Imagem Ha starless não linear',
-      'Photoshop',
+      { pt: 'Imagem RGB starless não linear', en: 'Non-linear RGB starless image' },
+      { pt: 'Imagem RGB de estrelas não linear', en: 'Non-linear RGB stars image' },
+      { pt: 'Imagem Ha starless não linear', en: 'Non-linear Ha starless image' },
+      { pt: 'Photoshop', en: 'Photoshop' },
     ],
   },
 ];
 
 const groups = [
   {
-    label: 'Fundações',
-    intro: 'Para editares com confiança e consistência, do princípio ao fim.',
+    label: t('editing.groupFoundationsLabel'),
+    intro: t('editing.groupFoundationsIntro'),
     topics: foundations,
   },
   {
-    label: 'Avançado',
-    intro: 'Para quem já tem bases sólidas e quer dar um passo em frente.',
+    label: t('editing.groupAdvancedLabel'),
+    intro: t('editing.groupAdvancedIntro'),
     topics: advanced,
   },
 ];
@@ -151,20 +184,18 @@ const groups = [
 
 <section id="temas" class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">O que vemos</p>
+    <p class="eyebrow reveal mb-4">{t('editing.topicsEyebrow')}</p>
     <h2
       class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
       style="--reveal-delay: 0.05s"
     >
-      A sessão é feita à tua medida
+      {t('editing.topicsTitle')}
     </h2>
     <p
       class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
       style="--reveal-delay: 0.1s"
     >
-      Não tens de escolher um curso de uma lista. Depois de reservares, dizes-me onde
-      estás e o que queres resolver, e eu preparo a sessão a partir daí. Estes são os
-      temas que podemos cobrir, sozinhos ou combinados.
+      {t('editing.topicsDesc')}
     </p>
 
     <div class="mt-12 grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -178,16 +209,16 @@ const groups = [
             <p class="mt-2 text-sm text-cream-50/60">{g.intro}</p>
 
             <div class="mt-6 divide-y divide-cream-50/12 border-t border-cream-50/12">
-              {g.topics.map((t) => (
+              {g.topics.map((topic) => (
                 <details class="group py-2 [&::-webkit-details-marker]:hidden">
                   <summary class="flex cursor-pointer list-none items-start justify-between gap-5 py-4">
                     <span>
                       <span class="flex items-baseline gap-2.5">
-                        <span class="text-xs font-medium text-accent-200">{t.code}</span>
-                        <span class="font-medium text-cream-50">{t.title}</span>
+                        <span class="text-xs font-medium text-accent-200">{topic.code}</span>
+                        <span class="font-medium text-cream-50">{topic.title[lang]}</span>
                       </span>
                       <span class="mt-1 block text-sm leading-relaxed text-cream-50/55">
-                        {t.desc}
+                        {topic.desc[lang]}
                       </span>
                     </span>
                     <span class="shrink-0 pt-0.5 text-xl leading-none text-cream-50/60 transition-transform duration-200 group-open:rotate-45">
@@ -198,26 +229,26 @@ const groups = [
                   <div class="grid gap-6 pb-5 sm:grid-cols-2">
                     <div>
                       <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
-                        Alinhamento
+                        {t('editing.agendaLabel')}
                       </p>
                       <ul class="mt-3 space-y-1.5">
-                        {t.agenda.map((a) => (
+                        {topic.agenda.map((a) => (
                           <li class="flex gap-2.5 text-sm leading-relaxed text-cream-50/70">
                             <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent-300/70" aria-hidden="true" />
-                            {a}
+                            {a[lang]}
                           </li>
                         ))}
                       </ul>
                     </div>
                     <div>
                       <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
-                        Precisas de
+                        {t('editing.needsLabel')}
                       </p>
                       <ul class="mt-3 space-y-1.5">
-                        {t.needs.map((n) => (
+                        {topic.needs.map((n) => (
                           <li class="flex gap-2.5 text-sm leading-relaxed text-cream-50/70">
                             <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-cream-50/30" aria-hidden="true" />
-                            {n}
+                            {n[lang]}
                           </li>
                         ))}
                       </ul>

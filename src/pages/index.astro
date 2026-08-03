@@ -1,69 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import About from '../components/About.astro';
-import Calendar from '../components/Calendar.astro';
-import HostSessions from '../components/HostSessions.astro';
-import Pillar from '../components/Pillar.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Shop from '../components/Shop.astro';
-import Community from '../components/Community.astro';
 import Footer from '../components/Footer.astro';
-import portraits from '../assets/Portraits.jpg';
+import HomeContent from '../components/HomeContent.astro';
 ---
 
 <Layout>
   <Header />
   <main>
-    <Hero />
-    <About />
-    <Calendar />
-    <HostSessions />
-    <Pillar
-      id="stargazing"
-      eyebrow="Observação Noturna"
-      title="Sessões privadas no observatório"
-      description="Aqui não há grupos numerosos. Cada sessão tem um limite de quatro adultos (as crianças não pagam) e é guiada por mim num ambiente descontraído. No final, fazemos alguns retratos para levarem para casa uma lembrança sob as estrelas."
-      price="45€"
-      priceNote="por adulto"
-      ctaLabel="Reservar sessão"
-      video={{ src: '/videos/observatory.mp4', poster: '/posters/observatory.jpg' }}
-    />
-    <Pillar
-      id="retratos"
-      eyebrow="Retratos sob as Estrelas"
-      title="O teu retrato, com um mar de estrelas"
-      description="Sessão de fotografia de retrato sob o céu estrelado do Alentejo, com a duração aproximada de 60 minutos. Entrega de 7 a 10 fotos finais editadas."
-      price="160€"
-      priceNote="por sessão · 1-2 pessoas"
-      ctaLabel="Reservar sessão"
-      flip
-      image={{
-        src: portraits,
-        alt: 'Casal fotografado sob um céu cheio de estrelas',
-      }}
-    />
-    <Pillar
-      id="workshops"
-      eyebrow="Aprende"
-      title="Da captura à imagem final"
-      description="Workshops de astrofotografia e cursos de edição de imagem. Acelera a tua curva de aprendizagem, desenvolve as tuas capacidades técnicas de forma estruturada e supera os obstáculos mais comuns na captura e pós-processamento."
-      offers={[
-        {
-          label: 'Astrofotografia',
-          href: '/astrofotografia',
-        },
-        {
-          label: 'Edição de imagem deep-sky',
-          href: '/edicao-de-imagem',
-        },
-      ]}
-      video={{ src: '/videos/workshops.mp4', poster: '/posters/workshops.jpg' }}
-    />
-    <Testimonials />
-    <Shop />
-    <Community />
+    <HomeContent />
   </main>
   <Footer />
 </Layout>

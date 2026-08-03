@@ -1,12 +1,16 @@
 ---
 import { Image } from 'astro:assets';
 import portrait from '../assets/About.jpg';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const stats = [
   { value: '3×', label: 'NASA APOD' },
   { value: '4×', label: 'Astrobin IOTD' },
   { value: '2×', label: 'ZWO IOTW' },
-  { value: 'ESA', label: 'Colaboração' },
+  { value: 'ESA', label: t('about.colaboracao') },
 ];
 ---
 
@@ -30,14 +34,14 @@ const stats = [
     </div>
 
     <div>
-      <p class="eyebrow reveal mb-4">Sobre</p>
+      <p class="eyebrow reveal mb-4">{t('nav.sobre')}</p>
       <h2
         class="reveal text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]"
         style="--reveal-delay: 0.05s"
       >
-        Olá, sou o David Cruz.<br />
+        {t('about.greeting')}<br />
         <span class="text-cream-50/60"
-          >No Instagram sou o <a
+          >{t('about.instagramPrefix')} <a
             href="https://www.instagram.com/astro.midnight"
             target="_blank"
             rel="noopener"
@@ -50,15 +54,14 @@ const stats = [
         class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
         style="--reveal-delay: 0.1s"
       >
-        Fotografo as estrelas a partir do meu observatório no Alentejo, sob céu livre de poluição luminosa, e
-        é aqui que faço cada sessão e workshop.
+        {t('about.desc')}
       </p>
 
       <p
         class="reveal mt-10 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/55"
         style="--reveal-delay: 0.15s"
       >
-        Reconhecimento
+        {t('about.reconhecimento')}
       </p>
       <dl
         class="reveal mt-4 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
@@ -80,14 +83,14 @@ const stats = [
       </dl>
 
       <div class="reveal mt-10 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
-        <a href="/sobre" class="btn btn-primary">Sobre mim</a>
+        <a href={localizeHref('/sobre', lang)} class="btn btn-primary">{t('about.ctaSobre')}</a>
         <a
           href="https://www.google.com/maps/search/?api=1&query=S%C3%A3o+Pedro+da+Gafanhoeira"
           target="_blank"
           rel="noopener"
           class="btn btn-ghost"
         >
-          Como chegar
+          {t('about.ctaMapa')}
         </a>
       </div>
     </div>

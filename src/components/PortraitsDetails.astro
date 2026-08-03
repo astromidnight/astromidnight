@@ -1,23 +1,25 @@
 ---
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const retratosLink = calLinkPath(CAL_LINKS.retratos);
 
 const stats = [
-  { value: '160€', label: 'por sessão · 1-2 pessoas' },
-  { value: '60min', label: 'duração da sessão' },
-  { value: '7–10', label: 'fotos finais editadas' },
-  { value: 'Privada', label: 'individual ou casal' },
+  { value: '160€', label: t('home.retratos.priceNote') },
+  { value: '60min', label: t('stargazing.stat2Label') },
+  { value: '7–10', label: t('retratos.statPhotosLabel') },
+  { value: t('retratos.statPrivateValue'), label: t('retratos.statPrivateLabel') },
 ];
 ---
 
 <section class="relative border-t border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Descrição e Preço</p>
+    <p class="eyebrow reveal mb-4">{t('retratos.detailsEyebrow')}</p>
     <p class="reveal max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg" style="--reveal-delay: 0.05s">
-      Uma sessão privada de fotografia de retrato sob o céu estrelado, no observatório. Guiada do
-      início ao fim, com exposição correta para o céu e para ti ao mesmo tempo — uma técnica pouco
-      comum entre fotógrafos de retrato.
+      {t('retratos.detailsDesc')}
     </p>
 
     <dl class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4" style="--reveal-delay: 0.1s">
@@ -40,7 +42,7 @@ const stats = [
       class="btn btn-primary reveal mt-10"
       style="--reveal-delay: 0.15s"
     >
-      Reservar sessão
+      {t('hero.ctaReservar')}
     </button>
   </div>
 </section>

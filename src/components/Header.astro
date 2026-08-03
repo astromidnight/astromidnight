@@ -1,29 +1,36 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/Logo.png';
+import { languages } from '../i18n/ui';
+import { useTranslations, localizeHref, switchLocalePath } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+const otherLang = lang === 'pt' ? 'en' : 'pt';
+const switchHref = switchLocalePath(Astro.url.pathname);
 
 type Link = { label: string; href: string };
 type NavEntry = Link | { label: string; items: Link[] };
 
 const nav: NavEntry[] = [
   {
-    label: 'Experiências noturnas',
+    label: t('nav.experiencias'),
     items: [
-      { label: 'Observação noturna', href: '/observacao-noturna' },
-      { label: 'Retratos sob as estrelas', href: '/retratos' },
-      { label: 'Para alojamentos rurais', href: '/#alojamentos' },
+      { label: t('nav.observacao'), href: '/observacao-noturna' },
+      { label: t('nav.retratos'), href: '/retratos' },
+      { label: t('nav.alojamentos'), href: '/#alojamentos' },
     ],
   },
   {
-    label: 'Aprende',
+    label: t('nav.aprende'),
     items: [
-      { label: 'Astrofotografia', href: '/astrofotografia' },
-      { label: 'Edição de imagem deep-sky', href: '/edicao-de-imagem' },
+      { label: t('nav.astrofotografia'), href: '/astrofotografia' },
+      { label: t('nav.edicao'), href: '/edicao-de-imagem' },
     ],
   },
-  { label: 'Loja', href: '/loja' },
-  { label: 'Sobre', href: '/sobre' },
-  { label: 'Contacto', href: '/contacto' },
+  { label: t('nav.loja'), href: '/loja' },
+  { label: t('nav.sobre'), href: '/sobre' },
+  { label: t('nav.contacto'), href: '/contacto' },
 ];
 ---
 
@@ -34,11 +41,11 @@ const nav: NavEntry[] = [
   <div
     class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8"
   >
-    <a href="/" class="shrink-0" aria-label="Astromidnight — início">
+    <a href={localizeHref('/', lang)} class="shrink-0" aria-label={t('nav.inicio')}>
       <Image src={logo} alt="Astromidnight" class="h-9 w-auto sm:h-10" densities={[1, 2]} />
     </a>
 
-    <nav class="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
+    <nav class="hidden items-center gap-7 lg:flex" aria-label={t('nav.principal')}>
       {
         nav.map((entry) =>
           'items' in entry ? (
@@ -68,7 +75,7 @@ const nav: NavEntry[] = [
               >
                 {entry.items.map((sub) => (
                   <a
-                    href={sub.href}
+                    href={localizeHref(sub.href, lang)}
                     role="menuitem"
                     class="block rounded-lg px-3 py-2.5 text-sm text-cream-50/80 transition-colors hover:bg-night-800 hover:text-cream-50"
                   >
@@ -79,7 +86,7 @@ const nav: NavEntry[] = [
             </div>
           ) : (
             <a
-              href={entry.href}
+              href={localizeHref(entry.href, lang)}
               class="group relative text-sm font-normal text-cream-50/75 transition-colors hover:text-cream-50"
             >
               {entry.label}
@@ -91,13 +98,20 @@ const nav: NavEntry[] = [
     </nav>
 
     <div class="flex items-center gap-3">
+      <a
+        href={switchHref}
+        class="hidden text-sm font-medium text-cream-50/60 transition-colors hover:text-cream-50 sm:inline-flex"
+        aria-label={`${languages[otherLang]}`}
+      >
+        {otherLang.toUpperCase()}
+      </a>
       <a href="#calendario" class="btn btn-primary hidden !min-h-0 !py-2.5 sm:inline-flex">
-        Reservar
+        {t('nav.reservar')}
       </a>
       <button
         id="menu-toggle"
         class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-cream-50/20 text-cream-50 lg:hidden"
-        aria-label="Abrir menu"
+        aria-label={t('nav.abrirMenu')}
         aria-expanded="false"
         aria-controls="mobile-menu"
       >
@@ -120,7 +134,7 @@ const nav: NavEntry[] = [
     id="mobile-menu"
     class="hidden border-t border-cream-50/10 bg-night-950/95 backdrop-blur-xl lg:hidden"
   >
-    <nav class="flex flex-col px-5 py-4" aria-label="Navegação móvel">
+    <nav class="flex flex-col px-5 py-4" aria-label={t('nav.movel')}>
       {
         nav.map((entry) =>
           'items' in entry ? (
@@ -148,7 +162,7 @@ const nav: NavEntry[] = [
                   <div class="flex flex-col pb-3 pl-4">
                     {entry.items.map((sub) => (
                       <a
-                        href={sub.href}
+                        href={localizeHref(sub.href, lang)}
                         class="py-2.5 text-sm text-cream-50/65 hover:text-accent-200"
                       >
                         {sub.label}
@@ -160,7 +174,7 @@ const nav: NavEntry[] = [
             </div>
           ) : (
             <a
-              href={entry.href}
+              href={localizeHref(entry.href, lang)}
               class="border-b border-cream-50/5 py-3.5 text-base text-cream-50/85 last:border-none hover:text-accent-200"
             >
               {entry.label}
@@ -168,7 +182,10 @@ const nav: NavEntry[] = [
           )
         )
       }
-      <a href="#calendario" class="btn btn-primary mt-4">Reservar</a>
+      <a href={switchHref} class="border-b border-cream-50/5 py-3.5 text-base text-cream-50/85 last:border-none hover:text-accent-200">
+        {languages[otherLang]}
+      </a>
+      <a href="#calendario" class="btn btn-primary mt-4">{t('nav.reservar')}</a>
     </nav>
   </div>
 </header>

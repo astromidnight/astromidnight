@@ -3,43 +3,45 @@ import { Image } from 'astro:assets';
 import heroImage from '../assets/EditingHero.jpg';
 import BreadcrumbSchema from './BreadcrumbSchema.astro';
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const EDITING_PRICE = 75;
 const calLink = calLinkPath(CAL_LINKS['editing-mentorship']);
 
 const facts = [
-  { value: '2h', label: 'por sessão' },
-  { value: `${EDITING_PRICE}€`, label: 'preço fixo' },
-  { value: '1 para 1', label: 'sessão personalizada' },
-  { value: 'Online', label: 'por videochamada' },
+  { value: t('editing.factDurationValue'), label: t('editing.factDurationLabel') },
+  { value: `${EDITING_PRICE}€`, label: t('editing.factPriceLabel') },
+  { value: t('editing.fact1to1Value'), label: t('editing.fact1to1Label') },
+  { value: t('editing.factOnlineValue'), label: t('editing.factOnlineLabel') },
 ];
 ---
 
 <section class="relative pb-16 sm:pb-20">
-  <BreadcrumbSchema label="Edição de imagem deep-sky" />
+  <BreadcrumbSchema label={t('nav.edicao')} />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
-      <a href="/" class="transition-colors hover:text-cream-50">Início</a>
+      <a href={localizeHref('/', lang)} class="transition-colors hover:text-cream-50">{t('breadcrumb.inicio')}</a>
       <span class="mx-1.5">/</span>
-      <span class="text-cream-50/80">Edição de imagem deep-sky</span>
+      <span class="text-cream-50/80">{t('nav.edicao')}</span>
     </p>
 
     <div class="mt-10 grid items-center gap-12 lg:grid-cols-[6fr_5fr] lg:gap-16">
       <div>
-        <p class="eyebrow reveal mb-4">Edição de imagem deep-sky</p>
+        <p class="eyebrow reveal mb-4">{t('nav.edicao')}</p>
         <h1
           class="reveal max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]"
           style="--reveal-delay: 0.05s"
         >
-          Uma sessão, o teu problema resolvido
+          {t('editing.title')}
         </h1>
         <p
           class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
           style="--reveal-delay: 0.1s"
         >
-          Orientação individual para editares os teus dados com confiança, com fluxos de
-          trabalho simples e fáceis de perceber. Do básico ao avançado, dizes-me o que
-          precisas e faço a sessão à tua medida.
+          {t('editing.heroDesc')}
         </p>
 
         <dl
@@ -63,23 +65,23 @@ const facts = [
 
         <div class="reveal mt-10 flex flex-wrap gap-4" style="--reveal-delay: 0.2s">
           <button type="button" data-book-link={calLink} class="btn btn-primary">
-            Reservar sessão
+            {t('editing.bookSession')}
           </button>
-          <a href="#antes-depois" class="btn btn-ghost">Ver antes e depois</a>
+          <a href="#antes-depois" class="btn btn-ghost">{t('editing.seeBeforeAfter')}</a>
         </div>
       </div>
 
       <div class="reveal mx-auto w-full max-w-lg lg:max-w-none" style="--reveal-delay: 0.1s">
         <Image
           src={heroImage}
-          alt="Sessão de edição em PixInsight, com a imagem separada em estrelas e starless"
+          alt={t('editing.heroAlt')}
           class="w-full rounded-2xl border border-cream-50/10"
           widths={[600, 900, 1200]}
           sizes="(min-width: 1024px) 520px, 90vw"
           priority
         />
         <p class="mt-3 text-xs text-cream-50/45">
-          Acompanho a sessão inteira por partilha de ecrã.
+          {t('editing.heroCaption')}
         </p>
       </div>
     </div>

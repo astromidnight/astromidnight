@@ -4,15 +4,19 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LegalContent from '../components/LegalContent.astro';
 import { EMAIL } from '../lib/contact';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title="Política de Privacidade — Astromidnight"
-  description="Como a Astromidnight recolhe, usa e protege os teus dados pessoais ao reservares uma sessão, escreveres pelo formulário ou comprares um print."
+  title={`${t('legal.privacidadeTitle')} — Astromidnight`}
+  description={t('legal.privacidadeMetaDesc')}
 >
   <Header />
   <main class="pt-28 pb-24 sm:pt-32">
-    <LegalContent title="Política de Privacidade" updated="2 de agosto de 2026">
+    <LegalContent title={t('legal.privacidadeTitle')} updated={t('legal.updatedDate')}>
       <h2>1. Quem trata os teus dados</h2>
       <p>
         O responsável pelo tratamento dos dados recolhidos através deste site é David

@@ -6,15 +6,20 @@
 // lib/contact.ts e STARGAZING_PRICE_PER_ADULT em lib/calcom.ts.
 import { EMAIL, INSTAGRAM_URL } from '../lib/contact';
 import { STARGAZING_PRICE_PER_ADULT } from '../lib/calcom';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const ASTROBIN_URL = 'https://app.astrobin.com/u/astro.midnight';
 const SITE_URL = 'https://astromidnight.pt';
+const offerUrl = (path: string) => `${SITE_URL}${localizeHref(path, lang)}`;
 
 const person = {
   '@type': 'Person',
   '@id': `${SITE_URL}/#david-cruz`,
   name: 'David Cruz',
-  jobTitle: 'Astrofotógrafo',
+  jobTitle: t('structuredData.jobTitle'),
   url: SITE_URL,
   image: `${SITE_URL}/share_thumb.jpg`,
   sameAs: [INSTAGRAM_URL, ASTROBIN_URL],
@@ -22,8 +27,8 @@ const person = {
     'NASA Astronomy Picture of the Day (3×)',
     'Astrobin Image of the Day (4×)',
     'ZWO Image of the Week (2×)',
-    'Astronomy Photographer of the Year — Finalista (2023)',
-    'Destacado pela Agência Espacial Europeia (ESA)',
+    t('structuredData.awardApy'),
+    t('structuredData.awardEsa'),
   ],
 };
 
@@ -31,8 +36,7 @@ const localBusiness = {
   '@type': 'LocalBusiness',
   '@id': `${SITE_URL}/#astromidnight`,
   name: 'Astromidnight',
-  description:
-    'Observatório privado no Alentejo, Portugal, com sessões de observação noturna, retratos sob as estrelas e workshops de astrofotografia, guiados por David Cruz, astrofotógrafo premiado pela NASA e pela ESA.',
+  description: t('structuredData.businessDesc'),
   url: SITE_URL,
   image: `${SITE_URL}/share_thumb.jpg`,
   email: EMAIL,
@@ -53,31 +57,31 @@ const localBusiness = {
   makesOffer: [
     {
       '@type': 'Offer',
-      name: 'Observação Noturna',
+      name: t('nav.observacao'),
       price: STARGAZING_PRICE_PER_ADULT,
       priceCurrency: 'EUR',
-      url: `${SITE_URL}/observacao-noturna`,
+      url: offerUrl('/observacao-noturna'),
     },
     {
       '@type': 'Offer',
-      name: 'Retratos sob as Estrelas',
+      name: t('nav.retratos'),
       price: 160,
       priceCurrency: 'EUR',
-      url: `${SITE_URL}/retratos`,
+      url: offerUrl('/retratos'),
     },
     {
       '@type': 'Offer',
-      name: 'Astrofotografia',
+      name: t('nav.astrofotografia'),
       price: 95,
       priceCurrency: 'EUR',
-      url: `${SITE_URL}/astrofotografia`,
+      url: offerUrl('/astrofotografia'),
     },
     {
       '@type': 'Offer',
-      name: 'Edição de imagem deep-sky',
+      name: t('nav.edicao'),
       price: 75,
       priceCurrency: 'EUR',
-      url: `${SITE_URL}/edicao-de-imagem`,
+      url: offerUrl('/edicao-de-imagem'),
     },
   ],
 };

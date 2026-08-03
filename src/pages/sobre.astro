@@ -2,12 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import AboutHero from '../components/AboutHero.astro';
-import AboutStory from '../components/AboutStory.astro';
-import AboutLocation from '../components/AboutLocation.astro';
-import AboutAwards from '../components/AboutAwards.astro';
-import AboutCta from '../components/AboutCta.astro';
-import StargazingBookingModal from '../components/StargazingBookingModal.astro';
+import AboutPageContent from '../components/AboutPageContent.astro';
 ---
 
 <Layout
@@ -15,13 +10,6 @@ import StargazingBookingModal from '../components/StargazingBookingModal.astro';
   description="David Cruz, astrofotógrafo premiado pela NASA e pela ESA, fotografa o céu profundo no seu observatório no Alentejo, sob céu Bortle 3."
 >
   <Header />
-  <main class="pt-28 sm:pt-32">
-    <AboutHero />
-    <AboutStory />
-    <AboutLocation />
-    <AboutAwards />
-    <AboutCta />
-  </main>
+  <AboutPageContent />
   <Footer />
-  <StargazingBookingModal />
 </Layout>

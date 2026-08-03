@@ -7,6 +7,10 @@
 //
 // "Gerir cookies" no rodapé (Footer.astro) dispara 'am-cookie-manage' para
 // reabrir este aviso e permitir mudar de ideias.
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 ---
 
 <div
@@ -14,25 +18,23 @@
   class="fixed inset-x-0 bottom-0 z-[80] hidden justify-center p-4 sm:p-6"
   role="dialog"
   aria-live="polite"
-  aria-label="Aviso de cookies"
+  aria-label={t('cookie.ariaLabel')}
 >
   <div
     class="flex w-full max-w-3xl flex-col items-start gap-4 rounded-2xl border border-cream-50/12 bg-night-900 p-5 shadow-2xl sm:flex-row sm:items-center sm:p-6"
   >
     <p class="text-sm leading-relaxed text-cream-50/75">
-      Usamos o Google Analytics para perceber como o site é usado — só com a
-      tua autorização. O motor de reservas e o widget do tempo, de terceiros,
-      podem definir os seus próprios cookies.
-      <a href="/privacidade#cookies" class="whitespace-nowrap text-cream-50 underline underline-offset-2 hover:text-accent-200">
-        Saber mais
+      {t('cookie.desc')}
+      <a href={`${localizeHref('/privacidade', lang)}#cookies`} class="whitespace-nowrap text-cream-50 underline underline-offset-2 hover:text-accent-200">
+        {t('cookie.saberMais')}
       </a>
     </p>
     <div class="flex w-full shrink-0 gap-2 sm:w-auto">
       <button type="button" id="cookie-reject" class="btn btn-ghost !min-h-0 flex-1 !px-5 !py-2.5 text-sm sm:flex-none">
-        Rejeitar
+        {t('cookie.rejeitar')}
       </button>
       <button type="button" id="cookie-accept" class="btn btn-primary !min-h-0 flex-1 !px-5 !py-2.5 text-sm sm:flex-none">
-        Aceitar
+        {t('cookie.aceitar')}
       </button>
     </div>
   </div>

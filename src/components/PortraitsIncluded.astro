@@ -1,21 +1,25 @@
 ---
 import { Image } from 'astro:assets';
 import couple from '../assets/PortraitsCouple.jpg';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const items = [
-  'Sessão privada, individual ou casal (1 a 2 pessoas)',
-  '60 minutos de sessão fotográfica sob o céu estrelado, no observatório',
-  '7 a 10 fotos finais editadas, entregues por link único após a sessão',
-  'Guiada por um astrofotógrafo premiado pela NASA e pela ESA',
+  t('retratos.item1'),
+  t('retratos.item2'),
+  t('retratos.item3'),
+  t('retratos.item4'),
 ];
 ---
 
 <section class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-24">
     <div class="reveal mx-auto w-full max-w-lg lg:max-w-none">
-      <p class="eyebrow mb-4">O que está incluído</p>
+      <p class="eyebrow mb-4">{t('stargazing.included')}</p>
       <h2 class="max-w-md text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-        Tudo o que precisas de saber antes de reservar
+        {t('stargazing.includedTitle')}
       </h2>
 
       <ul class="mt-8 space-y-4">
@@ -30,11 +34,9 @@ const items = [
       </ul>
 
       <div class="mt-8 border-l-2 border-accent-400/50 pl-5">
-        <h3 class="font-bold text-accent-200">Isto não é o retrato casual do Stargazing</h3>
+        <h3 class="font-bold text-accent-200">{t('retratos.notCasual')}</h3>
         <p class="mt-1 text-sm text-cream-50/70">
-          Na Observação Noturna existe a possibilidade de um retrato casual, informal e não
-          garantido. Aqui é diferente: uma sessão fotográfica dedicada, com hora marcada só para
-          isto.
+          {t('retratos.notCasualDesc')}
         </p>
       </div>
     </div>
@@ -43,7 +45,7 @@ const items = [
       <div class="overflow-hidden rounded-2xl border border-cream-50/10">
         <Image
           src={couple}
-          alt="Casal fotografado sob a Via Láctea, durante uma sessão de retrato dedicada"
+          alt={t('retratos.includedImgAlt')}
           class="aspect-[4/5] w-full object-cover"
           widths={[480, 720, 960]}
           sizes="(min-width: 1024px) 560px, 90vw"

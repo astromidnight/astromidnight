@@ -3,41 +3,73 @@
 // maquete/brief. As outras 7 são rascunhos meus com base nos factos já
 // decididos (grupo até 4 adultos, sem sinal de identidade prévia exigida,
 // política de cancelamento, etc.) -- o David deve rever o texto antes de
-// publicar.
-const faqs = [
+// publicar. Conteúdo bilingue inline (não no dicionário i18n/ui.ts): FAQ
+// só usada aqui, não ganha nada em reutilização.
+import { useTranslations } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
+const faqsBi = [
   {
-    q: 'Se estiver mau tempo, o que acontece?',
-    a: 'Se as condições não permitirem a observação, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+    q: { pt: 'Se estiver mau tempo, o que acontece?', en: 'What happens if the weather is bad?' },
+    a: {
+      pt: 'Se as condições não permitirem a observação, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+      en: "If conditions don't allow the observation, you can always reschedule for another night or get a full refund — you never lose what you paid.",
+    },
   },
   {
-    q: 'Qual a melhor altura para ver a Via Láctea ou a lua nova?',
-    a: 'A Via Láctea vê-se melhor entre março e outubro, e o ideal é escolher uma noite perto da lua nova, quando o céu está mais escuro. Fora dessa janela, continuas a ver estrelas, planetas e objetos mais brilhantes sem problema.',
+    q: { pt: 'Qual a melhor altura para ver a Via Láctea ou a lua nova?', en: 'What is the best time to see the Milky Way or a new moon?' },
+    a: {
+      pt: 'A Via Láctea vê-se melhor entre março e outubro, e o ideal é escolher uma noite perto da lua nova, quando o céu está mais escuro. Fora dessa janela, continuas a ver estrelas, planetas e objetos mais brilhantes sem problema.',
+      en: "The Milky Way is best seen between March and October, ideally on a night close to the new moon, when the sky is darkest. Outside that window, you'll still see stars, planets and brighter objects without any problem.",
+    },
   },
   {
-    q: 'Vou ver planetas ou galáxias — depende de quê?',
-    a: 'Depende da noite: perto da lua cheia vemos melhor a Lua e os planetas, que são alvos brilhantes; com lua nova e céu limpo, o telescópio revela galáxias e nebulosas mais ténues. Em qualquer dos casos, há sempre algo para ver.',
+    q: { pt: 'Vou ver planetas ou galáxias — depende de quê?', en: 'Will I see planets or galaxies — what does it depend on?' },
+    a: {
+      pt: 'Depende da noite: perto da lua cheia vemos melhor a Lua e os planetas, que são alvos brilhantes; com lua nova e céu limpo, o telescópio revela galáxias e nebulosas mais ténues. Em qualquer dos casos, há sempre algo para ver.',
+      en: "It depends on the night: close to full moon we see the Moon and planets best, which are bright targets; with a new moon and clear sky, the telescope reveals fainter galaxies and nebulae. Either way, there's always something to see.",
+    },
   },
   {
-    q: 'Há idade mínima para crianças?',
-    a: 'Não há idade mínima definida, mas a sessão dura 1 a 2 horas ao ar livre, de noite — para crianças muito pequenas pode ser um desafio aguentar o tempo todo. Se tiveres dúvidas sobre a idade do teu filho, contacta-nos antes de reservar.',
+    q: { pt: 'Há idade mínima para crianças?', en: 'Is there a minimum age for children?' },
+    a: {
+      pt: 'Não há idade mínima definida, mas a sessão dura 1 a 2 horas ao ar livre, de noite — para crianças muito pequenas pode ser um desafio aguentar o tempo todo. Se tiveres dúvidas sobre a idade do teu filho, contacta-nos antes de reservar.',
+      en: "There's no set minimum age, but the session lasts 1 to 2 hours outdoors, at night — for very young children it can be a challenge to last the whole time. If you're unsure about your child's age, contact us before booking.",
+    },
   },
   {
-    q: 'Preciso de saber alguma coisa de astronomia?',
-    a: 'Não é preciso qualquer conhecimento prévio. A sessão é guiada do início ao fim, com explicações acessíveis para quem nunca olhou por um telescópio.',
+    q: { pt: 'Preciso de saber alguma coisa de astronomia?', en: 'Do I need to know anything about astronomy?' },
+    a: {
+      pt: 'Não é preciso qualquer conhecimento prévio. A sessão é guiada do início ao fim, com explicações acessíveis para quem nunca olhou por um telescópio.',
+      en: "No prior knowledge is needed. The session is guided from start to finish, with accessible explanations for anyone who's never looked through a telescope.",
+    },
   },
   {
-    q: 'O que devo vestir ou levar?',
-    a: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer equipamento, o telescópio e tudo o resto já está no observatório.',
+    q: { pt: 'O que devo vestir ou levar?', en: 'What should I wear or bring?' },
+    a: {
+      pt: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer equipamento, o telescópio e tudo o resto já está no observatório.',
+      en: "Warm clothes and closed shoes — even in summer, nights in Alentejo cool down a lot after sunset. You don't need to bring any gear, the telescope and everything else is already at the observatory.",
+    },
   },
   {
-    q: 'Posso remarcar depois de pagar?',
-    a: 'Sim. Além da remarcação automática por más condições, também podes pedir para remarcar por outros motivos — contacta-nos com alguma antecedência.',
+    q: { pt: 'Posso remarcar depois de pagar?', en: 'Can I reschedule after paying?' },
+    a: {
+      pt: 'Sim. Além da remarcação automática por más condições, também podes pedir para remarcar por outros motivos — contacta-nos com alguma antecedência.',
+      en: 'Yes. Besides automatic rescheduling for bad conditions, you can also ask to reschedule for other reasons — just contact us with some notice.',
+    },
   },
   {
-    q: 'O retrato casual está garantido?',
-    a: 'Não. É um bónus possível durante a sessão de observação, sujeito às condições dessa noite — se quiseres a garantia de um retrato, a sessão dedicada de Retratos sob as Estrelas é o serviço certo.',
+    q: { pt: 'O retrato casual está garantido?', en: 'Is the casual portrait guaranteed?' },
+    a: {
+      pt: 'Não. É um bónus possível durante a sessão de observação, sujeito às condições dessa noite — se quiseres a garantia de um retrato, a sessão dedicada de Retratos sob as Estrelas é o serviço certo.',
+      en: "No. It's a possible bonus during the stargazing session, subject to that night's conditions — if you want a guaranteed portrait, the dedicated Portraits Under the Stars session is the right service.",
+    },
   },
 ];
+
+const faqs = faqsBi.map((f) => ({ q: f.q[lang], a: f.a[lang] }));
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -54,8 +86,8 @@ const faqSchema = {
 
 <section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-4xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Perguntas frequentes</p>
-    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ainda tens dúvidas?</h2>
+    <p class="eyebrow reveal mb-4">{t('stargazing.faqEyebrow')}</p>
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{t('stargazing.faqTitle')}</h2>
 
     <div class="reveal mt-10 divide-y divide-cream-50/12 border-t border-cream-50/12" style="--reveal-delay: 0.05s">
       {

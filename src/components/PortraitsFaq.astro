@@ -3,28 +3,52 @@
 // maquete/brief. As outras 4 são rascunhos meus com base nos factos já
 // decididos (preço fixo até 2 pessoas, política de cancelamento igual à do
 // Stargazing, etc.) -- o David deve rever o texto antes de publicar.
-const faqs = [
+// Conteúdo bilingue inline (não no dicionário i18n/ui.ts): FAQ só usada
+// aqui, não ganha nada em reutilização.
+import { useTranslations } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
+const faqsBi = [
   {
-    q: 'Qual o prazo de entrega das fotos?',
-    a: 'Recebes o link com as fotos finais editadas por email, normalmente dentro de uma a duas semanas após a sessão.',
+    q: { pt: 'Qual o prazo de entrega das fotos?', en: 'What is the delivery time for the photos?' },
+    a: {
+      pt: 'Recebes o link com as fotos finais editadas por email, normalmente dentro de uma a duas semanas após a sessão.',
+      en: "You'll get the link with the final edited photos by email, usually within one to two weeks after the session.",
+    },
   },
   {
-    q: 'O que devo vestir?',
-    a: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer mais nada, o equipamento fotográfico é todo fornecido.',
+    q: { pt: 'O que devo vestir?', en: 'What should I wear?' },
+    a: {
+      pt: 'Roupa quente e calçado fechado — mesmo no verão, as noites no Alentejo arrefecem bastante depois do pôr do sol. Não precisas de trazer mais nada, o equipamento fotográfico é todo fornecido.',
+      en: "Warm clothes and closed shoes — even in summer, nights in Alentejo cool down a lot after sunset. You don't need to bring anything else, all the photography equipment is provided.",
+    },
   },
   {
-    q: 'Pode ser só uma pessoa, ou tem de ser casal?',
-    a: 'Pode ser só uma pessoa ou um casal — o preço da sessão (160€) é o mesmo até 2 pessoas.',
+    q: { pt: 'Pode ser só uma pessoa, ou tem de ser casal?', en: 'Can it be just one person, or does it have to be a couple?' },
+    a: {
+      pt: 'Pode ser só uma pessoa ou um casal — o preço da sessão (160€) é o mesmo até 2 pessoas.',
+      en: 'It can be just one person or a couple — the session price (160€) is the same for up to 2 people.',
+    },
   },
   {
-    q: 'Se estiver mau tempo, o que acontece?',
-    a: 'Se as condições não permitirem a sessão, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+    q: { pt: 'Se estiver mau tempo, o que acontece?', en: 'What happens if the weather is bad?' },
+    a: {
+      pt: 'Se as condições não permitirem a sessão, tens sempre opção de remarcar para outra noite ou reembolso total — nunca perdes o que pagaste.',
+      en: "If conditions don't allow the session, you can always reschedule for another night or get a full refund — you never lose what you paid.",
+    },
   },
   {
-    q: 'As fotos são só para uso pessoal?',
-    a: 'As fotos são para uso pessoal, incluindo redes sociais. Para uso comercial, contacta-nos antes de reservar.',
+    q: { pt: 'As fotos são só para uso pessoal?', en: 'Are the photos only for personal use?' },
+    a: {
+      pt: 'As fotos são para uso pessoal, incluindo redes sociais. Para uso comercial, contacta-nos antes de reservar.',
+      en: 'The photos are for personal use, including social media. For commercial use, contact us before booking.',
+    },
   },
 ];
+
+const faqs = faqsBi.map((f) => ({ q: f.q[lang], a: f.a[lang] }));
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -41,8 +65,8 @@ const faqSchema = {
 
 <section class="relative border-y border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-4xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Perguntas frequentes</p>
-    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Ainda tens dúvidas?</h2>
+    <p class="eyebrow reveal mb-4">{t('stargazing.faqEyebrow')}</p>
+    <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{t('stargazing.faqTitle')}</h2>
 
     <div class="reveal mt-10 divide-y divide-cream-50/12 border-t border-cream-50/12" style="--reveal-delay: 0.05s">
       {

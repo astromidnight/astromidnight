@@ -2,14 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import PortraitsHero from '../components/PortraitsHero.astro';
-import PortraitsDetails from '../components/PortraitsDetails.astro';
-import PortraitsIncluded from '../components/PortraitsIncluded.astro';
-import PortraitsHowItWorks from '../components/PortraitsHowItWorks.astro';
-import PortraitsExamples from '../components/PortraitsExamples.astro';
-import StargazingLocation from '../components/StargazingLocation.astro';
-import PortraitsFaq from '../components/PortraitsFaq.astro';
-import PortraitsCta from '../components/PortraitsCta.astro';
+import PortraitsPageContent from '../components/PortraitsPageContent.astro';
 ---
 
 <Layout
@@ -17,15 +10,6 @@ import PortraitsCta from '../components/PortraitsCta.astro';
   description="Sessão privada de retrato sob o céu estrelado, no observatório da Astromidnight no Alentejo. 60 minutos, 7 a 10 fotos editadas, 160€ até 2 pessoas."
 >
   <Header />
-  <main class="pb-20 pt-28 sm:pb-0 sm:pt-32">
-    <PortraitsHero />
-    <PortraitsDetails />
-    <PortraitsIncluded />
-    <PortraitsHowItWorks />
-    <PortraitsExamples />
-    <StargazingLocation />
-    <PortraitsFaq />
-    <PortraitsCta />
-  </main>
+  <PortraitsPageContent />
   <Footer />
 </Layout>

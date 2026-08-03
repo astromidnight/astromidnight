@@ -13,14 +13,21 @@ import iotdCocoon from '../assets/AwardIotdCocoon.jpg';
 import iotdPazmino from '../assets/AwardIotdPazmino.jpg';
 import zwoDragon from '../assets/AwardZwoDragon.jpg';
 import zwoLemmon from '../assets/AwardZwoLemmon.jpg';
+import { useTranslations } from '../i18n/utils';
 
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+
+// Conteúdo bilingue inline (não no dicionário i18n/ui.ts): são 11 blocos de
+// texto só usados aqui, faria o dicionário inchar sem ganho de reutilização.
+type Bi = { pt: string; en: string };
 type Award = {
   source: string;
-  date: string;
-  title: string;
-  desc: string;
+  date: Bi;
+  title: Bi;
+  desc: Bi;
   image: ImageMetadata;
-  alt: string;
+  alt: Bi;
   // Destino original da publicação (APOD, Astrobin, Facebook da ZWO,
   // Instagram da ESA). O texto do botão sai daqui, ver linkLabel().
   href: string;
@@ -29,101 +36,158 @@ type Award = {
 const awards: Award[] = [
   {
     source: 'NASA APOD',
-    date: '18 de dezembro de 2025',
-    title: 'Chuva de meteoros Gemínidas 2025',
-    desc: 'O meu terceiro APOD da NASA, desta vez com uma imagem muito especial das Gemínidas, com Júpiter bem brilhante no centro do radiante.',
+    date: { pt: '18 de dezembro de 2025', en: 'December 18, 2025' },
+    title: { pt: 'Chuva de meteoros Gemínidas 2025', en: '2025 Geminids meteor shower' },
+    desc: {
+      pt: 'O meu terceiro APOD da NASA, desta vez com uma imagem muito especial das Gemínidas, com Júpiter bem brilhante no centro do radiante.',
+      en: 'My third NASA APOD, this time with a very special image of the Geminids, with Jupiter shining bright at the center of the radiant.',
+    },
     image: apodGeminids,
-    alt: 'Dezenas de meteoros das Gemínidas a irradiar de um ponto do céu, sobre a paisagem alentejana',
+    alt: {
+      pt: 'Dezenas de meteoros das Gemínidas a irradiar de um ponto do céu, sobre a paisagem alentejana',
+      en: 'Dozens of Geminid meteors radiating from a point in the sky, over the Alentejo landscape',
+    },
     href: 'https://apod.nasa.gov/apod/ap251218.html',
   },
   {
     source: 'Astrobin IOTD',
-    date: '17 de dezembro de 2025',
-    title: 'Enxame de Pazmino',
-    desc: 'A minha quarta imagem do dia no Astrobin e provavelmente a minha imagem de céu profundo preferida. O enxame de Pazmino imerso num campo de Ha, com as estrelas a brilhar intensamente.',
+    date: { pt: '17 de dezembro de 2025', en: 'December 17, 2025' },
+    title: { pt: 'Enxame de Pazmino', en: "Pazmino's Cluster" },
+    desc: {
+      pt: 'A minha quarta imagem do dia no Astrobin e provavelmente a minha imagem de céu profundo preferida. O enxame de Pazmino imerso num campo de Ha, com as estrelas a brilhar intensamente.',
+      en: "My fourth Image of the Day on Astrobin, and probably my favorite deep-sky image. Pazmino's Cluster immersed in a field of Ha, with the stars shining intensely.",
+    },
     image: iotdPazmino,
-    alt: 'Enxame de Pazmino, com estrelas azuis brilhantes sobre um campo vermelho de hidrogénio',
+    alt: {
+      pt: 'Enxame de Pazmino, com estrelas azuis brilhantes sobre um campo vermelho de hidrogénio',
+      en: "Pazmino's Cluster, with bright blue stars over a red field of hydrogen",
+    },
     href: 'https://app.astrobin.com/u/astro.midnight?i=6zsbbs#gallery',
   },
   {
     source: 'ZWO IOTW',
-    date: '6 de outubro de 2025',
-    title: 'Cometa C/2025 A6 (Lemmon)',
-    desc: 'A minha segunda imagem da semana da ZWO, com o cometa mais espetacular de 2025. Captada com o setup de céu profundo, ainda com o cometa demasiado longe para uma captura de paisagem noturna.',
+    date: { pt: '6 de outubro de 2025', en: 'October 6, 2025' },
+    title: { pt: 'Cometa C/2025 A6 (Lemmon)', en: 'Comet C/2025 A6 (Lemmon)' },
+    desc: {
+      pt: 'A minha segunda imagem da semana da ZWO, com o cometa mais espetacular de 2025. Captada com o setup de céu profundo, ainda com o cometa demasiado longe para uma captura de paisagem noturna.',
+      en: "My second ZWO Image of the Week, with 2025's most spectacular comet. Captured with the deep-sky setup, while the comet was still too far for a nightscape shot.",
+    },
     image: zwoLemmon,
-    alt: 'Cometa Lemmon com coma esverdeada e uma longa cauda de iões',
+    alt: {
+      pt: 'Cometa Lemmon com coma esverdeada e uma longa cauda de iões',
+      en: 'Comet Lemmon with a greenish coma and a long ion tail',
+    },
     href: 'https://www.facebook.com/photo/?fbid=1263442959144549&set=a.1263443705811141',
   },
   {
     source: 'Astrobin IOTD',
-    date: '26 de junho de 2025',
-    title: 'Nebulosa Little Cocoon',
-    desc: 'A minha terceira imagem do dia no Astrobin foi esta nebulosa Little Cocoon, um alvo muito interessante imerso num campo de estrelas douradas.',
+    date: { pt: '26 de junho de 2025', en: 'June 26, 2025' },
+    title: { pt: 'Nebulosa Little Cocoon', en: 'Little Cocoon Nebula' },
+    desc: {
+      pt: 'A minha terceira imagem do dia no Astrobin foi esta nebulosa Little Cocoon, um alvo muito interessante imerso num campo de estrelas douradas.',
+      en: 'My third Image of the Day on Astrobin was this Little Cocoon Nebula, a very interesting target immersed in a field of golden stars.',
+    },
     image: iotdCocoon,
-    alt: 'Nebulosa Little Cocoon, em tons de rosa e azul, num campo denso de estrelas douradas',
+    alt: {
+      pt: 'Nebulosa Little Cocoon, em tons de rosa e azul, num campo denso de estrelas douradas',
+      en: 'The Little Cocoon Nebula, in shades of pink and blue, in a dense field of golden stars',
+    },
     href: 'https://app.astrobin.com/u/astro.midnight?i=mx0zk1#gallery',
   },
   {
     source: 'Astrobin IOTD',
-    date: '29 de dezembro de 2024',
-    title: 'Nebulosa Boogeyman',
-    desc: 'A minha segunda imagem do dia no Astrobin foi esta nebulosa Boogeyman, em Orionte. Captada com o meu Newtoniano de 10 polegadas, com filtro dual band e câmara a cores.',
+    date: { pt: '29 de dezembro de 2024', en: 'December 29, 2024' },
+    title: { pt: 'Nebulosa Boogeyman', en: 'Boogeyman Nebula' },
+    desc: {
+      pt: 'A minha segunda imagem do dia no Astrobin foi esta nebulosa Boogeyman, em Orionte. Captada com o meu Newtoniano de 10 polegadas, com filtro dual band e câmara a cores.',
+      en: 'My second Image of the Day on Astrobin was this Boogeyman Nebula, in Orion. Captured with my 10-inch Newtonian, a dual-band filter and a color camera.',
+    },
     image: iotdBoogeyman,
-    alt: 'Nebulosa escura Boogeyman recortada contra nebulosidade vermelha, em Orionte',
+    alt: {
+      pt: 'Nebulosa escura Boogeyman recortada contra nebulosidade vermelha, em Orionte',
+      en: 'The dark Boogeyman Nebula silhouetted against red nebulosity, in Orion',
+    },
     href: 'https://app.astrobin.com/u/astro.midnight?i=16uhej#gallery',
   },
   {
     source: 'ESA',
-    date: '16 de outubro de 2024',
-    title: 'Agência Espacial Europeia',
-    desc: 'Fui destacado na página de Instagram da Agência Espacial Europeia, numa publicação colaborativa onde me apresento com algumas das minhas melhores imagens. Foi um enorme sucesso, com mais de 47 mil gostos.',
+    date: { pt: '16 de outubro de 2024', en: 'October 16, 2024' },
+    title: { pt: 'Agência Espacial Europeia', en: 'European Space Agency' },
+    desc: {
+      pt: 'Fui destacado na página de Instagram da Agência Espacial Europeia, numa publicação colaborativa onde me apresento com algumas das minhas melhores imagens. Foi um enorme sucesso, com mais de 47 mil gostos.',
+      en: "I was featured on the European Space Agency's Instagram page, in a collaborative post showcasing some of my best images. It was a huge success, with over 47 thousand likes.",
+    },
     image: esa,
-    alt: 'Cometa com uma cauda larga e azulada, ao crepúsculo',
+    alt: { pt: 'Cometa com uma cauda larga e azulada, ao crepúsculo', en: 'A comet with a wide, bluish tail, at twilight' },
     href: 'https://www.instagram.com/p/DBMOd0eoguH/',
   },
   {
     source: 'ZWO IOTW',
-    date: '15 de outubro de 2024',
-    title: 'Nebulosa do Dragão Chinês',
-    desc: 'A minha primeira imagem da semana da ZWO, com a nebulosa do Dragão Chinês, uma região incrível dentro da bem conhecida nebulosa da Lagoa.',
+    date: { pt: '15 de outubro de 2024', en: 'October 15, 2024' },
+    title: { pt: 'Nebulosa do Dragão Chinês', en: 'Chinese Dragon Nebula' },
+    desc: {
+      pt: 'A minha primeira imagem da semana da ZWO, com a nebulosa do Dragão Chinês, uma região incrível dentro da bem conhecida nebulosa da Lagoa.',
+      en: 'My first ZWO Image of the Week, with the Chinese Dragon Nebula, an incredible region within the well-known Lagoon Nebula.',
+    },
     image: zwoDragon,
-    alt: 'Nebulosa do Dragão Chinês, com emissão rosada e nebulosas de reflexão azuis',
+    alt: {
+      pt: 'Nebulosa do Dragão Chinês, com emissão rosada e nebulosas de reflexão azuis',
+      en: 'The Chinese Dragon Nebula, with pink emission and blue reflection nebulae',
+    },
     href: 'https://www.facebook.com/photo/?fbid=975440124611502&set=a.975519611270220',
   },
   {
     source: 'Astrobin IOTD',
-    date: '29 de maio de 2024',
-    title: 'Ondas do Cisne',
-    desc: 'A minha primeira imagem do dia no Astrobin foi esta imagem das ondas na constelação do Cisne, na paleta HOO. Um total de 20 horas de exposição, com filtro dual band e câmara a cores.',
+    date: { pt: '29 de maio de 2024', en: 'May 29, 2024' },
+    title: { pt: 'Ondas do Cisne', en: 'Waves of the Swan' },
+    desc: {
+      pt: 'A minha primeira imagem do dia no Astrobin foi esta imagem das ondas na constelação do Cisne, na paleta HOO. Um total de 20 horas de exposição, com filtro dual band e câmara a cores.',
+      en: 'My first Image of the Day on Astrobin was this image of waves in the Cygnus constellation, in the HOO palette. A total of 20 hours of exposure, with a dual-band filter and a color camera.',
+    },
     image: iotdCygnus,
-    alt: 'Filamentos vermelhos de gás na constelação do Cisne',
+    alt: { pt: 'Filamentos vermelhos de gás na constelação do Cisne', en: 'Red filaments of gas in the constellation Cygnus' },
     href: 'https://app.astrobin.com/i/x2fsch',
   },
   {
     source: 'NASA APOD',
-    date: '12 de outubro de 2023',
-    title: 'Mu Cephei',
-    desc: 'O meu segundo APOD da NASA e o primeiro com um objeto de céu profundo. Quis fotografar a supergigante vermelha Mu Cephei e a nebulosidade em redor da nebulosa da Tromba do Elefante. Resultou num enquadramento muito original, e as hastes de difração deram-lhe um toque especial.',
+    date: { pt: '12 de outubro de 2023', en: 'October 12, 2023' },
+    title: { pt: 'Mu Cephei', en: 'Mu Cephei' },
+    desc: {
+      pt: 'O meu segundo APOD da NASA e o primeiro com um objeto de céu profundo. Quis fotografar a supergigante vermelha Mu Cephei e a nebulosidade em redor da nebulosa da Tromba do Elefante. Resultou num enquadramento muito original, e as hastes de difração deram-lhe um toque especial.',
+      en: 'My second NASA APOD, and the first with a deep-sky object. I wanted to photograph the red supergiant Mu Cephei and the nebulosity around the Elephant Trunk Nebula. It resulted in a very original framing, and the diffraction spikes gave it a special touch.',
+    },
     image: apodMuCephei,
-    alt: 'A estrela supergigante vermelha Mu Cephei rodeada de nebulosidade avermelhada',
+    alt: {
+      pt: 'A estrela supergigante vermelha Mu Cephei rodeada de nebulosidade avermelhada',
+      en: 'The red supergiant star Mu Cephei surrounded by reddish nebulosity',
+    },
     href: 'https://apod.nasa.gov/apod/ap231012.html',
   },
   {
     source: 'Astronomy Photographer of the Year',
-    date: '2023',
-    title: 'Finalista, Cometa 2022 E3 (ZTF)',
-    desc: 'O cometa 2022 E3 (ZTF) foi o primeiro cometa que fotografei e chegou à lista final do concurso Astronomy Photographer of the Year. Tive a sorte de apanhar o momento em que a cauda se desligou, o que tornou esta imagem ainda mais especial.',
+    date: { pt: '2023', en: '2023' },
+    title: { pt: 'Finalista, Cometa 2022 E3 (ZTF)', en: 'Finalist, Comet 2022 E3 (ZTF)' },
+    desc: {
+      pt: 'O cometa 2022 E3 (ZTF) foi o primeiro cometa que fotografei e chegou à lista final do concurso Astronomy Photographer of the Year. Tive a sorte de apanhar o momento em que a cauda se desligou, o que tornou esta imagem ainda mais especial.',
+      en: 'Comet 2022 E3 (ZTF) was the first comet I photographed, and it made the shortlist of the Astronomy Photographer of the Year competition. I was lucky enough to catch the moment its tail disconnected, which made this image even more special.',
+    },
     image: apyComet,
-    alt: 'Cometa 2022 E3 (ZTF) com coma verde e a cauda de iões a desligar-se',
+    alt: {
+      pt: 'Cometa 2022 E3 (ZTF) com coma verde e a cauda de iões a desligar-se',
+      en: 'Comet 2022 E3 (ZTF) with a green coma and its ion tail disconnecting',
+    },
     href: 'https://app.astrobin.com/i/0p19ky',
   },
   {
     source: 'NASA APOD',
-    date: '11 de junho de 2022',
-    title: 'Arco da Via Láctea de verão',
-    desc: 'O meu primeiro APOD da NASA foi esta imagem do arco da Via Láctea de verão a nascer sobre uma estrada no Alentejo. Chamei-lhe Estrada para as Estrelas. Fica no meio da área protegida Dark Sky Alqueva, um dos melhores sítios de Portugal para observar e fotografar as estrelas.',
+    date: { pt: '11 de junho de 2022', en: 'June 11, 2022' },
+    title: { pt: 'Arco da Via Láctea de verão', en: 'Summer Milky Way arch' },
+    desc: {
+      pt: 'O meu primeiro APOD da NASA foi esta imagem do arco da Via Láctea de verão a nascer sobre uma estrada no Alentejo. Chamei-lhe Estrada para as Estrelas. Fica no meio da área protegida Dark Sky Alqueva, um dos melhores sítios de Portugal para observar e fotografar as estrelas.',
+      en: 'My first NASA APOD was this image of the summer Milky Way arch rising over a road in Alentejo. I called it Road to the Stars. It sits within the Dark Sky Alqueva protected area, one of the best spots in Portugal for stargazing and astrophotography.',
+    },
     image: apodMilkyWay,
-    alt: 'Arco da Via Láctea sobre uma estrada alentejana, ao fim da noite',
+    alt: { pt: 'Arco da Via Láctea sobre uma estrada alentejana, ao fim da noite', en: 'The Milky Way arch over an Alentejo road, late at night' },
     href: 'https://apod.nasa.gov/apod/ap220611.html',
   },
 ];
@@ -132,35 +196,34 @@ const awards: Award[] = [
 // utilizador saber que sai do site antes de clicar.
 const linkLabel = (href: string) => {
   const host = new URL(href).hostname;
-  if (host.endsWith('apod.nasa.gov')) return 'Ver no APOD';
-  if (host.includes('astrobin')) return 'Ver no Astrobin';
-  if (host.includes('facebook')) return 'Ver no Facebook';
-  if (host.includes('instagram')) return 'Ver no Instagram';
-  return 'Ver imagem';
+  if (host.endsWith('apod.nasa.gov')) return t('about.linkApod');
+  if (host.includes('astrobin')) return t('about.linkAstrobin');
+  if (host.includes('facebook')) return t('about.linkFacebook');
+  if (host.includes('instagram')) return t('about.linkInstagram');
+  return t('about.linkImage');
 };
 ---
 
 <section id="premios" class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Reconhecimento</p>
+    <p class="eyebrow reveal mb-4">{t('about.awardsEyebrow')}</p>
     <h2
       class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
       style="--reveal-delay: 0.05s"
     >
-      Prémios e reconhecimentos
+      {t('about.awardsTitle')}
     </h2>
     <p
       class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
       style="--reveal-delay: 0.1s"
     >
-      Ao longo destes anos como astrofotógrafo tive a sorte de ver algumas das minhas
-      imagens reconhecidas. Esta é a lista dos destaques até hoje.
+      {t('about.awardsDesc')}
     </p>
 
     <div class="reveal mt-10" style="--reveal-delay: 0.15s">
       <Image
         src={banner}
-        alt="Cartaz da exposição Astronomy Photographer of the Year no National Maritime Museum, em Greenwich"
+        alt={t('about.awardsBannerAlt')}
         class="aspect-[16/9] w-full rounded-2xl border border-cream-50/10 object-cover sm:aspect-[21/9]"
         widths={[768, 1152, 1536]}
         sizes="(min-width: 1280px) 1216px, 100vw"
@@ -180,7 +243,7 @@ const linkLabel = (href: string) => {
               <div class="overflow-hidden">
                 <Image
                   src={a.image}
-                  alt={a.alt}
+                  alt={a.alt[lang]}
                   class="aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                   widths={[400, 600, 800]}
                   sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 90vw"
@@ -191,10 +254,10 @@ const linkLabel = (href: string) => {
                   <span class="rounded-full border border-accent-400/35 px-3 py-1 text-xs font-medium text-accent-200">
                     {a.source}
                   </span>
-                  <span class="text-xs text-cream-50/45">{a.date}</span>
+                  <span class="text-xs text-cream-50/45">{a.date[lang]}</span>
                 </div>
-                <h3 class="mt-3 text-lg font-bold leading-snug">{a.title}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-cream-50/60">{a.desc}</p>
+                <h3 class="mt-3 text-lg font-bold leading-snug">{a.title[lang]}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-cream-50/60">{a.desc[lang]}</p>
                 <span class="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium text-accent-200">
                   {linkLabel(a.href)}
                   <svg

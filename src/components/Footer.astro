@@ -1,38 +1,42 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/Logo.png';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const columns = [
   {
-    heading: 'Experiências noturnas',
+    heading: t('nav.experiencias'),
     items: [
-      { label: 'Observação noturna', href: '/observacao-noturna' },
-      { label: 'Retratos sob as estrelas', href: '/retratos' },
-      { label: 'Para alojamentos rurais', href: '/#alojamentos' },
+      { label: t('nav.observacao'), href: '/observacao-noturna' },
+      { label: t('nav.retratos'), href: '/retratos' },
+      { label: t('nav.alojamentos'), href: '/#alojamentos' },
     ],
   },
   {
-    heading: 'Aprende',
+    heading: t('nav.aprende'),
     items: [
-      { label: 'Astrofotografia', href: '/astrofotografia' },
-      { label: 'Edição de imagem deep-sky', href: '/edicao-de-imagem' },
+      { label: t('nav.astrofotografia'), href: '/astrofotografia' },
+      { label: t('nav.edicao'), href: '/edicao-de-imagem' },
     ],
   },
   {
     heading: null,
     items: [
-      { label: 'Loja', href: '/loja' },
-      { label: 'Sobre', href: '/sobre' },
-      { label: 'Contacto', href: '/contacto' },
+      { label: t('nav.loja'), href: '/loja' },
+      { label: t('nav.sobre'), href: '/sobre' },
+      { label: t('nav.contacto'), href: '/contacto' },
     ],
   },
 ];
 
 const legal = [
-  { label: 'Instagram', href: 'https://www.instagram.com/astro.midnight/' },
-  { label: 'Astrobin', href: 'https://app.astrobin.com/u/astro.midnight' },
-  { label: 'Termos', href: '/termos' },
-  { label: 'Privacidade', href: '/privacidade' },
+  { label: t('footer.instagram'), href: 'https://www.instagram.com/astro.midnight/' },
+  { label: t('footer.astrobin'), href: 'https://app.astrobin.com/u/astro.midnight' },
+  { label: t('footer.termos'), href: '/termos' },
+  { label: t('footer.privacidade'), href: '/privacidade' },
 ];
 ---
 
@@ -42,13 +46,13 @@ const legal = [
       <div>
         <Image src={logo} alt="Astromidnight" class="h-10 w-auto" densities={[1, 2]} />
         <p class="mt-5 max-w-xs text-sm leading-relaxed text-cream-50/55">
-          Observatório privado, Alentejo, Portugal.
+          {t('footer.tagline')}
         </p>
       </div>
 
       <nav
         class="grid grid-cols-2 gap-x-12 gap-y-8 sm:grid-cols-3"
-        aria-label="Navegação do rodapé"
+        aria-label={t('footer.nav')}
       >
         {
           columns.map((col) => (
@@ -58,7 +62,7 @@ const legal = [
               )}
               {col.items.map((item) => (
                 <a
-                  href={item.href}
+                  href={localizeHref(item.href, lang)}
                   class="py-1 text-sm text-cream-50/60 transition-colors hover:text-accent-200"
                 >
                   {item.label}
@@ -77,7 +81,7 @@ const legal = [
         {
           legal.map((item) => (
             <a
-              href={item.href}
+              href={localizeHref(item.href, lang)}
               class="text-sm text-cream-50/45 transition-colors hover:text-accent-200"
               {...(item.href.startsWith('http')
                 ? { target: '_blank', rel: 'noopener' }
@@ -92,7 +96,7 @@ const legal = [
           id="footer-manage-cookies"
           class="text-sm text-cream-50/45 transition-colors hover:text-accent-200"
         >
-          Gerir cookies
+          {t('footer.geriCookies')}
         </button>
       </div>
       <p class="text-sm text-cream-50/35">

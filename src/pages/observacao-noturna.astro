@@ -2,13 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import StargazingHero from '../components/StargazingHero.astro';
-import StargazingDetails from '../components/StargazingDetails.astro';
-import StargazingIncluded from '../components/StargazingIncluded.astro';
-import StargazingLocation from '../components/StargazingLocation.astro';
-import StargazingFaq from '../components/StargazingFaq.astro';
-import StargazingCta from '../components/StargazingCta.astro';
-import StargazingBookingModal from '../components/StargazingBookingModal.astro';
+import StargazingPageContent from '../components/StargazingPageContent.astro';
 ---
 
 <Layout
@@ -16,14 +10,6 @@ import StargazingBookingModal from '../components/StargazingBookingModal.astro';
   description="Uma noite privada de observação no meu observatório no Alentejo. Até 4 adultos, telescópio de 250mm, com um astrofotógrafo premiado pela NASA. 45€ por adulto."
 >
   <Header />
-  <main class="pb-20 pt-28 sm:pb-0 sm:pt-32">
-    <StargazingHero />
-    <StargazingDetails />
-    <StargazingIncluded />
-    <StargazingLocation />
-    <StargazingFaq />
-    <StargazingCta />
-  </main>
+  <StargazingPageContent />
   <Footer />
-  <StargazingBookingModal />
 </Layout>

@@ -1,20 +1,20 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
 // Perfis rascunhados por mim, a rever pelo David (ver nota em AstroPaths.astro).
-const cases = [
-  'Tens uma boa máquina e nunca conseguiste uma fotografia decente do céu.',
-  'Já tentaste sozinho e as estrelas saem sempre tremidas ou desfocadas.',
-  'Compraste equipamento de céu profundo e não sabes por onde começar.',
-  'Queres aprender no terreno, com o céu à frente, e não em vídeos.',
-];
+const cases = [t('astro.case1'), t('astro.case2'), t('astro.case3'), t('astro.case4')];
 ---
 
 <section class="relative border-t border-cream-50/8 bg-night-900 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
       <div class="reveal">
-        <p class="eyebrow mb-4">Para quem é</p>
+        <p class="eyebrow mb-4">{t('astro.whoForEyebrow')}</p>
         <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-          Isto é para ti se...
+          {t('astro.whoForTitle')}
         </h2>
       </div>
 

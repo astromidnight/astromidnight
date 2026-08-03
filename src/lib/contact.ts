@@ -2,10 +2,18 @@
 // espalhados pelo site (secção da comunidade na homepage + página /contacto).
 
 const WHATSAPP_NUMBER = '351966702498';
-const WHATSAPP_MESSAGE = 'Olá! Vim do site da Astromidnight e tenho uma dúvida.';
+const WHATSAPP_MESSAGE: Record<'pt' | 'en', string> = {
+  pt: 'Olá! Vim do site da Astromidnight e tenho uma dúvida.',
+  en: 'Hi! I came from the Astromidnight website and I have a question.',
+};
 
-export const WHATSAPP_URL: string | null =
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+// Mensagem pré-preenchida no idioma da página de onde se clica -- ver
+// chamadas em Community.astro e ContactChannels.astro.
+export function getWhatsappUrl(lang: 'pt' | 'en' = 'pt'): string | null {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE[lang])}`;
+}
+
+export const WHATSAPP_URL: string | null = getWhatsappUrl('pt');
 
 export const EMAIL = 'info@astromidnight.pt';
 

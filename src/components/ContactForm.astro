@@ -2,15 +2,21 @@
 // Envia por Web3Forms (web3forms.com) direto do browser, mesmo padrão do
 // formulário de alojamentos rurais (HostSessions.astro) -- chave própria
 // deste form, ver PUBLIC_WEB3FORMS_CONTACT_KEY no .env.
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_CONTACT_KEY;
+const sendingLabel = t('contact.sending');
+const sendLabel = t('contact.send');
 
 const subjects = [
-  'Reservar uma sessão',
-  'Alojamentos rurais',
-  'Workshops e mentoria',
-  'Prints e loja',
-  'Imprensa',
-  'Outro assunto',
+  t('contact.subject1'),
+  t('contact.subject2'),
+  t('contact.subject3'),
+  t('contact.subject4'),
+  t('contact.subject5'),
+  t('contact.subject6'),
 ];
 
 const field =
@@ -21,21 +27,21 @@ const field =
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
       <div class="reveal">
-        <p class="eyebrow mb-4">Formulário</p>
+        <p class="eyebrow mb-4">{t('contact.formEyebrow')}</p>
         <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-          Preferes escrever?
+          {t('contact.formTitle')}
         </h2>
         <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
-          Se ainda tens dúvidas escolhe um tema e envia uma mensagem.
+          {t('contact.formDesc')}
         </p>
       </div>
 
       <form id="contact-form" class="reveal max-w-xl" style="--reveal-delay: 0.05s">
-        <input type="hidden" name="subject" value="Novo contacto — Astromidnight" />
+        <input type="hidden" name="subject" value={t('contact.subjectField')} />
         <input type="checkbox" name="botcheck" class="hidden" style="display: none" tabindex="-1" autocomplete="off" />
 
         <div class="flex flex-col gap-3">
-          <label class="sr-only" for="contact-subject">Assunto</label>
+          <label class="sr-only" for="contact-subject">{t('contact.subjectLabel')}</label>
           <div class="relative">
             <select id="contact-subject" name="assunto" required class:list={[field, 'appearance-none pr-11']}>
               {subjects.map((s) => <option value={s}>{s}</option>)}
@@ -52,55 +58,55 @@ const field =
             ><path d="M6 9l6 6 6-6" /></svg>
           </div>
 
-          <label class="sr-only" for="contact-name">O teu nome</label>
+          <label class="sr-only" for="contact-name">{t('contact.nameLabel')}</label>
           <input
             id="contact-name"
             name="nome"
             type="text"
             required
-            placeholder="o teu nome"
+            placeholder={t('contact.namePlaceholder')}
             autocomplete="name"
             class={field}
           />
 
-          <label class="sr-only" for="contact-email">O teu email</label>
+          <label class="sr-only" for="contact-email">{t('contact.emailLabel')}</label>
           <input
             id="contact-email"
             name="email"
             type="email"
             required
-            placeholder="o teu email"
+            placeholder={t('contact.emailPlaceholder')}
             autocomplete="email"
             class={field}
           />
 
-          <label class="sr-only" for="contact-message">Mensagem</label>
+          <label class="sr-only" for="contact-message">{t('contact.messageLabel')}</label>
           <textarea
             id="contact-message"
             name="mensagem"
             rows="5"
             required
-            placeholder="a tua mensagem"
+            placeholder={t('contact.messagePlaceholder')}
             class="w-full rounded-2xl border border-cream-50/25 bg-night-950/60 px-5 py-3 text-cream-50 placeholder:text-cream-50/40 focus:border-accent-300"
           ></textarea>
 
           <button type="submit" id="contact-submit" class="btn btn-primary mt-1 w-full sm:w-fit sm:px-10">
-            Enviar mensagem
+            {t('contact.send')}
           </button>
         </div>
 
         <p id="contact-note" class="mt-4 hidden text-sm text-accent-200" role="status">
-          Recebido, respondo assim que puder.
+          {t('contact.success')}
         </p>
         <p id="contact-error" class="mt-4 hidden text-sm text-red-300" role="status">
-          Não foi possível enviar. Tenta de novo ou escreve para o email de contacto.
+          {t('contact.error')}
         </p>
       </form>
     </div>
   </div>
 </section>
 
-<script define:vars={{ web3formsKey }}>
+<script define:vars={{ web3formsKey, sendingLabel, sendLabel }}>
   const form = document.getElementById('contact-form');
   const submitBtn = document.getElementById('contact-submit');
   const note = document.getElementById('contact-note');
@@ -111,7 +117,7 @@ const field =
     note.classList.add('hidden');
     errorNote.classList.add('hidden');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'A enviar…';
+    submitBtn.textContent = sendingLabel;
 
     try {
       const data = new FormData(form);
@@ -132,7 +138,7 @@ const field =
       errorNote.classList.remove('hidden');
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar mensagem';
+      submitBtn.textContent = sendLabel;
     }
   });
 </script>

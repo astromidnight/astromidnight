@@ -1,0 +1,61 @@
+---
+// Corpo da homepage, partilhado entre pt (index.astro) e en
+// (en/index.astro) -- "página EN wrapper fino" do plano de i18n, para não
+// duplicar a lista de secções nem os textos dos 3 Pillar em dois sítios.
+import Hero from './Hero.astro';
+import About from './About.astro';
+import Calendar from './Calendar.astro';
+import HostSessions from './HostSessions.astro';
+import Pillar from './Pillar.astro';
+import Testimonials from './Testimonials.astro';
+import Shop from './Shop.astro';
+import Community from './Community.astro';
+import portraits from '../assets/Portraits.jpg';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+---
+
+<Hero />
+<About />
+<Calendar />
+<HostSessions />
+<Pillar
+  id="stargazing"
+  eyebrow={t('home.stargazing.eyebrow')}
+  title={t('home.stargazing.title')}
+  description={t('home.stargazing.desc')}
+  price="45€"
+  priceNote={t('home.stargazing.priceNote')}
+  ctaLabel={t('hero.ctaReservar')}
+  video={{ src: '/videos/observatory.mp4', poster: '/posters/observatory.jpg' }}
+/>
+<Pillar
+  id="retratos"
+  eyebrow={t('nav.retratos')}
+  title={t('home.retratos.title')}
+  description={t('home.retratos.desc')}
+  price="160€"
+  priceNote={t('home.retratos.priceNote')}
+  ctaLabel={t('hero.ctaReservar')}
+  flip
+  image={{
+    src: portraits,
+    alt: t('home.retratos.imageAlt'),
+  }}
+/>
+<Pillar
+  id="workshops"
+  eyebrow={t('nav.aprende')}
+  title={t('home.workshops.title')}
+  description={t('home.workshops.desc')}
+  offers={[
+    { label: t('nav.astrofotografia'), href: '/astrofotografia' },
+    { label: t('nav.edicao'), href: '/edicao-de-imagem' },
+  ]}
+  video={{ src: '/videos/workshops.mp4', poster: '/posters/workshops.jpg' }}
+/>
+<Testimonials />
+<Shop />
+<Community />

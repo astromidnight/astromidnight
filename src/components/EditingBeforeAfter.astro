@@ -9,6 +9,10 @@ import m101Before from '../assets/BaM101Before.jpg';
 import m101After from '../assets/BaM101After.jpg';
 import veilBefore from '../assets/BaVeilBefore.jpg';
 import veilAfter from '../assets/BaVeilAfter.jpg';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 // Os quatro pares têm o mesmo enquadramento dentro de cada par (verificado
 // nas dimensões originais) e rondam todos 3:2, por isso o contentor pode ter
@@ -31,19 +35,18 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
 
 <section id="antes-depois" class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Antes e depois</p>
+    <p class="eyebrow reveal mb-4">{t('editing.baEyebrow')}</p>
     <h2
       class="reveal max-w-2xl text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl"
       style="--reveal-delay: 0.05s"
     >
-      Dos dados em bruto à imagem final
+      {t('editing.baTitle')}
     </h2>
     <p
       class="reveal mt-6 max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
       style="--reveal-delay: 0.1s"
     >
-      Arrasta para veres a diferença. É este o tipo de salto que trabalhamos na
-      sessão, sempre com edição não destrutiva em PixInsight e Photoshop.
+      {t('editing.baDesc')}
     </p>
 
     <div class="reveal mt-10" style="--reveal-delay: 0.15s">
@@ -54,7 +57,7 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
               <div class="relative aspect-[3/2] w-full overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900 select-none">
                 <Image
                   src={p.after}
-                  alt={`${p.name} depois da edição`}
+                  alt={`${p.name} ${t('editing.baAfterAltSuffix')}`}
                   class={imgClass}
                   widths={[768, 1152, 1536]}
                   sizes="(min-width: 1280px) 1216px, 100vw"
@@ -63,7 +66,7 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
                 <div class="absolute inset-0" data-ba-before style="clip-path: inset(0 50% 0 0)">
                   <Image
                     src={p.before}
-                    alt={`${p.name} antes da edição`}
+                    alt={`${p.name} ${t('editing.baBeforeAltSuffix')}`}
                     class={imgClass}
                     widths={[768, 1152, 1536]}
                     sizes="(min-width: 1280px) 1216px, 100vw"
@@ -72,10 +75,10 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
                 </div>
 
                 <span class="pointer-events-none absolute left-3 top-3 rounded-full bg-night-950/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/80 backdrop-blur sm:left-4 sm:top-4">
-                  Antes
+                  {t('editing.baBefore')}
                 </span>
                 <span class="pointer-events-none absolute right-3 top-3 rounded-full bg-night-950/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-cream-50/80 backdrop-blur sm:right-4 sm:top-4">
-                  Depois
+                  {t('editing.baAfter')}
                 </span>
 
                 <div
@@ -91,7 +94,7 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
                 </div>
 
                 <label class="sr-only" for={`ba-range-${i}`}>
-                  Comparar antes e depois de {p.name}
+                  {t('editing.baCompareLabelPrefix')} {p.name}
                 </label>
                 <input
                   id={`ba-range-${i}`}
@@ -109,7 +112,7 @@ const imgClass = 'absolute inset-0 h-full w-full object-cover';
         }
       </div>
 
-      <div class="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Escolher exemplo">
+      <div class="mt-5 flex flex-wrap gap-2" role="tablist" aria-label={t('editing.baChooseExample')}>
         {
           pairs.map((p, i) => (
             <button

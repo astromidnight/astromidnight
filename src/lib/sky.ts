@@ -89,25 +89,23 @@ export interface NightQuality {
   activity: string; // o que se faz melhor
 }
 
+const NIGHT_QUALITY: Record<'pt' | 'en', Record<NightTone, { verdict: string; activity: string }>> = {
+  pt: {
+    dark: { verdict: 'Céu escuro', activity: 'Deep-sky, Via Láctea e Retratos sob as Estrelas' },
+    good: { verdict: 'Boa observação', activity: 'Planetas, enxames e objetos brilhantes' },
+    bright: { verdict: 'Noite de luar', activity: 'Observação da Lua e dos planetas' },
+  },
+  en: {
+    dark: { verdict: 'Dark sky', activity: 'Deep-sky, Milky Way and Portraits Under the Stars' },
+    good: { verdict: 'Good viewing', activity: 'Planets, star clusters and bright objects' },
+    bright: { verdict: 'Moonlit night', activity: 'Moon and planet viewing' },
+  },
+};
+
 /** Veredicto de qualidade de uma noite a partir da iluminação lunar (%). */
-export function nightQuality(illum: number): NightQuality {
-  if (illum <= 15)
-    return {
-      tone: 'dark',
-      verdict: 'Céu escuro',
-      activity: 'Deep-sky, Via Láctea e Retratos sob as Estrelas',
-    };
-  if (illum <= 60)
-    return {
-      tone: 'good',
-      verdict: 'Boa observação',
-      activity: 'Planetas, enxames e objetos brilhantes',
-    };
-  return {
-    tone: 'bright',
-    verdict: 'Noite de luar',
-    activity: 'Observação da Lua e dos planetas',
-  };
+export function nightQuality(illum: number, lang: 'pt' | 'en' = 'pt'): NightQuality {
+  const tone: NightTone = illum <= 15 ? 'dark' : illum <= 60 ? 'good' : 'bright';
+  return { tone, ...NIGHT_QUALITY[lang][tone] };
 }
 
 /**

@@ -1,27 +1,17 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
 // Os cinco pontos de "How does it work?" do site atual, adaptados ao facto
 // de agora existir uma sessão única em vez de uma lista de cursos.
 const steps = [
-  {
-    title: 'Reservas a sessão',
-    desc: 'Escolhes no calendário e pagas na reserva. São sempre 2 horas, seja qual for o tema.',
-  },
-  {
-    title: 'Combinamos o horário',
-    desc: 'Depois da reserva entro em contacto contigo para acertarmos a hora que te dá jeito.',
-  },
-  {
-    title: 'Dizes-me o que precisas',
-    desc: 'Antes da sessão contas-me onde estás e o que queres resolver, para eu preparar tudo.',
-  },
-  {
-    title: 'Trabalhamos com os teus dados',
-    desc: 'Usamos as tuas imagens. Se ainda não tens nada com que trabalhar, forneço eu os dados.',
-  },
-  {
-    title: 'Acompanho do início ao fim',
-    desc: 'A sessão é online, por videochamada, e guio-te durante todo o tempo por partilha de ecrã.',
-  },
+  { title: t('editing.howStep1Title'), desc: t('editing.howStep1Desc') },
+  { title: t('editing.howStep2Title'), desc: t('editing.howStep2Desc') },
+  { title: t('editing.howStep3Title'), desc: t('editing.howStep3Desc') },
+  { title: t('editing.howStep4Title'), desc: t('editing.howStep4Desc') },
+  { title: t('editing.howStep5Title'), desc: t('editing.howStep5Desc') },
 ];
 ---
 
@@ -29,13 +19,12 @@ const steps = [
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
       <div class="reveal">
-        <p class="eyebrow mb-4">Como funciona</p>
+        <p class="eyebrow mb-4">{t('howItWorks.eyebrow')}</p>
         <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-          Da reserva à imagem final
+          {t('editing.howTitle')}
         </h2>
         <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
-          Precisas de ter o PixInsight instalado, e o Photoshop para os temas avançados.
-          Os scripts da RC-Astro ajudam mas são opcionais na maioria dos casos.
+          {t('editing.howDesc')}
         </p>
       </div>
 

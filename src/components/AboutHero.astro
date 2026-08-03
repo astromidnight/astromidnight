@@ -2,6 +2,10 @@
 import { Image } from 'astro:assets';
 import portrait from '../assets/AboutMe.jpg';
 import BreadcrumbSchema from './BreadcrumbSchema.astro';
+import { useTranslations, localizeHref } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 // Contagens que batem certo com a lista completa em AboutAwards.astro
 // (3 APOD, 4 IOTD, 2 IOTW, 1 ESA). Se lá for acrescentado um prémio novo,
@@ -10,35 +14,33 @@ const stats = [
   { value: '3×', label: 'NASA APOD' },
   { value: '4×', label: 'Astrobin IOTD' },
   { value: '2×', label: 'ZWO IOTW' },
-  { value: 'ESA', label: 'Colaboração' },
+  { value: 'ESA', label: t('about.colaboracao') },
 ];
 ---
 
 <section class="relative pb-16 sm:pb-20">
-  <BreadcrumbSchema label="Sobre" />
+  <BreadcrumbSchema label={t('nav.sobre')} />
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <p class="reveal text-sm text-cream-50/55">
-      <a href="/" class="transition-colors hover:text-cream-50">Início</a>
+      <a href={localizeHref('/', lang)} class="transition-colors hover:text-cream-50">{t('breadcrumb.inicio')}</a>
       <span class="mx-1.5">/</span>
-      <span class="text-cream-50/80">Sobre</span>
+      <span class="text-cream-50/80">{t('nav.sobre')}</span>
     </p>
 
     <div class="mt-10 grid items-center gap-12 lg:grid-cols-[6fr_5fr] lg:gap-20">
       <div>
-        <p class="eyebrow reveal mb-4">Sobre</p>
+        <p class="eyebrow reveal mb-4">{t('nav.sobre')}</p>
         <h1
           class="reveal max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]"
           style="--reveal-delay: 0.05s"
         >
-          Olá, sou o David Cruz
+          {t('about.title')}
         </h1>
         <p
           class="reveal mt-6 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg"
           style="--reveal-delay: 0.1s"
         >
-          Astrofotógrafo e designer digital. Fotografo o céu profundo a partir do meu
-          observatório no Alentejo, sob um dos céus mais escuros de Portugal, e é aqui que
-          recebo cada sessão e workshop.
+          {t('about.heroDesc')}
         </p>
 
         <dl
@@ -69,7 +71,7 @@ const stats = [
         </div>
         <Image
           src={portrait}
-          alt="David Cruz junto ao telescópio, no observatório do Alentejo"
+          alt={t('about.portraitAlt')}
           class="relative aspect-square w-full rounded-xl object-cover"
           widths={[480, 720, 960]}
           sizes="(min-width: 1024px) 480px, 90vw"

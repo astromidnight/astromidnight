@@ -1,0 +1,117 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LegalContent from '../../components/LegalContent.astro';
+import { EMAIL } from '../../lib/contact';
+import { useTranslations } from '../../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+---
+
+<Layout
+  title={`${t('legal.privacidadeTitle')} — Astromidnight`}
+  description={t('legal.privacidadeMetaDesc')}
+>
+  <Header />
+  <main class="pt-28 pb-24 sm:pt-32">
+    <LegalContent title={t('legal.privacidadeTitle')} updated={t('legal.updatedDate')}>
+      <h2>1. Who processes your data</h2>
+      <p>
+        The data controller for data collected through this site is David Cruz,
+        carrying out the Astromidnight activity as a sole trader, based in São Pedro
+        da Gafanhoeira, Alentejo, Portugal (Tax ID: 205254128). For any
+        question about your data, write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+      </p>
+
+      <h2>2. What data we collect and why</h2>
+      <ul>
+        <li>
+          <strong>Contact forms</strong> (general contact and rural stays): name,
+          email and the message text, so we can reply to you.
+        </li>
+        <li>
+          <strong>Session bookings</strong>: name, email and other data you fill in
+          on the booking engine, to organize and confirm the session.
+        </li>
+        <li>
+          <strong>Shop purchases</strong>: delivery and payment data, collected and
+          processed directly by the external checkout platform — it doesn't pass
+          through our servers or get stored by us.
+        </li>
+      </ul>
+
+      <h2>3. Who we share data with</h2>
+      <p>We use the following third-party services to run the site and our services:</p>
+      <ul>
+        <li><strong>Web3Forms</strong> — processes and forwards contact-form messages by email.</li>
+        <li><strong>Cal.com / Cal.eu</strong> — booking engine and calendar; handles the data you fill in when booking a session.</li>
+        <li><strong>Supabase</strong> — stores the list of prints available in the shop (doesn't collect personal data while browsing).</li>
+        <li><strong>meteoblue</strong> — weather forecast widget embedded on the site.</li>
+        <li><strong>Google Analytics</strong> (Google Ireland Limited) — site usage statistics, only after you accept the cookie notice.</li>
+      </ul>
+      <p>
+        Each of these services has its own privacy policy, which applies to the data
+        they process on Astromidnight's behalf. We do not sell or share your data
+        with third parties for marketing purposes.
+      </p>
+
+      <h2>4. Cookies</h2>
+      <p id="cookies">
+        We use Google Analytics to understand how the site is used (pages visited,
+        where visits come from, aggregated data) — but only after you accept the
+        cookie notice on your first visit; if you reject or ignore the notice,
+        Google Analytics never loads. IPs are anonymized. You can change your mind
+        at any time under "Manage cookies", in the site footer. More details in
+        Google's <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">privacy policy</a>.
+      </p>
+      <p>
+        The booking engine (Cal.com/Cal.eu) and the weather widget (meteoblue),
+        embedded on some pages, are essential to the site's operation and always
+        load — they may set their own cookies when you use them, and we have no
+        direct control over them.
+      </p>
+
+      <h2>5. Legal basis and retention period</h2>
+      <p>
+        We process your data based on the performance of a contract (when you book
+        a session or buy a print) or on your consent (when you write to us on your
+        own initiative). We keep contact and booking data for as long as necessary
+        to provide the service and comply with tax obligations, and delete or
+        anonymize it afterwards.
+      </p>
+
+      <h2>6. Your rights</h2>
+      <p>
+        Under the GDPR, you have the right to access, rectify, erase or restrict the
+        processing of your data, to request its portability, and to object to
+        processing. To exercise any of these rights, write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+        You also have the right to file a complaint with Portugal's National Data
+        Protection Authority (<a href="https://www.cnpd.pt" target="_blank" rel="noopener">cnpd.pt</a>).
+      </p>
+
+      <h2>7. Security</h2>
+      <p>
+        We take reasonable measures to protect the data we process directly, but no
+        transmission over the internet is 100% secure. We recommend not sharing
+        sensitive data (such as payment card details) by email or through the
+        contact form.
+      </p>
+
+      <h2>8. Minors</h2>
+      <p>
+        This site is not directed at minors under 16 for the purposes of directly
+        collecting data. Sessions involving minors must be booked by a responsible
+        adult.
+      </p>
+
+      <h2>9. Changes to this policy</h2>
+      <p>
+        We may update this policy periodically. The version in force is always the
+        one published on this page, with the update date shown at the top.
+      </p>
+    </LegalContent>
+  </main>
+  <Footer />
+</Layout>

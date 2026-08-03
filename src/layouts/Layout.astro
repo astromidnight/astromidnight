@@ -7,6 +7,7 @@ import CalBookingModal from '../components/CalBookingModal.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import Analytics from '../components/Analytics.astro';
 import StructuredData from '../components/StructuredData.astro';
+import { switchLocalePath, isTranslated } from '../i18n/utils';
 
 interface Props {
   title?: string;
@@ -30,10 +31,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = image
   ? new URL(image, Astro.site)
   : new URL('/share_thumb.jpg', Astro.site);
+
+const currentLang = Astro.currentLocale ?? 'pt';
+const altPath = switchLocalePath(Astro.url.pathname);
+const ptPath = currentLang === 'pt' ? Astro.url.pathname : altPath;
+const bareForCheck = currentLang === 'pt' ? Astro.url.pathname : altPath;
+// Só há par pt/en real para páginas já traduzidas (ver isTranslated) --
+// nas outras, esta página só existe num idioma, não emitir hreflang para
+// um /en/xxx (ou pt) que ainda não existe.
+const hasBothLangs = isTranslated(bareForCheck);
+const ptURL = new URL(ptPath, Astro.site);
+const enURL = new URL(currentLang === 'en' ? Astro.url.pathname : altPath, Astro.site);
+const ogLocale = currentLang === 'en' ? 'en_US' : 'pt_PT';
 ---
 
 <!doctype html>
-<html lang="pt">
+<html lang={currentLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,12 +54,21 @@ const ogImageURL = image
     <meta name="description" content={description} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="canonical" href={canonicalURL} />
+    {
+      hasBothLangs && (
+        <>
+          <link rel="alternate" hreflang="pt" href={ptURL} />
+          <link rel="alternate" hreflang="en" href={enURL} />
+          <link rel="alternate" hreflang="x-default" href={ptURL} />
+        </>
+      )
+    }
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:locale" content={ogLocale} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

@@ -2,13 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-
-const links = [
-  { label: 'Observação Noturna', href: '/observacao-noturna' },
-  { label: 'Retratos sob as Estrelas', href: '/retratos' },
-  { label: 'Loja de prints', href: '/loja' },
-  { label: 'Contacto', href: '/contacto' },
-];
+import NotFoundContent from '../components/NotFoundContent.astro';
 ---
 
 <Layout
@@ -16,27 +10,6 @@ const links = [
   description="Esta página não existe ou foi movida. Volta ao início ou escolhe uma das secções principais do site."
 >
   <Header />
-  <main class="starfield flex min-h-[80svh] items-center pt-28 sm:pt-32">
-    <div class="mx-auto w-full max-w-3xl px-5 text-center sm:px-8">
-      <p class="eyebrow mb-4">Erro 404</p>
-      <h1 class="text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-[3.25rem]">
-        Esta página perdeu-se no espaço
-      </h1>
-      <p class="mx-auto mt-6 max-w-lg text-base leading-relaxed text-cream-50/75 sm:text-lg">
-        A página que procuras não existe ou foi movida. Aqui tens o caminho de volta.
-      </p>
-
-      <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
-        <a href="/" class="btn btn-primary">Voltar ao início</a>
-        {
-          links.map((l) => (
-            <a href={l.href} class="btn btn-ghost">
-              {l.label}
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </main>
+  <NotFoundContent />
   <Footer />
 </Layout>

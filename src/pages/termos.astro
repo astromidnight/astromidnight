@@ -4,15 +4,19 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LegalContent from '../components/LegalContent.astro';
 import { EMAIL } from '../lib/contact';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title="Termos e Condições — Astromidnight"
-  description="Termos e condições de utilização do site e de reserva dos serviços da Astromidnight: observação noturna, retratos, workshops e loja de prints."
+  title={`${t('legal.termosTitle')} — Astromidnight`}
+  description={t('legal.termosMetaDesc')}
 >
   <Header />
   <main class="pt-28 pb-24 sm:pt-32">
-    <LegalContent title="Termos e Condições" updated="2 de agosto de 2026">
+    <LegalContent title={t('legal.termosTitle')} updated={t('legal.updatedDate')}>
       <h2>1. Quem somos</h2>
       <p>
         A Astromidnight é a atividade de astrofotografia e observação noturna de David

@@ -1,0 +1,116 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import LegalContent from '../../components/LegalContent.astro';
+import { EMAIL } from '../../lib/contact';
+import { useTranslations } from '../../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+---
+
+<Layout
+  title={`${t('legal.termosTitle')} — Astromidnight`}
+  description={t('legal.termosMetaDesc')}
+>
+  <Header />
+  <main class="pt-28 pb-24 sm:pt-32">
+    <LegalContent title={t('legal.termosTitle')} updated={t('legal.updatedDate')}>
+      <h2>1. Who we are</h2>
+      <p>
+        Astromidnight is the astrophotography and stargazing activity of David Cruz,
+        carried out as a sole trader from a private observatory in São Pedro da
+        Gafanhoeira, Alentejo, Portugal (Tax ID: 205254128). These terms apply
+        to the website astromidnight.pt and to all services and products booked or
+        purchased through it.
+      </p>
+
+      <h2>2. Services</h2>
+      <p>We provide the following services, always at the observatory or another agreed location:</p>
+      <ul>
+        <li>Stargazing, individual or in groups;</li>
+        <li>Portraits Under the Stars;</li>
+        <li>Astrophotography sessions and deep-sky image-editing mentorship;</li>
+        <li>Stargazing sessions for groups and guests of rural stays;</li>
+        <li>Sale of photographic prints in the site's shop.</li>
+      </ul>
+
+      <h2>3. Bookings and payment</h2>
+      <p>
+        Session and workshop bookings are made through our booking engine
+        (Cal.com/Cal.eu), embedded in the site or opened directly. Payment is
+        processed at that point, through the method shown in the booking form
+        itself. Prices shown on the site are in euros and may change without notice
+        for future bookings — the price that applies is always the one confirmed at
+        the time of booking.
+      </p>
+
+      <h2>4. Cancellation, rescheduling and bad weather</h2>
+      <p>
+        If weather conditions don't allow a stargazing, portrait or astrophotography
+        session to go ahead, you always have the option to reschedule for another
+        night or receive a full refund — you never lose what you paid because of
+        clouds. You can also ask to reschedule for other reasons by contacting us
+        with reasonable notice; rescheduling outside the bad-weather policy is
+        assessed case by case.
+      </p>
+
+      <h2>5. Print shop</h2>
+      <p>
+        Each print is made to order after purchase, with a preparation time of up to
+        3 business days, followed by shipping (2 to 5 business days for Europe, up
+        to 7 business days for the US and Canada, and up to 14 business days for
+        other destinations). Payment is processed by the external checkout platform
+        shown on each product — we do not store payment card data on our systems.
+      </p>
+
+      <h2>6. Taking part in stargazing sessions</h2>
+      <p>
+        Sessions take place outdoors, at night, on rural terrain. Participants
+        should dress appropriately for the night-time cold and follow the
+        instructions given on site, particularly regarding the handling of
+        equipment. Minors must always be accompanied by a responsible adult.
+        Participation is at each person's own risk, within what is reasonable given
+        the nature of the activity.
+      </p>
+
+      <h2>7. Intellectual property</h2>
+      <p>
+        The photographs, text and other content published on the site are the
+        property of David Cruz, unless stated otherwise. They may not be copied,
+        redistributed or used commercially without prior written permission —
+        including photographs delivered in portrait sessions, whose personal-use
+        terms are agreed at the time of delivery.
+      </p>
+
+      <h2>8. Complaints</h2>
+      <p>
+        If you have a complaint, contact us directly — we resolve things far faster
+        than any outside body. This business also has an Electronic Complaints Book
+        (Livro de Reclamações Eletrónico), available at <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">livroreclamacoes.pt</a>.
+        In the event of an unresolved consumer dispute, you can turn to an
+        alternative dispute resolution body — see the list at <a href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">consumidor.gov.pt</a>.
+      </p>
+
+      <h2>9. Changes to these terms</h2>
+      <p>
+        We may update these terms periodically. The version in force is always the
+        one published on this page, with the update date shown at the top.
+      </p>
+
+      <h2>10. Applicable law</h2>
+      <p>
+        These terms are governed by Portuguese law. For any dispute not resolved out
+        of court, the court of the consumer's place of residence has jurisdiction,
+        under applicable law.
+      </p>
+
+      <h2>11. Contact</h2>
+      <p>
+        For any question about these terms, write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+      </p>
+    </LegalContent>
+  </main>
+  <Footer />
+</Layout>

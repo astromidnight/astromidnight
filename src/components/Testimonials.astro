@@ -1,15 +1,20 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
 const placeholders = [1, 2, 3];
 ---
 
 <section class="relative border-y border-cream-50/8 bg-night-900 py-24 sm:py-32">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Testemunhos</p>
+    <p class="eyebrow reveal mb-4">{t('testimonials.eyebrow')}</p>
     <h2
       class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]"
       style="--reveal-delay: 0.05s"
     >
-      O que diz a família Astromidnight
+      {t('testimonials.title')}
     </h2>
 
     <div class="mt-12 grid gap-5 md:grid-cols-3">
@@ -20,14 +25,13 @@ const placeholders = [1, 2, 3];
             style={`--reveal-delay: ${0.1 + i * 0.07}s`}
           >
             <span class="w-fit rounded-full border border-accent-400/40 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-accent-200">
-              Placeholder
+              {t('testimonials.placeholderBadge')}
             </span>
             <blockquote class="mt-5 leading-relaxed text-cream-50/45 italic">
-              Testemunho de cliente real, a recolher após as primeiras sessões.
-              Duas a três linhas sobre a experiência.
+              {t('testimonials.placeholderQuote')}
             </blockquote>
             <figcaption class="mt-auto pt-6 text-sm font-medium text-cream-50/35">
-              Nome do cliente
+              {t('testimonials.placeholderName')}
             </figcaption>
           </figure>
         ))

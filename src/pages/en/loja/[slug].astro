@@ -1,0 +1,30 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import ShopDetailContent from '../../../components/ShopDetailContent.astro';
+import { getPublishedPrints, printSubtitle, type Print } from '../../../lib/prints';
+import { useTranslations } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const prints = await getPublishedPrints();
+  return prints.map((print) => ({
+    params: { slug: print.slug },
+    props: { print },
+  }));
+}
+
+const { print } = Astro.props as { print: Print };
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+---
+
+<Layout
+  title={`${print.title} — ${t('shop.metaTitleSuffix')}`}
+  description={`${t('shop.metaDescPrefix')} "${print.title}" (${printSubtitle(print)})${t('shop.metaDescSuffix')}`}
+  image={print.detail_image_1_url ?? print.thumb_url}
+>
+  <Header />
+  <ShopDetailContent print={print} />
+  <Footer />
+</Layout>

@@ -1,22 +1,15 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
 // Como correm as até 4 horas. Rascunho meu, a rever pelo David.
 const steps = [
-  {
-    title: 'Planeamos a noite',
-    desc: 'Antes de pegar na máquina vemos o que está no céu nessa noite, e escolhemos os alvos que fazem sentido para o teu equipamento.',
-  },
-  {
-    title: 'Montamos o equipamento',
-    desc: 'Alinhamento, focagem e enquadramento. É aqui que se ganha ou se perde a noite toda, e é por isso que damos tempo a este passo.',
-  },
-  {
-    title: 'Fotografamos',
-    desc: 'Captação acompanhada do princípio ao fim, com espaço para errares e perceberes porquê. É a errar que se aprende isto.',
-  },
-  {
-    title: 'Primeiro processamento',
-    desc: 'Antes de ires embora vês os teus próprios dados a transformar-se em imagem, para saíres daqui a perceber o caminho todo.',
-  },
+  { title: t('astro.nightStep1Title'), desc: t('astro.nightStep1Desc') },
+  { title: t('astro.nightStep2Title'), desc: t('astro.nightStep2Desc') },
+  { title: t('astro.nightStep3Title'), desc: t('astro.nightStep3Desc') },
+  { title: t('astro.nightStep4Title'), desc: t('astro.nightStep4Desc') },
 ];
 ---
 
@@ -24,13 +17,12 @@ const steps = [
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-10 lg:grid-cols-[4fr_8fr] lg:gap-20">
       <div class="reveal">
-        <p class="eyebrow mb-4">A noite</p>
+        <p class="eyebrow mb-4">{t('astro.nightEyebrow')}</p>
         <h2 class="text-3xl font-bold leading-tight tracking-[-0.02em] sm:text-4xl">
-          Passo a passo, do plano à imagem
+          {t('astro.nightTitle')}
         </h2>
         <p class="mt-6 max-w-md text-base leading-relaxed text-cream-50/75">
-          São até quatro horas, e o ritmo é o teu. Se quiseres passar metade da noite só a
-          acertar o alinhamento até ficares confortável, passamos.
+          {t('astro.nightDesc')}
         </p>
       </div>
 

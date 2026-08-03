@@ -1,25 +1,28 @@
 ---
 import { CAL_LINKS, calLinkPath } from '../lib/calcom';
+import { useTranslations, localizeHref } from '../i18n/utils';
 
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 const calLink = calLinkPath(CAL_LINKS['editing-mentorship']);
 ---
 
 <section class="relative border-t border-cream-50/8 py-20 text-center sm:py-24">
   <div class="mx-auto max-w-2xl px-5 sm:px-8">
     <h2 class="reveal text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
-      Traz os teus dados
+      {t('editing.ctaTitle')}
     </h2>
     <p class="reveal mt-4 text-cream-50/70" style="--reveal-delay: 0.05s">
-      Duas horas, numa 1 para 1, à volta do que precisas de resolver.
+      {t('editing.ctaDesc')}
     </p>
     <div
       class="reveal mt-8 flex flex-wrap items-center justify-center gap-4"
       style="--reveal-delay: 0.1s"
     >
       <button type="button" data-book-link={calLink} class="btn btn-primary">
-        Reservar sessão
+        {t('editing.bookSession')}
       </button>
-      <a href="/contacto" class="btn btn-ghost">Tens dúvidas? Contacta-nos</a>
+      <a href={localizeHref('/contacto', lang)} class="btn btn-ghost">{t('about.ctaQuestions')}</a>
     </div>
   </div>
 </section>

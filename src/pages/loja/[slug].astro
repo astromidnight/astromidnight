@@ -2,16 +2,9 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import BreadcrumbSchema from '../../components/BreadcrumbSchema.astro';
-import {
-  getPublishedPrints,
-  formatPrice,
-  formatDistance,
-  formatExposure,
-  formatDateRange,
-  printSubtitle,
-  type Print,
-} from '../../lib/prints';
+import ShopDetailContent from '../../components/ShopDetailContent.astro';
+import { getPublishedPrints, printSubtitle, type Print } from '../../lib/prints';
+import { useTranslations } from '../../i18n/utils';
 
 export async function getStaticPaths() {
   const prints = await getPublishedPrints();
@@ -22,162 +15,16 @@ export async function getStaticPaths() {
 }
 
 const { print } = Astro.props as { print: Print };
-
-const legendLines: string[] = [];
-if (print.category === 'deep-sky' && print.constellation) {
-  legendLines.push(
-    print.constellation === 'Solar System Event'
-      ? print.constellation
-      : `Constelação ${print.constellation}`
-  );
-}
-if (print.category === 'nightscape' && print.location) legendLines.push(print.location);
-if (print.exposure_minutes != null) legendLines.push(formatExposure(print.exposure_minutes));
-if (print.distance_ly != null && print.distance_unit) {
-  legendLines.push(formatDistance(print.distance_ly, print.distance_unit));
-}
-if (print.capture_date_start && print.capture_date_end) {
-  legendLines.push(formatDateRange(print.capture_date_start, print.capture_date_end));
-}
-
-const productSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: print.title,
-  description: printSubtitle(print),
-  image: print.detail_image_1_url ?? print.thumb_url,
-  url: `https://astromidnight.pt/loja/${print.slug}`,
-  ...(print.price_cents != null && {
-    offers: {
-      '@type': 'Offer',
-      price: (print.price_cents / 100).toFixed(2),
-      priceCurrency: print.currency,
-      url: `https://astromidnight.pt/loja/${print.slug}`,
-      availability: print.order_url
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/PreOrder',
-    },
-  }),
-};
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title={`${print.title} — Loja Astromidnight`}
-  description={`Print de "${print.title}" (${printSubtitle(print)}). Impressão sob encomenda, envio grátis.`}
+  title={`${print.title} — ${t('shop.metaTitleSuffix')}`}
+  description={`${t('shop.metaDescPrefix')} "${print.title}" (${printSubtitle(print)})${t('shop.metaDescSuffix')}`}
   image={print.detail_image_1_url ?? print.thumb_url}
 >
   <Header />
-  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
-  <BreadcrumbSchema label={print.title} trail={[{ label: 'Loja', href: '/loja' }]} />
-  <main class="pt-32 pb-24 sm:pt-36">
-    <div class="mx-auto max-w-7xl px-5 sm:px-8">
-      <p class="text-sm text-cream-50/55">
-        <a href="/" class="transition-colors hover:text-cream-50">Início</a>
-        <span class="mx-1.5">/</span>
-        <a href="/loja" class="transition-colors hover:text-cream-50">Loja</a>
-        <span class="mx-1.5">/</span>
-        <span class="text-cream-50/80">{print.title}</span>
-      </p>
-
-      <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-        <div class="flex flex-col gap-4">
-          <div class="overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900">
-            <img
-              src={print.detail_image_1_url ?? print.thumb_url}
-              alt={`Print «${print.title}» emoldurado em contexto de parede`}
-              class="w-full object-cover"
-            />
-          </div>
-          {print.detail_image_2_url && (
-            <div class="overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900">
-              <img
-                src={print.detail_image_2_url}
-                alt={`Print «${print.title}» — detalhe`}
-                loading="lazy"
-                class="w-full object-cover"
-              />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <h1 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{print.title}</h1>
-          <p class="mt-2 text-cream-50/60">{printSubtitle(print)}</p>
-
-          {print.size && (
-            <div class="mt-8">
-              <p class="text-sm text-cream-50/70">Tamanho:</p>
-              <span
-                class="mt-2 inline-flex rounded-full border border-cream-50/20 px-4 py-2 text-sm"
-              >
-                {print.size}
-              </span>
-            </div>
-          )}
-
-          {print.price_cents != null && (
-            <p class="mt-6 text-3xl font-bold text-accent-200">
-              {formatPrice(print.price_cents, print.currency)}
-            </p>
-          )}
-          {print.free_shipping && (
-            <p class="mt-1 text-sm text-cream-50/70">ENVIO GRÁTIS 🎉</p>
-          )}
-
-          {print.order_url ? (
-            <a
-              href={print.order_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-primary mt-6"
-            >
-              Encomendar
-            </a>
-          ) : (
-            <p class="mt-6 text-sm text-cream-50/50">Brevemente disponível.</p>
-          )}
-
-          {legendLines.length > 0 && (
-            <div class="mt-10">
-              <p class="font-bold">Legenda do print:</p>
-              <div class="mt-3 flex flex-col gap-1 text-sm text-cream-50/70">
-                <p>{print.title}</p>
-                {legendLines.map((line) => (
-                  <p>{line}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div class="mt-10">
-            <p class="font-bold">Papel de impressão:</p>
-            <p class="mt-3 text-sm leading-relaxed text-cream-50/70">
-              A superfície mate e de textura fina do papel fotográfico FUJIFILM Crystal
-              Archive DP II oferece um espectro de cor rico e uma reprodução nítida de
-              detalhe. Graças ao acabamento mate, o papel é praticamente livre de reflexos
-              indesejados e resistente a dedadas.
-            </p>
-            <ul class="mt-3 list-disc pl-5 text-sm text-cream-50/70">
-              <li>FUJIFILM Crystal Archive DP II</li>
-              <li>Papel mate premium, 234 g/m²</li>
-            </ul>
-          </div>
-
-          <div class="mt-10">
-            <p class="font-bold">Envio:</p>
-            <ul class="mt-3 list-disc pl-5 text-sm leading-relaxed text-cream-50/70">
-              <li>Envio grátis!</li>
-              <li>Cada print é impresso por encomenda e demora até 3 dias úteis a preparar.</li>
-              <li>
-                A entrega na Europa demora 2 a 5 dias úteis, até 7 dias úteis para os EUA e
-                Canadá, e até 14 dias úteis para outros destinos.
-              </li>
-              <li>Os prints são enviados enrolados (sem moldura) num tubo de cartão.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+  <ShopDetailContent print={print} />
   <Footer />
 </Layout>

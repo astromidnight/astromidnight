@@ -1,11 +1,16 @@
 ---
 import {
-  WHATSAPP_URL,
+  getWhatsappUrl,
   EMAIL,
   INSTAGRAM_HANDLE,
   INSTAGRAM_URL,
   hasWhatsapp,
 } from '../lib/contact';
+import { useTranslations } from '../i18n/utils';
+
+const lang = (Astro.currentLocale ?? 'pt') as 'pt' | 'en';
+const t = useTranslations(lang);
+const whatsappUrl = getWhatsappUrl(lang);
 
 const whatsappSvg =
   '<svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.2-.3.3-.5v-.5c0-.1-.5-1.4-.7-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s1 2.5 1.1 2.7c.1.2 1.9 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3Z"></path></svg>';
@@ -30,24 +35,24 @@ const channels: Channel[] = [
   {
     name: 'WhatsApp',
     icon: whatsappSvg,
-    desc: 'Dúvidas rápidas, disponibilidade e o estado do tempo à hora da sessão.',
-    cta: 'Abrir WhatsApp',
-    // Fica inativo até haver número, ver WHATSAPP_URL em lib/contact.ts.
-    href: WHATSAPP_URL,
-    badge: 'Resposta mais rápida',
+    desc: t('contact.whatsappDesc'),
+    cta: t('whatsapp.abrir'),
+    // Fica inativo até haver número, ver getWhatsappUrl em lib/contact.ts.
+    href: whatsappUrl,
+    badge: t('contact.fastestReply'),
     external: true,
   },
   {
     name: 'Email',
     icon: mailSvg,
-    desc: 'Propostas, parcerias, imprensa e tudo o que precise de anexos.',
+    desc: t('contact.emailDesc'),
     cta: EMAIL,
     href: `mailto:${EMAIL}`,
   },
   {
     name: 'Instagram',
     icon: instagramSvg,
-    desc: 'A rede social onde sou mais ativo. Podes sempre enviar uma mensagem direta.',
+    desc: t('contact.instagramDesc'),
     cta: INSTAGRAM_HANDLE,
     href: INSTAGRAM_URL,
     external: true,
@@ -86,7 +91,7 @@ const channels: Channel[] = [
             ) : (
               <span
                 class="mt-auto inline-flex w-fit cursor-not-allowed items-center gap-1.5 pt-5 text-sm font-medium text-cream-50/35"
-                title="Brevemente"
+                title={t('contact.comingSoon')}
               >
                 {c.cta}
               </span>
@@ -99,8 +104,7 @@ const channels: Channel[] = [
     {
       !hasWhatsapp() && (
         <p class="reveal mt-6 text-sm text-cream-50/45" style="--reveal-delay: 0.15s">
-          O WhatsApp fica disponível em breve. Entretanto, usa o email ou o formulário
-          aqui em baixo.
+          {t('contact.whatsappSoon')}
         </p>
       )
     }

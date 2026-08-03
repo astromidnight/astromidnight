@@ -8,16 +8,20 @@ import slide05 from '../assets/PortraitsSlide05.jpg';
 import slide06 from '../assets/PortraitsSlide06.jpg';
 import slide07 from '../assets/PortraitsSlide07.jpg';
 import slide08 from '../assets/PortraitsSlide08.jpg';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 
 const slides = [
-  { src: slide01, alt: 'Grupo de três pessoas sob a Via Láctea, numa sessão de retrato' },
-  { src: slide02, alt: 'Retrato individual sob um céu cheio de estrelas' },
-  { src: slide03, alt: 'Três pessoas sentadas numa estrada sob a Via Láctea, junto a uma azinheira' },
-  { src: slide04, alt: 'Retrato sob as estrelas com os braços erguidos para o céu' },
-  { src: slide05, alt: 'Retrato individual junto a uma azinheira, sob a Via Láctea' },
-  { src: slide06, alt: 'Retrato sob as estrelas a apontar para o céu' },
-  { src: slide07, alt: 'Duas pessoas em retrato sob um céu estrelado' },
-  { src: slide08, alt: 'Retrato de costas, a contemplar a Via Láctea' },
+  { src: slide01, alt: t('retratos.slide1') },
+  { src: slide02, alt: t('retratos.slide2') },
+  { src: slide03, alt: t('retratos.slide3') },
+  { src: slide04, alt: t('retratos.slide4') },
+  { src: slide05, alt: t('retratos.slide5') },
+  { src: slide06, alt: t('retratos.slide6') },
+  { src: slide07, alt: t('retratos.slide7') },
+  { src: slide08, alt: t('retratos.slide8') },
 ];
 ---
 
@@ -25,9 +29,9 @@ const slides = [
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div class="reveal max-w-2xl">
-        <p class="eyebrow mb-4">Exemplos</p>
+        <p class="eyebrow mb-4">{t('retratos.examplesEyebrow')}</p>
         <h2 class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
-          Retratos de sessões anteriores
+          {t('retratos.examplesTitle')}
         </h2>
       </div>
 
@@ -36,7 +40,7 @@ const slides = [
           type="button"
           data-examples-prev
           class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50"
-          aria-label="Exemplo anterior"
+          aria-label={t('retratos.prevExample')}
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
         </button>
@@ -44,7 +48,7 @@ const slides = [
           type="button"
           data-examples-next
           class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-cream-50/15 text-cream-50/70 transition-colors hover:border-accent-300/50 hover:text-cream-50"
-          aria-label="Próximo exemplo"
+          aria-label={t('retratos.nextExample')}
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
         </button>

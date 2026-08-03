@@ -4,6 +4,11 @@
 // (mesma convenção usada em Calendar.astro e Pillar.astro). Standalone: não
 // depende de dados do calendário, só dos links fixos do Cal.com.
 import { STARGAZING_LINKS, STARGAZING_PRICE_PER_ADULT, calLinkPath } from '../lib/calcom';
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+const adultoWord = t('calendar.adultoWord');
 
 const stargazingCalLinks = Object.fromEntries(
   Object.entries(STARGAZING_LINKS).map(([n, href]) => [n, calLinkPath(href)])
@@ -21,23 +26,23 @@ const stargazingCalLinks = Object.fromEntries(
   <div class="relative w-full max-w-sm rounded-2xl border border-cream-50/12 bg-night-900 p-6 shadow-2xl">
     <button
       class="modal-close absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-cream-50/60 transition-colors hover:bg-night-800 hover:text-cream-50"
-      aria-label="Fechar"
+      aria-label={t('calendar.close')}
     >
       <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
     </button>
-    <p class="eyebrow">Observação Noturna</p>
-    <h3 id="sg-title" class="mt-1 text-xl font-bold">Quantos adultos?</h3>
-    <p class="mt-1 text-xs text-cream-50/45">Crianças não pagam.</p>
+    <p class="eyebrow">{t('nav.observacao')}</p>
+    <h3 id="sg-title" class="mt-1 text-xl font-bold">{t('calendar.howManyAdults')}</h3>
+    <p class="mt-1 text-xs text-cream-50/45">{t('calendar.childrenFree')}</p>
 
-    <div id="sg-options" class="mt-5 space-y-2" role="radiogroup" aria-label="Número de adultos"></div>
+    <div id="sg-options" class="mt-5 space-y-2" role="radiogroup" aria-label={t('calendar.numberOfAdults')}></div>
 
     <button type="button" id="sg-continue" class="btn btn-primary mt-5 w-full">
-      Continuar para reserva
+      {t('calendar.continueBooking')}
     </button>
   </div>
 </div>
 
-<script define:vars={{ links: stargazingCalLinks, pricePerAdult: STARGAZING_PRICE_PER_ADULT }}>
+<script define:vars={{ links: stargazingCalLinks, pricePerAdult: STARGAZING_PRICE_PER_ADULT, adultoWord }}>
   const $ = (id) => document.getElementById(id);
   const sgModal = $('stargazing-modal');
   const sgOptionsEl = $('sg-options');
@@ -59,7 +64,7 @@ const stargazingCalLinks = Object.fromEntries(
                 : 'border-cream-50/15 hover:border-cream-50/30'
             }"
           >
-            <span class="font-medium">${n} adulto${n > 1 ? 's' : ''}</span>
+            <span class="font-medium">${n} ${adultoWord}${n > 1 ? 's' : ''}</span>
             <span class="font-bold">${price}€</span>
           </button>`;
       })

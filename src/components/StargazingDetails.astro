@@ -1,19 +1,22 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
+
 const stats = [
-  { value: '45€', label: 'por adulto · crianças grátis' },
-  { value: '1–2h', label: 'duração da sessão' },
-  { value: '4', label: 'adultos no máximo' },
-  { value: 'Retratos', label: 'no final da sessão' },
+  { value: '45€', label: t('stargazing.stat1Label') },
+  { value: '1–2h', label: t('stargazing.stat2Label') },
+  { value: '4', label: t('stargazing.stat3Label') },
+  { value: t('stargazing.stat4Value'), label: t('stargazing.stat4Label') },
 ];
 ---
 
 <section class="relative border-t border-cream-50/8 py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <p class="eyebrow reveal mb-4">Detalhes da sessão</p>
+    <p class="eyebrow reveal mb-4">{t('stargazing.detailsEyebrow')}</p>
     <p class="reveal max-w-2xl text-base leading-relaxed text-cream-50/75 sm:text-lg" style="--reveal-delay: 0.05s">
-      Uma experiência guiada, do início ao fim: contextualização do céu dessa noite, observação
-      direta pelo telescópio de 250mm e tempo para perguntas. Sessões de terça a sábado, a
-      começar cerca de uma hora após o pôr do sol.
+      {t('stargazing.detailsDesc')}
     </p>
 
     <dl class="reveal mt-10 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4" style="--reveal-delay: 0.1s">
@@ -31,7 +34,7 @@ const stats = [
     </dl>
 
     <button type="button" data-open-stargazing class="btn btn-primary reveal mt-10" style="--reveal-delay: 0.15s">
-      Reservar sessão
+      {t('hero.ctaReservar')}
     </button>
   </div>
 </section>

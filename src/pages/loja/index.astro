@@ -2,71 +2,18 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import BreadcrumbSchema from '../../components/BreadcrumbSchema.astro';
-import { getPublishedPrints, formatPrice, printSubtitle } from '../../lib/prints';
+import ShopIndexContent from '../../components/ShopIndexContent.astro';
+import { useTranslations } from '../../i18n/utils';
 
-const prints = await getPublishedPrints();
+const lang = Astro.currentLocale ?? 'pt';
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title="Loja — Astromidnight"
-  description="Compra um print do meu trabalho para a tua parede. Edições impressas sob encomenda, envio grátis."
+  title={`${t('nav.loja')} — Astromidnight`}
+  description={t('shop.indexMetaDesc')}
 >
   <Header />
-  <BreadcrumbSchema label="Loja" />
-  <main class="pt-32 pb-24 sm:pt-36">
-    <div class="mx-auto max-w-7xl px-5 sm:px-8">
-      <p class="reveal text-sm text-cream-50/55">
-        <a href="/" class="transition-colors hover:text-cream-50">Início</a>
-        <span class="mx-1.5">/</span>
-        <span class="text-cream-50/80">Loja</span>
-      </p>
-      <p class="eyebrow reveal mb-4 mt-10">Loja</p>
-      <h1 class="reveal text-4xl font-bold tracking-[-0.02em] sm:text-5xl">O Universo em tua casa</h1>
-      <p class="reveal mt-4 max-w-lg text-cream-50/70" style="--reveal-delay: 0.05s">
-        Impressões de alta qualidade das minhas melhores astrofotografias.
-      </p>
-
-      {
-        prints.length === 0 ? (
-          <p class="mt-16 text-cream-50/60">De momento não há prints disponíveis.</p>
-        ) : (
-          <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {prints.map((print, i) => (
-              <a
-                href={`/loja/${print.slug}`}
-                class="reveal group block overflow-hidden rounded-2xl border border-cream-50/10 bg-night-900 transition-all duration-300 hover:-translate-y-1 hover:border-accent-400/40"
-                style={`--reveal-delay: ${0.05 + (i % 6) * 0.06}s`}
-              >
-                <div class="overflow-hidden">
-                  <img
-                    src={print.thumb_url}
-                    alt={`Print «${print.title}» emoldurado em contexto de parede`}
-                    loading="lazy"
-                    class="aspect-square w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
-                </div>
-                <div class="flex items-start justify-between gap-4 p-5">
-                  <div>
-                    <h2 class="font-bold transition-colors group-hover:text-accent-200">
-                      {print.title}
-                    </h2>
-                    <p class="mt-1 text-sm text-cream-50/55">{printSubtitle(print)}</p>
-                  </div>
-                  {print.price_cents != null && (
-                    <p class="shrink-0 text-right">
-                      <span class="text-xl font-bold text-accent-200">
-                        {formatPrice(print.price_cents, print.currency)}
-                      </span>
-                    </p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        )
-      }
-    </div>
-  </main>
+  <ShopIndexContent />
   <Footer />
 </Layout>
