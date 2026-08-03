@@ -58,9 +58,12 @@ export const ui = {
     // Testimonials.astro
     'testimonials.eyebrow': 'Testemunhos',
     'testimonials.title': 'O que diz a família Astromidnight',
-    'testimonials.placeholderBadge': 'Placeholder',
-    'testimonials.placeholderQuote': 'Testemunho de cliente real, a recolher após as primeiras sessões. Duas a três linhas sobre a experiência.',
-    'testimonials.placeholderName': 'Nome do cliente',
+    'testimonials.ratingSuffix': 'no Google',
+    'testimonials.reviewWord': 'avaliação',
+    'testimonials.reviewWordPlural': 'avaliações',
+    'testimonials.writeReview': 'Escrever uma review',
+    'testimonials.seeAllReviews': 'Ver todas as reviews',
+    'testimonials.emptyState': 'Ainda não há reviews públicas — sê a primeira pessoa a deixar uma.',
 
     // Shop.astro
     'shop.title': 'O Universo em tua casa',
@@ -561,9 +564,12 @@ export const ui = {
     // Testimonials.astro
     'testimonials.eyebrow': 'Testimonials',
     'testimonials.title': 'What the Astromidnight family says',
-    'testimonials.placeholderBadge': 'Placeholder',
-    'testimonials.placeholderQuote': 'Real client testimonial, to be collected after the first sessions. Two or three lines about the experience.',
-    'testimonials.placeholderName': 'Client name',
+    'testimonials.ratingSuffix': 'on Google',
+    'testimonials.reviewWord': 'review',
+    'testimonials.reviewWordPlural': 'reviews',
+    'testimonials.writeReview': 'Write a review',
+    'testimonials.seeAllReviews': 'See all reviews',
+    'testimonials.emptyState': 'No public reviews yet — be the first to leave one.',
 
     // Shop.astro
     'shop.title': 'The universe in your home',
