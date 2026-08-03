@@ -274,10 +274,12 @@ const calendarData = {
     reservar: t('calendar.reservar'),
     reservarAgora: t('calendar.reservarAgora'),
     disponivel: t('calendar.disponivel'),
-    semVagas: t('calendar.semVagas'),
     saberMais: t('calendar.saberMais'),
     brevemente: t('calendar.brevemente'),
     paraEstaNoite: t('calendar.paraEstaNoite'),
+    idealFor: t('calendar.idealFor'),
+    observatorioFechado: t('calendar.observatorioFechado'),
+    semDisponibilidade: t('calendar.semDisponibilidade'),
     adultoWord: t('calendar.adultoWord'),
     moonWord: t('calendar.moonWord'),
     illuminatedWord: t('calendar.illuminatedWord'),
@@ -651,7 +653,7 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
       </div>
       <ul id="nm-sky" class="mt-4 space-y-1.5 text-sm text-cream-50/70"></ul>
       <div class="mt-5">
-        <p class="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
+        <p id="nm-ideal-for" class="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cream-50/40">
           {t('calendar.idealFor')}
         </p>
         <div id="nm-activities" class="space-y-2.5"></div>
@@ -774,10 +776,12 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
       reservar: string;
       reservarAgora: string;
       disponivel: string;
-      semVagas: string;
       saberMais: string;
       brevemente: string;
       paraEstaNoite: string;
+      idealFor: string;
+      observatorioFechado: string;
+      semDisponibilidade: string;
       adultoWord: string;
       moonWord: string;
       illuminatedWord: string;
@@ -843,10 +847,12 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
         <a href="${escAttr(e.href)}" target="_blank" rel="noopener" class="btn btn-primary !min-h-0 shrink-0 !px-4 !py-2 text-xs">${data.strings.reservar}</a>
       </div>`;
 
+    // Só recebe serviços com available=true (ver filtro em `cards` abaixo) --
+    // uma noite sem disponibilidade não mostra cartão nenhum, só a mensagem
+    // de observatório fechado.
     const serviceCard = (s: Service) => {
-      const cta = !s.available
-        ? `<span class="btn !min-h-0 flex-1 cursor-not-allowed !px-4 !py-2 text-xs opacity-40">${data.strings.reservarAgora}</span>`
-        : s.type === 'stargazing'
+      const cta =
+        s.type === 'stargazing'
           ? `<button type="button" data-open-stargazing data-date="${escAttr(s.dateKey)}" data-slot="${escAttr(s.slotTime ?? '')}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">${data.strings.reservarAgora}</button>`
           : `<button type="button" data-book-link="${escAttr(new URL(s.href).pathname.replace(/^\/+/, ''))}" data-book-date="${escAttr(s.dateKey)}" data-book-month="${escAttr(s.dateKey.slice(0, 7))}" data-book-slot="${escAttr(s.slotTime ?? '')}" class="btn btn-primary !min-h-0 flex-1 !px-4 !py-2 text-xs">${data.strings.reservarAgora}</button>`;
       return `
@@ -856,9 +862,9 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
           <span class="shrink-0 text-sm font-bold">${s.price}</span>
         </div>
         ${s.desc ? `<p class="mt-1 text-xs text-cream-50/55">${s.desc}</p>` : ''}
-        <span class="mt-1.5 inline-flex items-center gap-1.5 text-[0.7rem] font-medium ${s.available ? 'text-accent-200' : 'text-cream-50/45'}">
-          <span class="h-1.5 w-1.5 rounded-full ${s.available ? 'bg-accent-300' : 'bg-cream-50/30'}"></span>
-          ${s.available ? data.strings.disponivel : data.strings.semVagas}
+        <span class="mt-1.5 inline-flex items-center gap-1.5 text-[0.7rem] font-medium text-accent-200">
+          <span class="h-1.5 w-1.5 rounded-full bg-accent-300"></span>
+          ${data.strings.disponivel}
         </span>
         <div class="mt-3 flex items-center gap-2">
           ${cta}
@@ -875,9 +881,18 @@ const listCalLink = (item: (typeof listItems)[number]) => calLinkPath(listHref(i
 
     const cards: string[] = [
       ...n.events.map(eventCard),
-      ...n.services.map(serviceCard),
+      ...n.services.filter((s) => s.available).map(serviceCard),
     ];
-    $('nm-activities').innerHTML = cards.join('');
+
+    $('nm-ideal-for').classList.toggle('hidden', cards.length === 0);
+    $('nm-activities').innerHTML =
+      cards.length > 0
+        ? cards.join('')
+        : `
+      <div class="rounded-xl border border-cream-50/12 bg-night-950/50 px-4 py-5 text-center">
+        <p class="font-medium">${data.strings.observatorioFechado}</p>
+        <p class="mt-1 text-sm text-cream-50/55">${data.strings.semDisponibilidade}</p>
+      </div>`;
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
