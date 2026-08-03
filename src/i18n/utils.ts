@@ -22,8 +22,17 @@ const translatedPaths = new Set<string>(['/', '/contacto', '/sobre', '/observaca
 // estar traduzido para qualquer slug funcionar em /en.
 const translatedPrefixes = ['/loja/'];
 
+// O build estático do Astro gera Astro.url.pathname com barra final (ex.
+// "/retratos/"), ao contrário do dev server ("/retratos") -- normaliza
+// antes de comparar com translatedPaths, ou a comparação falha sempre no
+// build de produção (por isso o seletor de idioma caía sempre na home).
+function stripTrailingSlash(path: string): string {
+  return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+}
+
 function pathIsTranslated(bare: string): boolean {
-  return translatedPaths.has(bare) || translatedPrefixes.some((p) => bare.startsWith(p));
+  const p = stripTrailingSlash(bare);
+  return translatedPaths.has(p) || translatedPrefixes.some((prefix) => p.startsWith(prefix));
 }
 
 // Só prefixa com /en caminhos internos reais ("/loja", "/#alojamentos") E já
@@ -46,10 +55,11 @@ export function isTranslated(pathname: string): boolean {
 // de num /en/xxx inexistente; ir de en para pt é sempre seguro (toda a
 // página pt já existe).
 export function switchLocalePath(pathname: string): string {
-  if (pathname === '/en' || pathname.startsWith('/en/')) {
-    const rest = pathname.slice(3);
+  const path = stripTrailingSlash(pathname);
+  if (path === '/en' || path.startsWith('/en/')) {
+    const rest = path.slice(3);
     return rest === '' ? '/' : rest;
   }
-  if (!pathIsTranslated(pathname)) return '/en';
-  return `/en${pathname === '/' ? '' : pathname}`;
+  if (!pathIsTranslated(path)) return '/en';
+  return `/en${path === '/' ? '' : path}`;
 }
